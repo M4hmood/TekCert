@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1C2F5E"/><text x="50" y="62" text-anchor="middle" font-family="Georgia,serif" font-size="32" fill="#F6F3EC">TK</text></svg></template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}input::placeholder{color:#8A8E9C}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}@keyframes wallUp{from{transform:translateY(0)}to{transform:translateY(-50%)}}@keyframes wallDown{from{transform:translateY(-50%)}to{transform:translateY(0)}}</style>
+</helmet>
+<div ref="{{ root }}" style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;gap:56px;align-items:flex-start;color:var(--ink)">
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">02 · Sign in / Sign up — Desktop 1440 · interactive (tabs, forgot password)</div>
+<div data-screen-label="02 Sign in desktop" style="width:1440px;height:900px;background:var(--bg);border-radius:12px;overflow:hidden;display:grid;grid-template-columns:600px 1fr;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <aside style="background:var(--hero);color:var(--hero-ink);padding:48px 56px;display:flex;flex-direction:column;justify-content:space-between">
+    <a href="Landing.dc.html" style="display:flex;align-items:center;gap:11px;text-decoration:none;color:inherit"><div style="width:34px;height:34px;border-radius:50%;background:#F3EFE6;color:#14244B;display:grid;place-items:center;font-family:'Newsreader',serif;font-size:19px;font-weight:600;box-shadow:0 0 0 2px #14244B,0 0 0 3.5px #D4A23A">T</div><span style="font-family:'Newsreader',serif;font-size:23px;font-weight:600">TekCert</span></a>
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:56px;line-height:1.04;letter-spacing:-0.02em">Your class is moving ahead.<br><span style="font-style:italic;color:#E2BC66">Join it.</span></h1>
+      {{ badgeWall }}
+    </div>
+    <span style="font-size:14px;opacity:.75">142 certifications verified by TEK-UP students this semester.</span>
+  </aside>
+  <main style="display:flex;flex-direction:column;padding:32px 48px">
+    <div style="display:flex;justify-content:flex-end"><button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--ink2);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--sf2)"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ themeIcon }}</span></button></div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center">
+      <div style="width:420px;display:flex;flex-direction:column;gap:28px">
+        <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}">
+          <div role="tablist" style="display:grid;grid-template-columns:1fr 1fr;background:var(--sf2);border-radius:10px;padding:4px">
+            <button role="tab" onClick="{{ goLogin }}" style="height:44px;border:none;border-radius:7px;font-size:15px;font-weight:600;cursor:pointer;background:{{ tabLoginBg }};color:{{ tabLoginInk }};box-shadow:{{ tabLoginSh }}">Sign in</button>
+            <button role="tab" onClick="{{ goSignup }}" style="height:44px;border:none;border-radius:7px;font-size:15px;font-weight:600;cursor:pointer;background:{{ tabSignBg }};color:{{ tabSignInk }};box-shadow:{{ tabSignSh }}">Sign up</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:22px">
+            <div style="display:flex;flex-direction:column;gap:8px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:38px;letter-spacing:-0.015em">Welcome back</h2><span style="font-size:15.5px;color:var(--ink2)">Sign in with your institute account.</span></div>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Institute email</span><input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="firstname.lastname@tek-up.de" style="height:48px;border:1.5px solid {{ emailBorder }};border-radius:8px;background:var(--sf);padding:0 14px;font-size:15.5px;outline:none" style-focus="box-shadow:0 0 0 3px var(--pri-sf);border-color:var(--pri)"></input>
+              <sc-if value="{{ emailError }}"><span role="alert" style="font-size:13px;color:var(--err);display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:17px">error</span>Use your @tek-up.de address</span></sc-if>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14px;font-weight:600">Password</span><button onClick="{{ goForgot }}" style="border:none;background:none;padding:0;font-size:13.5px;font-weight:600;color:var(--pri);cursor:pointer;min-height:24px">Forgot password?</button></span><span style="position:relative;display:flex"><input type="{{ pwType }}" value="motdepasse2026" readOnly="" style="flex:1;height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);padding:0 52px 0 14px;font-size:15.5px;outline:none" style-focus="box-shadow:0 0 0 3px var(--pri-sf);border-color:var(--pri)"></input><button onClick="{{ togglePw }}" aria-label="Show password" style="position:absolute;right:2px;top:2px;width:44px;height:44px;border:none;background:none;color:var(--ink3);display:grid;place-items:center;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">{{ pwIcon }}</span></button></span></label>
+            <label style="display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px;cursor:pointer"><span style="width:22px;height:22px;border-radius:6px;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:18px">check</span></span>Stay signed in on this device</label>
+            <button onClick="{{ submitLogin }}" style="height:52px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;cursor:pointer" style-hover="filter:brightness(1.15)">Sign in</button>
+            <span style="font-size:14px;color:var(--ink3);text-align:center">Enter an address outside @tek-up.de to see the error state.</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;flex-direction:column;gap:8px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:38px;letter-spacing:-0.015em">Create your account</h2><span style="font-size:15.5px;color:var(--ink2)">For students enrolled at TEK-UP only.</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">First name</span><input value="Yassine" readOnly="" style="height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);padding:0 14px;font-size:15.5px;outline:none;min-width:0"></input></label>
+              <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Last name</span><input value="Ben Amor" readOnly="" style="height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);padding:0 14px;font-size:15.5px;outline:none;min-width:0"></input></label>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Institute email</span><input value="yassine.benamor@tek-up.de" readOnly="" style="height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);padding:0 14px;font-size:15.5px;outline:none"></input></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Password</span><input type="password" value="motdepasse2026" readOnly="" style="height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);padding:0 14px;font-size:15.5px;outline:none"></input>
+              <span style="display:flex;gap:16px;font-size:13px;color:var(--ok)"><span style="display:flex;align-items:center;gap:4px"><span style="font-family:'Material Symbols Outlined';font-size:16px">check_circle</span>8 characters</span><span style="display:flex;align-items:center;gap:4px"><span style="font-family:'Material Symbols Outlined';font-size:16px">check_circle</span>A number</span><span style="display:flex;align-items:center;gap:4px;color:var(--ink3)"><span style="font-family:'Material Symbols Outlined';font-size:16px">radio_button_unchecked</span>A symbol</span></span>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.5;color:var(--ink2);padding:10px 0"><span style="width:22px;height:22px;border-radius:6px;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:18px">check</span></span>I agree that my name, class and certifications are visible to TEK-UP students. You can change this at any time.</label>
+            <a href="Onboarding.dc.html" style="height:52px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;text-decoration:none">Create my account</a>
+            <span style="font-size:13.5px;color:var(--ink3);text-align:center">A confirmation link will be sent to your institute address.</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isForgot }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:22px">
+            <button onClick="{{ goLogin }}" style="align-self:flex-start;height:44px;border:none;background:none;padding:0;display:flex;align-items:center;gap:6px;font-size:14.5px;font-weight:600;color:var(--pri);cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_back</span>Back to sign in</button>
+            <div style="display:flex;flex-direction:column;gap:8px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:38px;letter-spacing:-0.015em">Forgot password</h2><span style="font-size:15.5px;color:var(--ink2);line-height:1.55">We'll send you a reset link that's valid for 30 minutes.</span></div>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Institute email</span><input value="yassine.benamor@tek-up.de" readOnly="" style="height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);padding:0 14px;font-size:15.5px;outline:none"></input></label>
+            <button onClick="{{ goSent }}" style="height:52px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;cursor:pointer">Send link</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSent }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:20px;align-items:flex-start">
+            <span style="width:64px;height:64px;border-radius:50%;background:var(--ok-sf);color:var(--ok);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:32px">mark_email_read</span></span>
+            <h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:38px;letter-spacing:-0.015em">Check your inbox</h2>
+            <span style="font-size:15.5px;color:var(--ink2);line-height:1.6">A link was sent to <strong style="color:var(--ink)">yassine.benamor@tek-up.de</strong>. Remember to check your spam folder.</span>
+            <div style="display:flex;gap:10px"><button onClick="{{ goLogin }}" style="height:48px;padding:0 18px;border:1.5px solid var(--ln2);border-radius:10px;background:var(--sf);font-size:15px;font-weight:600;cursor:pointer">Back to sign in</button><button style="height:48px;padding:0 14px;border:none;background:none;color:var(--ink3);font-size:15px;font-weight:600">Resend in 0:58</button></div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · sign-in error</div>
+<div data-screen-label="02 Sign in mobile error" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="background:var(--hero);color:var(--hero-ink);padding:28px 24px 32px;display:flex;flex-direction:column;gap:22px">
+    <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:#F3EFE6;color:#14244B;display:grid;place-items:center;font-family:'Newsreader',serif;font-size:17px;font-weight:600;box-shadow:0 0 0 2px #14244B,0 0 0 3px #D4A23A">T</div><span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600">TekCert</span></div>
+    <h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:36px;line-height:1.05">Your class is moving ahead. <span style="font-style:italic;color:#E2BC66">Join it.</span></h1>
+  </div>
+  <div style="padding:24px 20px;display:flex;flex-direction:column;gap:20px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;background:var(--sf2);border-radius:10px;padding:4px"><span style="height:44px;border-radius:7px;background:var(--sf);display:grid;place-items:center;font-size:15px;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)">Sign in</span><span style="height:44px;display:grid;place-items:center;font-size:15px;font-weight:600;color:var(--ink2)">Sign up</span></div>
+    <div role="alert" style="display:flex;gap:10px;padding:12px 14px;border-radius:10px;background:var(--err-sf);color:var(--err);font-size:14px;line-height:1.45"><span style="font-family:'Material Symbols Outlined';font-size:20px;flex:none">error</span><span><strong>Incorrect email or password.</strong> You have 4 attempts left before a 15-minute lockout.</span></div>
+    <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Institute email</span><span style="height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);display:flex;align-items:center;padding:0 14px;font-size:15.5px">yassine.benamor@tek-up.de</span></label>
+    <label style="display:flex;flex-direction:column;gap:7px"><span style="display:flex;justify-content:space-between"><span style="font-size:14px;font-weight:600">Password</span><span style="font-size:13.5px;font-weight:600;color:var(--pri)">Forgot password?</span></span><span style="height:48px;border:1.5px solid var(--err);border-radius:8px;background:var(--sf);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:15.5px">•••••••<span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ink3)">visibility</span></span></label>
+    <span style="height:52px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;display:grid;place-items:center">Sign in</span>
+  </div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · sign up</div>
+<div data-screen-label="02 Sign up mobile" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="padding:16px 12px 0;display:flex;align-items:center;justify-content:space-between"><a href="Landing.dc.html" aria-label="Back" style="width:44px;height:44px;display:grid;place-items:center;color:var(--ink)"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></a><span style="font-family:'Newsreader',serif;font-size:19px;font-weight:600">TekCert</span><span style="width:44px"></span></div>
+  <div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:32px">Create your account</h2><span style="font-size:15px;color:var(--ink2)">For students enrolled at TEK-UP only.</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">First name</span><span style="height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);display:flex;align-items:center;padding:0 14px;font-size:15.5px">Yassine</span></label><label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Last name</span><span style="height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);display:flex;align-items:center;padding:0 14px;font-size:15.5px">Ben Amor</span></label></div>
+    <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Institute email</span><span style="height:48px;border:1.5px solid var(--pri);border-radius:8px;background:var(--sf);display:flex;align-items:center;padding:0 14px;font-size:15.5px;box-shadow:0 0 0 3px var(--pri-sf)">yassine.benamor@tek-up.de</span><span style="font-size:13px;color:var(--ok);display:flex;align-items:center;gap:5px"><span style="font-family:'Material Symbols Outlined';font-size:16px">check_circle</span>Institute address recognised</span></label>
+    <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Password</span><span style="height:48px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);display:flex;align-items:center;padding:0 14px;font-size:15.5px">••••••••••••</span><span style="display:flex;gap:14px;font-size:12.5px;color:var(--ok)"><span style="display:flex;align-items:center;gap:4px"><span style="font-family:'Material Symbols Outlined';font-size:15px">check_circle</span>8 characters</span><span style="display:flex;align-items:center;gap:4px"><span style="font-family:'Material Symbols Outlined';font-size:15px">check_circle</span>A number</span></span></label>
+    <label style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;line-height:1.5;color:var(--ink2)"><span style="width:22px;height:22px;border-radius:6px;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:18px">check</span></span>I agree that my profile is visible to TEK-UP students. You can change this at any time.</label>
+    <a href="Onboarding.dc.html" style="height:52px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;display:grid;place-items:center;text-decoration:none">Create my account</a>
+  </div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · link sent</div>
+<div data-screen-label="02 Forgot password mobile" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="padding:16px 12px 0"><span style="width:44px;height:44px;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></span></div>
+  <div style="flex:1;padding:24px 24px;display:flex;flex-direction:column;gap:18px;justify-content:center">
+    <span style="width:64px;height:64px;border-radius:50%;background:var(--ok-sf);color:var(--ok);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:32px">mark_email_read</span></span>
+    <h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:32px">Check your inbox</h2>
+    <span style="font-size:15.5px;color:var(--ink2);line-height:1.6">A link valid for 30 minutes was sent to <strong style="color:var(--ink)">yassine.benamor@tek-up.de</strong>.</span>
+    <span style="height:52px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:16px;font-weight:600;display:grid;place-items:center;margin-top:8px">Back to sign in</span>
+    <span style="font-size:14px;color:var(--ink3);text-align:center">Resend in 0:58</span>
+  </div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;clair&quot;,&quot;sombre&quot;],&quot;default&quot;:&quot;clair&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static T = {
+    clair: {'--bg':'#F6F3EC','--sf':'#FFFDF8','--sf2':'#EEE9DE','--ln':'#E1DACB','--ln2':'#CBC2AF','--ink':'#131A2C','--ink2':'#474E63','--ink3':'#62677A','--pri':'#1C2F5E','--pri-ink':'#FFFFFF','--pri-sf':'#E4E8F2','--gold':'#86590C','--gold-fill':'#D4A23A','--gold-sf':'#F5EBD3','--ok':'#2C6A45','--ok-sf':'#E0EDE4','--warn':'#9C4F0C','--warn-sf':'#F7E6D6','--err':'#A3302A','--err-sf':'#F5DDDA','--hero':'#14244B','--hero-ink':'#F3EFE6','--focus':'#3B63C9'},
+    sombre: {'--bg':'#0D1220','--sf':'#141B2D','--sf2':'#1B2338','--ln':'#262F47','--ln2':'#38425F','--ink':'#ECEAE4','--ink2':'#B3B8C7','--ink3':'#9097AA','--pri':'#AFC2F4','--pri-ink':'#0D1220','--pri-sf':'#1F2B4C','--gold':'#E5BC62','--gold-fill':'#D9AE4E','--gold-sf':'#33291A','--ok':'#7CC79A','--ok-sf':'#15301F','--warn':'#EDA867','--warn-sf':'#36240F','--err':'#F0928A','--err-sf':'#3A1C1B','--hero':'#18213A','--hero-ink':'#ECEAE4','--focus':'#AFC2F4'}
+  };
+  root = React.createRef();
+  state = { theme: null, mode: 'login', email: 'yassine.benamor@tek-up.de', err: false, showPw: false };
+  th() { return this.state.theme ?? this.props.theme ?? 'clair'; }
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() { const el = this.root.current; if (!el) return; const t = Component.T[this.th()] || Component.T.clair; for (const k in t) el.style.setProperty(k, t[k]); }
+  wall() {
+    const O = 'assets/official/', K = 'assets/certs/';
+    const cols = [
+      [O+'b-aws-saa.png', O+'b-ccna.png', K+'py-pcap.png', O+'b-ewpt.svg', O+'b-ms-associate.png', K+'b-cka.png'],
+      [O+'b-ms-fundamentals.png', K+'b-oca-java.png', O+'b-aws-dop.png', O+'b-ccnp.png', O+'b-ecppt.svg', K+'b-aad.png'],
+      [O+'b-icca.png', O+'b-aws-clf.png', K+'b-ckad.png', O+'b-ccie.png', K+'py-pcep.png', O+'b-ms-expert.png']];
+    const h = React.createElement;
+    const tile = (src, i) => h('div', { key: i, style: { width: 104, height: 104, borderRadius: 18, background: 'rgba(255,253,248,.96)', display: 'grid', placeItems: 'center', boxShadow: '0 10px 24px -12px rgba(0,0,0,.55)', flex: 'none' } }, h('img', { src, alt: '', style: { maxWidth: 76, maxHeight: 76, width: 'auto', height: 'auto', display: 'block' } }));
+    const col = (list, i) => h('div', { key: i, style: { display: 'flex', flexDirection: 'column', gap: 14, alignSelf: 'flex-start', flex: 'none', animation: (i % 2 ? 'wallDown' : 'wallUp') + ' ' + (34 + i * 6) + 's linear infinite', marginTop: i === 1 ? -40 : 0 } }, [...list, ...list].map(tile));
+    return h('div', { 'aria-hidden': 'true', style: { height: 380, overflow: 'hidden', display: 'flex', gap: 14, maskImage: 'linear-gradient(to bottom,transparent,#000 18%,#000 82%,transparent)', WebkitMaskImage: 'linear-gradient(to bottom,transparent,#000 18%,#000 82%,transparent)', transform: 'rotate(-6deg)', transformOrigin: 'left center', marginLeft: 6 } }, cols.map(col));
+  }
+  renderVals() {
+    const m = this.state.mode;
+    const on = { bg: 'var(--sf)', ink: 'var(--ink)', sh: '0 1px 2px rgba(0,0,0,.08)' }, off = { bg: 'transparent', ink: 'var(--ink2)', sh: 'none' };
+    const L = m === 'login' ? on : off, S = m === 'signup' ? on : off;
+    if (!this._wall) this._wall = this.wall();
+    return {
+      badgeWall: this._wall, root: this.root, themeIcon: this.th() === 'clair' ? 'dark_mode' : 'light_mode',
+      toggleTheme: () => this.setState({ theme: this.th() === 'clair' ? 'sombre' : 'clair' }),
+      isLogin: m === 'login', isSignup: m === 'signup', isForgot: m === 'forgot', isSent: m === 'sent', showTabs: m === 'login' || m === 'signup',
+      tabLoginBg: L.bg, tabLoginInk: L.ink, tabLoginSh: L.sh, tabSignBg: S.bg, tabSignInk: S.ink, tabSignSh: S.sh,
+      goLogin: () => this.setState({ mode: 'login' }), goSignup: () => this.setState({ mode: 'signup' }), goForgot: (e) => { e && e.preventDefault(); this.setState({ mode: 'forgot' }); }, goSent: () => this.setState({ mode: 'sent' }),
+      email: this.state.email, onEmail: (e) => this.setState({ email: e.target.value, err: false }),
+      emailError: this.state.err, emailBorder: this.state.err ? 'var(--err)' : 'var(--ln2)',
+      pwType: this.state.showPw ? 'text' : 'password', pwIcon: this.state.showPw ? 'visibility_off' : 'visibility', togglePw: (e) => { e.preventDefault(); this.setState({ showPw: !this.state.showPw }); },
+      submitLogin: () => { if (!/@tek-up\.de$/i.test(this.state.email.trim())) this.setState({ err: true }); else window.location.href = 'Tableau-de-bord.dc.html'; }
+    };
+  }
+}
+</script>
+</body>
+</html>

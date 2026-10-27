@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}@keyframes toastIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}</style>
+</helmet>
+<div ref="{{ root }}" style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;gap:56px;align-items:flex-start;color:var(--ink)">
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">06 · Paths — Desktop 1440 · pick a path, follow it, click a node</div>
+<div data-screen-label="06 Paths desktop" style="width:1440px;min-height:1180px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;box-shadow:0 1px 3px rgba(0,0,0,.08);position:relative">
+  <dc-import name="Sidebar" active="parcours" hint-size="256px,1180px" style="align-self:stretch;flex:none"></dc-import>
+  <main style="flex:1;min-width:0;padding:32px 40px 48px;display:flex;flex-direction:column;gap:24px">
+    <header style="display:flex;justify-content:space-between;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;gap:6px"><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.015em">Paths</h1><span style="font-size:15px;color:var(--ink2)">One path per specialty, plus the Fundamentals. You follow your specialty's path and can add others.</span></div>
+      <button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink2);display:grid;place-items:center;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ themeIcon }}</span></button>
+    </header>
+
+    <div role="tablist" aria-label="Paths" style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px">
+      <sc-for list="{{ paths }}" as="p" hint-placeholder-count="7">
+        <button role="tab" aria-selected="{{ p.sel }}" onClick="{{ p.pick }}" style="padding:14px;border-radius:12px;border:{{ p.bw }} solid {{ p.bc }};background:{{ p.bg }};display:flex;flex-direction:column;gap:8px;text-align:left;cursor:pointer;min-height:132px;box-sizing:border-box">
+          <span style="display:flex;justify-content:space-between;align-items:center;width:100%"><span style="width:12px;height:12px;border-radius:50%;background:{{ p.c }}"></span><sc-if value="{{ p.followed }}"><span style="display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:600;color:var(--pri)"><span style="font-family:'Material Symbols Outlined';font-size:15px;font-variation-settings:'FILL' 1">{{ p.fIcon }}</span>{{ p.fLabel }}</span></sc-if></span>
+          <span style="font-family:'Newsreader',serif;font-size:{{ p.fs }};font-weight:600;color:var(--ink);line-height:1.1;min-width:0;max-width:100%;overflow-wrap:anywhere">{{ p.code }}</span>
+          <span style="font-size:12px;color:var(--ink2);line-height:1.3;min-height:31px">{{ p.short }}</span>
+          <span style="display:flex;align-items:center;gap:6px;width:100%;margin-top:auto"><span style="flex:1;height:4px;border-radius:2px;background:var(--sf2)"><span style="display:block;width:{{ p.w }};height:100%;border-radius:2px;background:var(--gold-fill)"></span></span><span style="font-size:11.5px;font-weight:600;color:var(--ink2)">{{ p.ratio }}</span></span>
+        </button>
+      </sc-for>
+    </div>
+
+    <section style="display:flex;justify-content:space-between;align-items:center;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:14px;height:14px;border-radius:50%;background:{{ cur.c }}"></span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:32px">{{ cur.title }}</h2></div>
+        <span style="font-size:14.5px;color:var(--ink2)">{{ cur.sub }}</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <sc-if value="{{ cur.isMine }}" hint-placeholder-val="{{ true }}"><span style="height:44px;padding:0 14px;border-radius:10px;background:var(--pri-sf);color:var(--pri);display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:19px;font-variation-settings:'FILL' 1">school</span>Your specialty's path</span></sc-if>
+        <sc-if value="{{ cur.canUnfollow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toggleFollow }}" style="height:44px;padding:0 16px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink);display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--pri);font-variation-settings:'FILL' 1">bookmark_added</span>Following · Unfollow</button></sc-if>
+        <sc-if value="{{ cur.canFollow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toggleFollow }}" style="height:44px;padding:0 18px;border-radius:10px;border:none;background:var(--pri);color:var(--pri-ink);display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:19px">bookmark_add</span>Follow this path</button></sc-if>
+      </div>
+    </section>
+
+    <section style="display:grid;grid-template-columns:auto repeat(4,minmax(0,1fr));background:var(--sf);border:1px solid var(--ln);border-radius:16px;align-items:center">
+      <div style="padding:18px 26px;display:flex;align-items:center;gap:16px;border-right:1px solid var(--ln)">
+        <div style="position:relative;width:68px;height:68px"><svg width="68" height="68" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" style="stroke:var(--sf2)" stroke-width="7"></circle><circle cx="34" cy="34" r="28" fill="none" style="stroke:var(--gold-fill);transition:stroke-dashoffset .6s" stroke-width="7" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="{{ cur.ringOff }}" transform="rotate(-90 34 34)"></circle></svg><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Newsreader',serif;font-size:19px;font-weight:600"><span>{{ cur.ratio }}</span></span></div>
+        <div style="display:flex;flex-direction:column;gap:3px"><span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600">{{ cur.pct }}% of the path</span><span style="font-size:13px;color:var(--ink2)">{{ cur.verifNote }}</span></div>
+      </div>
+      <sc-for list="{{ cur.counts }}" as="k" hint-placeholder-count="4"><div style="padding:18px 22px;display:flex;flex-direction:column;gap:4px;border-left:1px solid {{ k.bl }}"><span style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2)"><span style="font-family:'Material Symbols Outlined';font-size:17px;color:{{ k.ic }};font-variation-settings:'FILL' {{ k.fill }}">{{ k.icon }}</span>{{ k.label }}</span><span style="font-family:'Newsreader',serif;font-size:28px;font-weight:500">{{ k.n }}</span></div></sc-for>
+    </section>
+
+    <section style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:28px 32px 28px;display:flex;flex-direction:column;gap:20px">
+      <div style="position:relative;width:1040px;height:416px;margin:0 auto">
+        <span style="position:absolute;left:56px;top:0;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Stage 1 · Foundations</span>
+        <span style="position:absolute;left:368px;top:0;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Stage 2 · Consolidation</span>
+        <span style="position:absolute;left:680px;top:0;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Stage 3 · Specialisation</span>
+        <svg width="1040" height="416" viewBox="0 0 1040 416" style="position:absolute;inset:0" aria-hidden="true"><sc-for list="{{ edges }}" as="e" hint-placeholder-count="0"><path d="{{ e.d }}" fill="none" style="stroke:{{ e.c }}" stroke-width="2" stroke-dasharray="{{ e.dash }}"></path></sc-for></svg>
+        <span title="Start of path" style="position:absolute;left:0;top:216px;width:24px;height:24px;border-radius:50%;background:{{ cur.c }};box-shadow:0 0 0 4px var(--sf2)"></span>
+        <div title="Goal" style="position:absolute;left:992px;top:204px;width:48px;height:48px;border-radius:50%;border:2px dashed var(--ln2);display:grid;place-items:center;color:var(--ink3);box-sizing:border-box;background:var(--sf)"><span style="font-family:'Material Symbols Outlined';font-size:24px">school</span></div>
+        <sc-for list="{{ nodes }}" as="n" hint-placeholder-count="9">
+          <button onClick="{{ n.pick }}" aria-pressed="{{ n.sel }}" aria-label="{{ n.aria }}" style="position:absolute;left:{{ n.x }};top:{{ n.y }};width:240px;height:108px;box-sizing:border-box;background:{{ n.bg }};border:{{ n.bw }} {{ n.bs }} {{ n.bc }};border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;text-align:left;cursor:pointer;box-shadow:{{ n.sh }};transition:box-shadow .2s">
+            <span style="width:34px;height:34px;border-radius:50%;background:{{ n.icBg }};border:1.5px {{ n.icBs }} {{ n.icBc }};color:{{ n.icInk }};display:grid;place-items:center;flex:none;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:19px;font-variation-settings:'FILL' {{ n.fill }}">{{ n.icon }}</span></span>
+            <span style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1">
+              <span style="font:500 11.5px 'IBM Plex Mono',monospace;color:{{ n.codeInk }}">{{ n.code }} · {{ n.stateLabel }}</span>
+              <span style="font-size:14px;font-weight:600;line-height:1.3;color:{{ n.titleInk }}">{{ n.name }}</span>
+              <sc-if value="{{ n.hasPct }}"><span style="display:flex;align-items:center;gap:8px;margin-top:3px"><span style="flex:1;height:5px;border-radius:3px;background:var(--sf2)"><span style="display:block;width:{{ n.pctW }};height:100%;border-radius:3px;background:var(--pri)"></span></span><span style="font-size:12px;font-weight:600">{{ n.pct }}%</span></span></sc-if>
+              <sc-if value="{{ n.hasNote }}"><span style="font-size:12px;color:var(--ink3)">{{ n.note }}</span></sc-if>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:20px;font-size:13px;color:var(--ink2);padding-top:16px;border-top:1px solid var(--ln);flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:2px;background:var(--pri)"></span>Progress so far</span>
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:2px;background:var(--ln2)"></span>Accessible</span>
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:24px;border-top:2px dashed var(--ln2)"></span>Missing prerequisite</span>
+        <span style="margin-left:auto">Prerequisites are recommended: you can still request an exam, with a warning.</span>
+      </div>
+    </section>
+
+    <section aria-live="polite" style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:22px 28px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:32px;align-items:center">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:center"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 9px;border:1px solid var(--ln2);border-radius:6px;font-size:12px;font-weight:600;color:var(--ink2)"><span style="width:8px;height:8px;border-radius:2px;background:{{ sel.dot }}"></span>{{ sel.prov }}</span><span style="height:26px;padding:0 10px 0 7px;border-radius:13px;background:{{ sel.chipBg }};color:{{ sel.chipInk }};display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ sel.icon }}</span>{{ sel.stateLabel }}</span></div>
+        <span style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;line-height:1.2">{{ sel.name }}</span>
+        <span style="font-size:14px;color:var(--ink2)">{{ sel.level }} · {{ sel.note2 }}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--ink2)"><span><strong style="color:var(--ink)">{{ sel.got }}</strong> TEK-UP students earned it</span><span><strong style="color:var(--ink)">{{ sel.prep }}</strong> are preparing it right now</span></div>
+      <a href="Fiche-certification.dc.html" style="height:48px;padding:0 20px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;text-decoration:none">Open the page<span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_forward</span></a>
+    </section>
+  </main>
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute;bottom:28px;left:calc(50% + 128px);transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;animation:toastIn .3s ease-out;white-space:nowrap"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--gold-fill)">bookmark</span><span style="font-size:14.5px">{{ toast }}</span></div></sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · list of the 7 paths</div>
+<div data-screen-label="06 Paths mobile list" style="width:390px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <header style="padding:20px 16px 8px 20px;display:flex;justify-content:space-between;align-items:center"><span style="font-family:'Newsreader',serif;font-size:30px;font-weight:500">Paths</span><button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border:none;background:none;color:var(--ink2);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">{{ themeIcon }}</span></button></header>
+  <div style="padding:4px 16px 24px;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:0 4px">Following</span>
+      <sc-for list="{{ followedPaths }}" as="p" hint-placeholder-count="2"><button onClick="{{ p.pick }}" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1px solid var(--ln);background:var(--sf);text-align:left;cursor:pointer"><span style="width:12px;height:12px;border-radius:50%;background:{{ p.c }};flex:none"></span><span style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0"><span style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:var(--ink)">{{ p.code }}</span><span style="font-size:12px;font-weight:600;color:var(--pri)">{{ p.fLabel }}</span></span><span style="display:flex;align-items:center;gap:8px"><span style="flex:1;height:4px;border-radius:2px;background:var(--sf2)"><span style="display:block;width:{{ p.w }};height:100%;border-radius:2px;background:var(--gold-fill)"></span></span><span style="font-size:12px;font-weight:600;color:var(--ink2)">{{ p.ratio }}</span></span></span><span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ink3)">chevron_right</span></button></sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:0 4px">Other paths</span>
+      <sc-for list="{{ otherPaths }}" as="p" hint-placeholder-count="5"><button onClick="{{ p.pick }}" style="display:flex;align-items:center;gap:14px;min-height:60px;padding:0 16px;border-radius:12px;border:1px solid var(--ln);background:var(--sf);text-align:left;cursor:pointer"><span style="width:12px;height:12px;border-radius:50%;background:{{ p.c }};flex:none"></span><span style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:15px;font-weight:600;color:var(--ink)">{{ p.code }}</span><span style="font-size:12.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.short }}</span></span><span style="font-size:12.5px;color:var(--ink2)">{{ p.ratio }}</span></button></sc-for>
+    </div>
+  </div>
+  <dc-import name="BottomNav" active="parcours" hint-size="390px,82px"></dc-import>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · vertical timeline of the selected path</div>
+<div data-screen-label="06 Paths mobile timeline" style="width:390px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="padding:12px 8px 0;display:flex;justify-content:space-between"><span style="width:44px;height:44px;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></span></div>
+  <div style="padding:0 20px 12px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:10px"><span style="width:12px;height:12px;border-radius:50%;background:{{ cur.c }}"></span><span style="font-family:'Newsreader',serif;font-size:28px;font-weight:500">{{ cur.code }}</span></div><span style="font-size:13.5px;color:var(--ink2)">{{ cur.name }}</span></div>
+  <div style="margin:0 16px;background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+    <div style="position:relative;width:56px;height:56px;flex:none"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="23" fill="none" style="stroke:var(--sf2)" stroke-width="6"></circle><circle cx="28" cy="28" r="23" fill="none" style="stroke:var(--gold-fill)" stroke-width="6" stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="{{ cur.ringOffS }}" transform="rotate(-90 28 28)"></circle></svg><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Newsreader',serif;font-size:16px;font-weight:600"><span>{{ cur.ratio }}</span></span></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--ink2)"><span style="font-family:'Newsreader',serif;font-size:19px;font-weight:600;color:var(--ink)">{{ cur.pct }}% of the path</span><span>{{ cur.countLine }}</span></div>
+  </div>
+  <div style="padding:12px 16px 0"><sc-if value="{{ cur.canFollow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toggleFollow }}" style="width:100%;height:48px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:19px">bookmark_add</span>Follow this path</button></sc-if><sc-if value="{{ cur.canUnfollow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toggleFollow }}" style="width:100%;height:48px;border:1.5px solid var(--ln2);border-radius:10px;background:var(--sf);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--pri);font-variation-settings:'FILL' 1">bookmark_added</span>Following · Unfollow</button></sc-if></div>
+  <div style="padding:20px 16px 28px;display:flex;flex-direction:column;gap:6px">
+    <sc-for list="{{ mobileGroups }}" as="g" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:14px">
+        <span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:6px 0 2px 44px">{{ g.title }}</span>
+        <sc-for list="{{ g.items }}" as="n" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:32px 1fr;gap:12px">
+            <div style="display:flex;flex-direction:column;align-items:center"><span style="width:32px;height:32px;border-radius:50%;background:{{ n.icBg }};border:1.5px {{ n.icBs }} {{ n.icBc }};color:{{ n.icInk }};display:grid;place-items:center;box-sizing:border-box;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:17px;font-variation-settings:'FILL' {{ n.fill }}">{{ n.icon }}</span></span><span style="flex:1;width:2px;background:{{ n.rail }};margin-top:4px;min-height:12px"></span></div>
+            <a href="Fiche-certification.dc.html" style="background:{{ n.bg }};border:{{ n.bw }} {{ n.bs }} {{ n.bc }};border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink);margin-bottom:4px">
+              <span style="font:500 11.5px 'IBM Plex Mono',monospace;color:{{ n.codeInk }}">{{ n.code }} · {{ n.stateLabel }}</span>
+              <span style="font-size:15px;font-weight:600;line-height:1.3;color:{{ n.titleInk }}">{{ n.name }}</span>
+              <sc-if value="{{ n.hasPct }}"><span style="display:flex;align-items:center;gap:8px;margin-top:2px"><span style="flex:1;height:5px;border-radius:3px;background:var(--sf2)"><span style="display:block;width:{{ n.pctW }};height:100%;border-radius:3px;background:var(--pri)"></span></span><span style="font-size:12px;font-weight:600">{{ n.pct }}%</span></span></sc-if>
+              <sc-if value="{{ n.hasNote }}"><span style="font-size:12.5px;color:var(--ink3)">{{ n.note }}</span></sc-if>
+            </a>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+  <dc-import name="BottomNav" active="parcours" hint-size="390px,82px"></dc-import>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;clair&quot;,&quot;sombre&quot;],&quot;default&quot;:&quot;clair&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static T = {
+    clair: {'--bg':'#F6F3EC','--sf':'#FFFDF8','--sf2':'#EEE9DE','--ln':'#E1DACB','--ln2':'#CBC2AF','--ink':'#131A2C','--ink2':'#474E63','--ink3':'#62677A','--pri':'#1C2F5E','--pri-ink':'#FFFFFF','--pri-sf':'#E4E8F2','--gold':'#86590C','--gold-fill':'#D4A23A','--gold-sf':'#F5EBD3','--ok':'#2C6A45','--ok-sf':'#E0EDE4','--warn':'#9C4F0C','--warn-sf':'#F7E6D6','--err':'#A3302A','--err-sf':'#F5DDDA','--hero':'#14244B','--hero-ink':'#F3EFE6','--focus':'#3B63C9'},
+    sombre: {'--bg':'#0D1220','--sf':'#141B2D','--sf2':'#1B2338','--ln':'#262F47','--ln2':'#38425F','--ink':'#ECEAE4','--ink2':'#B3B8C7','--ink3':'#9097AA','--pri':'#AFC2F4','--pri-ink':'#0D1220','--pri-sf':'#1F2B4C','--gold':'#E5BC62','--gold-fill':'#D9AE4E','--gold-sf':'#33291A','--ok':'#7CC79A','--ok-sf':'#15301F','--warn':'#EDA867','--warn-sf':'#36240F','--err':'#F0928A','--err-sf':'#3A1C1B','--hero':'#18213A','--hero-ink':'#ECEAE4','--focus':'#AFC2F4'}
+  };
+  static C = {
+    'CLF-C02': ['AWS Cloud Practitioner', 'AWS', 0, 41, 9], 'SAA-C03': ['AWS Solutions Architect – Associate', 'AWS', 1, 14, 23], 'SAP-C02': ['AWS Solutions Architect – Professional', 'AWS', 2, 2, 1],
+    'DVA-C02': ['AWS Developer – Associate', 'AWS', 1, 6, 8], 'DOP-C02': ['AWS DevOps Engineer – Professional', 'AWS', 2, 1, 3], 'SCS-C02': ['AWS Security – Specialty', 'AWS', 2, 1, 4], 'MLA-C01': ['AWS Machine Learning Engineer – Associate', 'AWS', 1, 2, 6],
+    'AZ-900': ['Microsoft Azure Fundamentals', 'MS', 0, 31, 6], 'AZ-104': ['Microsoft Azure Administrator', 'MS', 1, 9, 11], 'AZ-204': ['Azure Developer Associate', 'MS', 1, 5, 9], 'AZ-305': ['Azure Solutions Architect Expert', 'MS', 3, 1, 2], 'AZ-400': ['Azure DevOps Engineer Expert', 'MS', 3, 3, 4], 'AZ-500': ['Azure Security Engineer', 'MS', 1, 2, 7],
+    'AI-900': ['Azure AI Fundamentals', 'MS', 0, 15, 10], 'AI-102': ['Azure AI Engineer Associate', 'MS', 1, 3, 8], 'DP-900': ['Azure Data Fundamentals', 'MS', 0, 12, 5], 'DP-100': ['Azure Data Scientist Associate', 'MS', 1, 2, 6], 'SC-900': ['Microsoft Security Fundamentals', 'MS', 0, 10, 4],
+    'CDL': ['Google Cloud Digital Leader', 'GC', 0, 8, 4], 'ACE': ['Google Associate Cloud Engineer', 'GC', 1, 3, 5], 'PCD': ['Google Professional Cloud Developer', 'GC', 2, 1, 2], 'PMLE': ['Google Professional ML Engineer', 'GC', 2, 1, 3],
+    'RHCSA': ['Red Hat System Administrator', 'RH', 1, 7, 5], 'RHCE': ['Red Hat Certified Engineer', 'RH', 2, 1, 2], 'SY0-701': ['CompTIA Security+', 'CT', 1, 11, 7], 'N10-009': ['CompTIA Network+', 'CT', 0, 4, 3]
+  };
+  // nodes: [code, col, row, prereq]
+  static PATHS = [
+    ['FOND', 'Fundamentals', 'Shared path for all years', null, 'ING-1 to ING-5 · recommended if you haven’t chosen your specialty yet', [['CLF-C02', 0, 0], ['AI-900', 1, 0], ['AZ-900', 0, 1], ['DP-900', 1, 1], ['SC-900', 2, 1], ['CDL', 0, 2], ['N10-009', 1, 2]]],
+    ['SDIA', 'AI & Data Science', 'AI & Data Science', 285, 'ING-4 and ING-5 SDIA · 29 students follow it', [['AI-900', 0, 0], ['AI-102', 1, 0, 'AI-900'], ['DP-900', 0, 1], ['DP-100', 1, 1, 'DP-900'], ['PMLE', 2, 1, 'DP-100'], ['CLF-C02', 0, 2], ['MLA-C01', 1, 2, 'CLF-C02']]],
+    ['CIM', 'Cloud Infrastructure Management', 'Cloud Infrastructure Mgmt', 225, 'ING-4 and ING-5 CIM · 68 students follow it', [['CLF-C02', 0, 0], ['SAA-C03', 1, 0, 'CLF-C02'], ['SAP-C02', 2, 0, 'SAA-C03'], ['AZ-900', 0, 1], ['AZ-104', 1, 1, 'AZ-900'], ['AZ-305', 2, 1, 'AZ-104'], ['CDL', 0, 2], ['SY0-701', 1, 2], ['RHCSA', 2, 2]]],
+    ['GLOps', 'Software Engineering & DevOps', 'Software Engineering & DevOps', 165, 'ING-4 and ING-5 GLOps · 52 students follow it', [['RHCSA', 0, 0], ['RHCE', 1, 0, 'RHCSA'], ['AZ-900', 0, 1], ['AZ-204', 1, 1], ['AZ-400', 2, 1, 'AZ-204'], ['CLF-C02', 0, 2], ['DVA-C02', 1, 2], ['DOP-C02', 2, 2, 'DVA-C02']]],
+    ['SSIR', 'Systems Security & Network Infrastructure', 'Systems & Network Security', 15, 'ING-4 and ING-5 SSIR · 47 students follow it', [['SC-900', 0, 0], ['SY0-701', 1, 0], ['AZ-500', 2, 0, 'SY0-701'], ['N10-009', 0, 1], ['RHCSA', 1, 1], ['SCS-C02', 2, 1, 'SAA-C03'], ['CLF-C02', 0, 2], ['SAA-C03', 1, 2, 'CLF-C02']]],
+    ['AIOT', 'AI & IoT', 'AI & IoT', 130, 'ING-4 and ING-5 AIOT · 18 students follow it', [['AI-900', 0, 0], ['AI-102', 1, 0, 'AI-900'], ['AZ-900', 0, 1], ['AZ-204', 1, 1], ['N10-009', 0, 2], ['DVA-C02', 1, 2]]],
+    ['DMWM', 'Mobile, Web & Multimedia Development', 'Mobile, Web & Multimedia', 340, 'ING-4 and ING-5 DMWM · 24 students follow it', [['AZ-900', 0, 0], ['AZ-204', 1, 0], ['CLF-C02', 0, 1], ['DVA-C02', 1, 1], ['DOP-C02', 2, 1, 'DVA-C02'], ['CDL', 0, 2], ['ACE', 1, 2], ['PCD', 2, 2, 'ACE']]]
+  ];
+  static P = { AWS: ['AWS', 'oklch(0.66 0.14 55)'], MS: ['Microsoft Azure', 'oklch(0.66 0.14 245)'], RH: ['Red Hat', 'oklch(0.66 0.14 25)'], GC: ['Google Cloud', 'oklch(0.66 0.14 150)'], CT: ['CompTIA', 'oklch(0.66 0.14 310)'] };
+  static LV = ['Foundational', 'Associate', 'Professional', 'Expert'];
+  static HELD = { 'AZ-900': 'ob', 'CLF-C02': 'nv', 'SAA-C03': 'ec' };
+  root = React.createRef();
+  state = { theme: null, path: 'CIM', sel: 'SAA-C03', follows: ['CIM', 'SSIR'], toast: null };
+  th() { return this.state.theme ?? this.props.theme ?? 'clair'; }
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  componentWillUnmount() { clearTimeout(this.tt); }
+  apply() { const el = this.root.current; if (!el) return; const t = Component.T[this.th()] || Component.T.clair; for (const k in t) el.style.setProperty(k, t[k]); }
+  stateOf(code, pre) { const h = Component.HELD[code]; if (h) return h; if (pre && !['ob', 'nv'].includes(Component.HELD[pre])) return 'lk'; return 'di'; }
+  renderVals() {
+    const s = this.state, C = Component.C, P = Component.P, LV = Component.LV;
+    const X = [56, 368, 680], Y = [36, 172, 308], H = 108, W = 240;
+    const S = {
+      ob: { label: 'Earned', bg: 'var(--sf)', bw: '1.5px', bs: 'solid', bc: 'var(--gold-fill)', icBg: 'var(--gold-fill)', icBs: 'solid', icBc: 'var(--gold-fill)', icInk: '#1A1406', icon: 'workspace_premium', fill: 1, codeInk: 'var(--gold)', titleInk: 'var(--ink)', chipBg: 'var(--gold-sf)', chipInk: 'var(--gold)' },
+      nv: { label: 'Unverified', bg: 'var(--bg)', bw: '1.5px', bs: 'dashed', bc: 'var(--gold-fill)', icBg: 'var(--bg)', icBs: 'dashed', icBc: 'var(--gold-fill)', icInk: 'var(--gold)', icon: 'workspace_premium', fill: 0, codeInk: 'var(--gold)', titleInk: 'var(--ink)', chipBg: 'var(--sf2)', chipInk: 'var(--ink2)' },
+      ec: { label: 'In progress', bg: 'var(--sf)', bw: '2px', bs: 'solid', bc: 'var(--pri)', icBg: 'var(--pri)', icBs: 'solid', icBc: 'var(--pri)', icInk: 'var(--pri-ink)', icon: 'clock_loader_40', fill: 0, codeInk: 'var(--pri)', titleInk: 'var(--ink)', chipBg: 'var(--pri-sf)', chipInk: 'var(--pri)' },
+      di: { label: 'Available', bg: 'var(--sf)', bw: '1.5px', bs: 'solid', bc: 'var(--ln2)', icBg: 'var(--sf)', icBs: 'solid', icBc: 'var(--ln2)', icInk: 'var(--ink2)', icon: 'radio_button_unchecked', fill: 0, codeInk: 'var(--ink3)', titleInk: 'var(--ink)', chipBg: 'var(--sf2)', chipInk: 'var(--ink)' },
+      lk: { label: 'Locked', bg: 'var(--sf2)', bw: '1.5px', bs: 'dashed', bc: 'var(--ln2)', icBg: 'var(--bg)', icBs: 'solid', icBc: 'var(--bg)', icInk: 'var(--ink3)', icon: 'lock', fill: 0, codeInk: 'var(--ink3)', titleInk: 'var(--ink2)', chipBg: 'var(--sf2)', chipInk: 'var(--ink3)' }
+    };
+    const summarize = list => { const st = list.map(([c, , , pre]) => this.stateOf(c, pre)); const got = st.filter(x => x === 'ob' || x === 'nv').length; return { st, got, total: list.length, ver: st.filter(x => x === 'ob').length }; };
+    const colOf = h => h == null ? 'var(--ink3)' : `oklch(0.6 0.13 ${h})`;
+    const paths = Component.PATHS.map(([code, name, short, h, sub, list]) => { const sm = summarize(list), sel = s.path === code, fol = s.follows.includes(code), mine = code === 'CIM';
+      return { code: code === 'FOND' ? 'Fundamentals' : code, fs: code === 'FOND' ? '17px' : '22px', name, short, c: colOf(h), sel, followed: fol, fIcon: mine ? 'school' : 'bookmark_added', fLabel: mine ? 'My specialty' : 'Following', ratio: sm.got + '/' + sm.total, w: Math.round(sm.got / sm.total * 100) + '%', bw: sel ? '2px' : '1px', bc: sel ? colOf(h) : 'var(--ln)', bg: sel ? `color-mix(in oklch, ${colOf(h)} 10%, var(--sf))` : 'var(--sf)', pick: () => { const first = list.find(n => Component.HELD[n[0]] === 'ec') || list[0]; this.setState({ path: code, sel: first[0] }); } }; });
+    const P0 = Component.PATHS.find(p => p[0] === s.path), list = P0[5], sm = summarize(list), pct = Math.round(sm.got / sm.total * 100);
+    const fol = s.follows.includes(s.path), mine = s.path === 'CIM';
+    const cnt = k => sm.st.filter(x => x === k).length;
+    const cur = { code: P0[0] === 'FOND' ? 'Fundamentals' : P0[0], name: P0[1], title: P0[0] === 'FOND' ? 'Fundamentals' : P0[0] + ' · ' + P0[1], sub: P0[4], c: colOf(P0[3]), isMine: mine, canUnfollow: fol && !mine, canFollow: !fol, pct, ratio: sm.got + '/' + sm.total,
+      ringOff: (175.9 * (1 - sm.got / sm.total)).toFixed(1), ringOffS: (144.5 * (1 - sm.got / sm.total)).toFixed(1), verifNote: sm.ver + (sm.ver > 1 ? ' verified' : ' verified') + ' of ' + sm.got + ' earned',
+      countLine: cnt('ec') + ' in progress · ' + cnt('di') + ' available · ' + cnt('lk') + ' locked',
+      counts: [['Earned', sm.got, 'workspace_premium', 'var(--gold)', 1], ['In progress', cnt('ec'), 'clock_loader_40', 'var(--pri)', 0], ['Available', cnt('di'), 'radio_button_unchecked', 'var(--ink2)', 0], ['Locked', cnt('lk'), 'lock', 'var(--ink3)', 0]].map(([label, n, icon, ic, fill], i) => ({ label, n, icon, ic, fill, bl: i ? 'var(--ln)' : 'transparent' })) };
+    const mk = ([code, col, row, pre]) => { const [name, pk, lv, got, prep] = C[code]; const st = this.stateOf(code, pre), v = S[st], sel = s.sel === code;
+      const pctN = st === 'ec' ? 45 : 0, note = st === 'lk' ? 'Prerequisite: ' + pre : st === 'nv' ? 'Proof under review' : st === 'ob' ? 'Verified' : (pre ? 'Prerequisite met: ' + pre : 'No prerequisites');
+      return { code, name, col, row, st, level: LV[lv], got, prep, prov: P[pk][0], dot: P[pk][1], ...v, stateLabel: v.label, x: X[col] + 'px', y: Y[row] + 'px', sel,
+        sh: sel ? '0 0 0 4px var(--pri-sf), 0 8px 24px -12px rgba(19,26,44,.35)' : (st === 'ec' ? '0 0 0 4px var(--pri-sf)' : 'none'),
+        hasPct: pctN > 0, pct: pctN, pctW: pctN + '%', hasNote: !pctN, note, note2: pctN ? pctN + ' % of the syllabus' : note, aria: code + ', ' + v.label, pick: () => this.setState({ sel: code }) }; };
+    const nodes = list.map(mk);
+    const cy = r => Y[r] + H / 2, curve = (x1, y1, x2, y2) => `M${x1} ${y1} C${x1 + 36} ${y1}, ${x2 - 36} ${y2}, ${x2} ${y2}`;
+    const edges = [];
+    const held = n => n.st === 'ob' || n.st === 'nv';
+    nodes.forEach(n => {
+      if (n.col === 0) edges.push({ d: curve(24, cy(1), X[0], cy(n.row)), c: held(n) || n.st === 'ec' ? 'var(--pri)' : 'var(--ln2)', dash: 'none' });
+      const prev = nodes.filter(m => m.row === n.row && m.col < n.col).sort((a, b) => b.col - a.col)[0];
+      if (prev) edges.push({ d: curve(X[prev.col] + W, cy(n.row), X[n.col], cy(n.row)), c: held(prev) ? 'var(--pri)' : 'var(--ln2)', dash: n.st === 'lk' ? '6 5' : 'none' });
+      const isLast = !nodes.some(m => m.row === n.row && m.col > n.col);
+      if (isLast) edges.push({ d: curve(X[n.col] + W, cy(n.row), 992, cy(1)), c: 'var(--ln2)', dash: '6 5' });
+    });
+    const sel = nodes.find(n => n.sel) || nodes[0];
+    const mobileGroups = [['Stage 1 · Foundations', 0], ['Stage 2 · Consolidation', 1], ['Stage 3 · Specialisation', 2]].map(([title, c]) => ({ title, items: nodes.filter(n => n.col === c).map(n => ({ ...n, rail: held(n) ? 'var(--pri)' : 'var(--ln2)' })) })).filter(g => g.items.length);
+    const toggleFollow = () => { const f = fol ? s.follows.filter(x => x !== s.path) : [...s.follows, s.path]; clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2400); this.setState({ follows: f, toast: fol ? 'Paths ' + cur.code + ' removed from your followed paths' : 'You’re now following the path ' + cur.code }); };
+    return { root: this.root, themeIcon: this.th() === 'clair' ? 'dark_mode' : 'light_mode', toggleTheme: () => this.setState({ theme: this.th() === 'clair' ? 'sombre' : 'clair' }),
+      paths, followedPaths: paths.filter(p => p.followed), otherPaths: paths.filter(p => !p.followed), cur, nodes, edges, sel, mobileGroups, toggleFollow, hasToast: !!s.toast, toast: s.toast };
+  }
+}
+</script>
+</body>
+</html>

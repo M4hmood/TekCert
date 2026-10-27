@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}</style>
+</helmet>
+<div ref="{{ root }}" style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;flex-direction:column;gap:72px;color:var(--ink)">
+
+<div style="display:flex;gap:56px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">11 · Declare a certification — Desktop 1440 · 3 steps · “Continue” advances, the preview updates</div>
+<div data-screen-label="11 Declare desktop" style="width:1440px;height:960px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <dc-import name="Sidebar" active="profil" hint-size="256px,960px" style="align-self:stretch;flex:none"></dc-import>
+  <main style="flex:1;min-width:0;padding:32px 40px;display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink3)"><a href="Profil.dc.html" style="color:var(--ink2);text-decoration:none">My profile</a><span style="font-family:'Material Symbols Outlined';font-size:16px">chevron_right</span><span style="color:var(--ink)">Declare a certification</span></nav>
+        <h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:44px;letter-spacing:-0.015em;line-height:1.05">Declare an earned certification</h1>
+      </div>
+      <button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink2);display:grid;place-items:center;cursor:pointer;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ themeIcon }}</span></button>
+    </div>
+    <ol aria-label="Steps" style="margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+      <sc-for list="{{ stepper }}" as="s" hint-placeholder-count="3"><li aria-current="{{ s.cur }}" style="display:flex;flex-direction:column;gap:10px"><span style="height:4px;border-radius:2px;background:{{ s.bar }}"></span><span style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:{{ s.ink }}"><span style="font:500 12.5px 'IBM Plex Mono',monospace">{{ s.n }}</span>{{ s.label }}</span></li></sc-for>
+    </ol>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:32px">
+      <section style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;display:flex;flex-direction:column;overflow:hidden">
+        <div style="flex:1;padding:28px 32px;display:flex;flex-direction:column;gap:22px;overflow:auto">
+          <sc-if value="{{ s1 }}" hint-placeholder-val="{{ true }}">
+            <h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:26px">Which certification did you earn?</h2>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Search the catalog</span><span style="position:relative;display:flex"><span style="position:absolute;left:14px;top:13px;font-family:'Material Symbols Outlined';font-size:21px;color:var(--ink3)">search</span><input value="AWS" readonly="" style="flex:1;height:48px;padding:0 14px 0 44px;border-radius:10px;border:1.5px solid var(--pri);background:var(--sf);font-size:15px;box-shadow:0 0 0 3px var(--pri-sf)"></span></label>
+            <div role="radiogroup" aria-label="Results" style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ certs }}" as="c" hint-placeholder-count="3"><button role="radio" aria-checked="{{ c.on }}" onClick="{{ c.pick }}" style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:14px;align-items:center;min-height:64px;padding:10px 16px;border-radius:12px;border:{{ c.bw }} solid {{ c.bc }};background:{{ c.bg }};text-align:left;cursor:pointer"><span style="width:44px;height:44px;border-radius:10px;background:var(--gold-sf);color:var(--gold);display:grid;place-items:center;font:600 11px 'IBM Plex Mono',monospace">AWS</span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15.5px;font-weight:600">{{ c.name }}</span><span style="font-size:13px;color:var(--ink3)">{{ c.code }} · {{ c.level }}</span></span><span style="font-size:13px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:4px"><span style="font-family:'Material Symbols Outlined';font-size:17px;font-variation-settings:'FILL' 1">workspace_premium</span>+{{ c.pts }} pts</span></button></sc-for>
+            </div>
+            <span style="font-size:14px;color:var(--ink2)">Not in the list? <a href="#" style="font-weight:600">Suggest a certification</a></span>
+          </sc-if>
+          <sc-if value="{{ s2 }}" hint-placeholder-val="{{ false }}">
+            <h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:26px">Proof of certification</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Date earned</span><input type="date" value="2026-09-28" style="height:48px;padding:0 14px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px"></label>
+              <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Expiry date</span><input type="date" value="2029-09-28" style="height:48px;padding:0 14px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px"></label>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Validation ID</span><input value="{{ credId }}" onChange="{{ setCred }}" aria-invalid="{{ credBad }}" aria-describedby="cred-h" style="height:48px;padding:0 14px;border-radius:10px;border:1.5px solid {{ credBc }};background:var(--sf);font:500 15px 'IBM Plex Mono',monospace"><span id="cred-h" style="font-size:13px;color:{{ credInk }};display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ credIcon }}</span>{{ credMsg }}</span></label>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Verification link <span style="font-weight:400;color:var(--ink3)">· Credly, Accredible…</span></span><input value="https://www.credly.com/badges/3f9a…" style="height:48px;padding:0 14px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px"></label>
+            <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Certificate (PDF or image, 10 MB max)</span>
+              <sc-if value="{{ noFile }}" hint-placeholder-val="{{ false }}"><button onClick="{{ addFile }}" style="height:120px;border-radius:12px;border:1.5px dashed var(--ln2);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:28px;color:var(--ink3)">upload_file</span><span style="font-size:14.5px"><strong style="color:var(--pri)">Choose a file</strong> or drag it here</span></button></sc-if>
+              <sc-if value="{{ hasFile }}"><div style="display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:12px;border:1px solid var(--ln);background:var(--bg)"><span style="width:40px;height:48px;border-radius:6px;background:var(--err-sf);color:var(--err);display:grid;place-items:center;font:600 10px 'IBM Plex Mono',monospace">PDF</span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14.5px;font-weight:600">AWS-SAA-C03-YBenAmor.pdf</span><span style="font-size:12.5px;color:var(--ink3)">412 KB · uploaded</span></span><button onClick="{{ rmFile }}" aria-label="Remove file" style="width:44px;height:44px;border-radius:8px;border:none;background:none;display:grid;place-items:center;cursor:pointer;color:var(--ink2)"><span style="font-family:'Material Symbols Outlined';font-size:20px">delete</span></button></div></sc-if>
+            </div>
+          </sc-if>
+          <sc-if value="{{ s3 }}" hint-placeholder-val="{{ false }}">
+            <h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:26px">Visibility and submission</h2>
+            <fieldset style="border:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><legend style="font-size:14px;font-weight:600;padding:0;margin-bottom:8px">Who can see this certification on your profile?</legend>
+              <sc-for list="{{ vis }}" as="v" hint-placeholder-count="3"><button role="radio" aria-checked="{{ v.on }}" onClick="{{ v.pick }}" style="display:flex;align-items:center;gap:14px;min-height:60px;padding:10px 16px;border-radius:12px;border:{{ v.bw }} solid {{ v.bc }};background:{{ v.bg }};text-align:left;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--ink2)">{{ v.icon }}</span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">{{ v.label }}</span><span style="font-size:13px;color:var(--ink3)">{{ v.sub }}</span></span><span style="width:20px;height:20px;border-radius:50%;border:2px solid {{ v.rc }};box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:{{ v.dot }}"></span></span></button></sc-for>
+            </fieldset>
+            <label style="display:flex;align-items:flex-start;gap:12px;font-size:14.5px;line-height:1.5;cursor:pointer"><input type="checkbox" checked="{{ honor }}" onChange="{{ toggleHonor }}" style="width:20px;height:20px;margin:1px 0 0;accent-color:var(--pri)"><span>I solemnly declare that this document is authentic. A false declaration leads to the removal of points and a report to the registrar.</span></label>
+            <div style="display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--pri-sf)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--pri);flex:none">schedule</span><span style="font-size:14px;line-height:1.55">A member of the teaching team checks the ID within 48 hours. Points are credited after validation.</span></div>
+          </sc-if>
+          <sc-if value="{{ s4 }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px">
+              <span style="width:72px;height:72px;border-radius:50%;background:var(--warn-sf);color:var(--warn);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:34px">hourglass_top</span></span>
+              <span style="font-family:'Newsreader',serif;font-size:32px;font-weight:500">Declaration sent</span>
+              <span style="font-size:15.5px;color:var(--ink2);line-height:1.6;max-width:440px">Your certification appears on your profile marked “Under review”. You'll be notified as soon as it's validated.</span>
+              <div style="display:flex;gap:8px;margin-top:8px"><a href="Profil.dc.html" style="height:46px;padding:0 20px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;text-decoration:none">View my profile</a><button onClick="{{ restart }}" style="height:46px;padding:0 18px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px;font-weight:600;cursor:pointer">Declare another</button></div>
+            </div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ showFooter }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:16px 32px;border-top:1px solid var(--ln);display:flex;justify-content:space-between;align-items:center">
+          <button onClick="{{ back }}" disabled="{{ isFirst }}" style="height:46px;padding:0 16px;border:none;background:none;color:{{ backInk }};font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_back</span>Back</button>
+          <button onClick="{{ fwd }}" disabled="{{ blocked }}" style="height:46px;padding:0 22px;border-radius:10px;border:none;background:{{ fwdBg }};color:{{ fwdInk }};font-size:15px;font-weight:600;cursor:{{ fwdCur }}">{{ fwdLabel }}</button>
+        </div>
+        </sc-if>
+      </section>
+      <aside style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Preview on your profile</span>
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;gap:14px;align-items:center"><span style="width:56px;height:56px;border-radius:50%;background:var(--gold-sf);color:var(--gold);display:grid;place-items:center;box-shadow:0 0 0 2px var(--sf),0 0 0 3.5px var(--gold-fill);flex:none"><span style="font-family:'Material Symbols Outlined';font-size:28px;font-variation-settings:'FILL' 1">workspace_premium</span></span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;line-height:1.2">{{ pick.name }}</span><span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">{{ pick.code }} · Amazon Web Services</span></span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ln);padding-top:14px;gap:12px"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12.5px;color:var(--ink3)">Earned on</span><span style="font-size:14.5px;font-weight:600">{{ pvDate }}</span></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12.5px;color:var(--ink3)">Visibility</span><span style="font-size:14.5px;font-weight:600">{{ pvVis }}</span></span></div>
+          <span style="height:30px;padding:0 12px 0 9px;border-radius:15px;background:{{ pvBg }};color:{{ pvInk }};display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;align-self:flex-start"><span style="font-family:'Material Symbols Outlined';font-size:17px">{{ pvIcon }}</span>{{ pvStatus }}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:var(--gold-sf)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--gold);font-variation-settings:'FILL' 1">military_tech</span><span style="font-size:14px;line-height:1.5">After validation: <strong>+{{ pick.pts }} points</strong> and a place on your specialty's leaderboard.</span></div>
+      </aside>
+    </div>
+  </main>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · step 2 · invalid ID</div>
+<div data-screen-label="11 Declare mobile error" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <header style="padding:12px 16px 8px 4px;display:flex;align-items:center;justify-content:space-between"><span style="display:flex;align-items:center"><span style="width:44px;height:44px;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">close</span></span><span style="font-size:16px;font-weight:600">Declare</span></span><span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">2 / 3</span></header>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 20px"><span style="height:4px;border-radius:2px;background:var(--pri)"></span><span style="height:4px;border-radius:2px;background:var(--pri)"></span><span style="height:4px;border-radius:2px;background:var(--sf2)"></span></div>
+  <div style="flex:1;padding:20px;display:flex;flex-direction:column;gap:18px;overflow:hidden">
+    <span style="font-family:'Newsreader',serif;font-size:26px;font-weight:500">Proof of certification</span>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--sf);border:1px solid var(--ln)"><span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--gold);font-variation-settings:'FILL' 1">workspace_premium</span><span style="font-size:14px;font-weight:600">SAA-C03 · Solutions Architect</span></div>
+    <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Date earned</span><span style="height:48px;padding:0 14px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px;display:flex;align-items:center">28/09/2026</span></label>
+    <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Validation ID</span><span style="height:48px;padding:0 14px;border-radius:10px;border:1.5px solid var(--err);background:var(--sf);font:500 15px 'IBM Plex Mono',monospace;display:flex;align-items:center">7K2Q91</span><span role="alert" style="font-size:13px;color:var(--err);display:flex;align-items:flex-start;gap:6px;line-height:1.45"><span style="font-family:'Material Symbols Outlined';font-size:16px">error</span><span>Expected format: 10 to 16 characters, like “AWS04Q7KX2B”.</span></span></label>
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Certificate</span><span style="height:96px;border-radius:12px;border:1.5px dashed var(--ln2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px"><span style="font-family:'Material Symbols Outlined';font-size:26px;color:var(--ink3)">photo_camera</span><span style="font-size:14px"><strong style="color:var(--pri)">Take a photo</strong> or choose a file</span></span></div>
+  </div>
+  <div style="padding:12px 16px 30px;border-top:1px solid var(--ln);background:var(--sf);display:grid;grid-template-columns:auto 1fr;gap:8px"><span style="height:52px;padding:0 16px;border-radius:10px;border:1.5px solid var(--ln2);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></span><span style="height:52px;border-radius:10px;background:var(--sf2);color:var(--ink3);font-size:15.5px;font-weight:600;display:flex;align-items:center;justify-content:center">Continue</span></div>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;clair&quot;,&quot;sombre&quot;],&quot;default&quot;:&quot;clair&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static T = {
+    clair: {'--bg':'#F6F3EC','--sf':'#FFFDF8','--sf2':'#EEE9DE','--ln':'#E1DACB','--ln2':'#CBC2AF','--ink':'#131A2C','--ink2':'#474E63','--ink3':'#62677A','--pri':'#1C2F5E','--pri-ink':'#FFFFFF','--pri-sf':'#E4E8F2','--gold':'#86590C','--gold-fill':'#D4A23A','--gold-sf':'#F5EBD3','--ok':'#2C6A45','--ok-sf':'#E0EDE4','--warn':'#9C4F0C','--warn-sf':'#F7E6D6','--err':'#A3302A','--err-sf':'#F5DDDA','--hero':'#14244B','--hero-ink':'#F3EFE6','--focus':'#3B63C9'},
+    sombre: {'--bg':'#0D1220','--sf':'#141B2D','--sf2':'#1B2338','--ln':'#262F47','--ln2':'#38425F','--ink':'#ECEAE4','--ink2':'#B3B8C7','--ink3':'#9097AA','--pri':'#AFC2F4','--pri-ink':'#0D1220','--pri-sf':'#1F2B4C','--gold':'#E5BC62','--gold-fill':'#D9AE4E','--gold-sf':'#33291A','--ok':'#7CC79A','--ok-sf':'#15301F','--warn':'#EDA867','--warn-sf':'#36240F','--err':'#F0928A','--err-sf':'#3A1C1B','--hero':'#18213A','--hero-ink':'#ECEAE4','--focus':'#AFC2F4'}
+  };
+  static C = [
+    { k: 'saa', name: 'AWS Solutions Architect – Associate', code: 'SAA-C03', level: 'Associate', pts: 300 },
+    { k: 'clf', name: 'AWS Cloud Practitioner', code: 'CLF-C02', level: 'Foundational', pts: 100 },
+    { k: 'dva', name: 'AWS Developer – Associate', code: 'DVA-C02', level: 'Associate', pts: 300 }
+  ];
+  root = React.createRef();
+  state = { theme: null, step: 0, cert: 'saa', cred: 'AWS04Q7KX2B9', file: true, vis: 'ecole', honor: false };
+  th() { return this.state.theme ?? this.props.theme ?? 'clair'; }
+  componentDidMount() { this.apply(); } componentDidUpdate() { this.apply(); }
+  apply() { const el = this.root.current; if (!el) return; const t = Component.T[this.th()] || Component.T.clair; for (const k in t) el.style.setProperty(k, t[k]); }
+  renderVals() {
+    const s = this.state, pick = Component.C.find(c => c.k === s.cert);
+    const credOk = /^[A-Z0-9]{10,16}$/.test(s.cred.trim().toUpperCase());
+    const blocked = (s.step === 1 && (!credOk || !s.file)) || (s.step === 2 && !s.honor);
+    const stepper = ['Certification', 'Proof', 'Visibility and submission'].map((label, i) => ({ label, n: '0' + (i + 1), cur: i === s.step ? 'step' : 'false', bar: i <= s.step ? 'var(--pri)' : 'var(--sf2)', ink: i <= s.step ? 'var(--ink)' : 'var(--ink3)' }));
+    const sel = on => ({ bw: on ? '2px' : '1.5px', bc: on ? 'var(--pri)' : 'var(--ln2)', bg: on ? 'var(--pri-sf)' : 'var(--sf)' });
+    const certs = Component.C.map(c => ({ ...c, on: c.k === s.cert, ...sel(c.k === s.cert), pick: () => this.setState({ cert: c.k }) }));
+    const V = { ecole: ['Whole institute', 'TEK-UP students and teachers', 'school'], spec: ['My specialty', 'CIM students only', 'groups'], moi: ['Me and the teaching team', 'Hidden from the public leaderboard', 'lock'] };
+    const vis = Object.entries(V).map(([k, [label, sub, icon]]) => { const on = s.vis === k; return { label, sub, icon, on, ...sel(on), rc: on ? 'var(--pri)' : 'var(--ln2)', dot: on ? 'var(--pri)' : 'transparent', pick: () => this.setState({ vis: k }) }; });
+    const done = s.step === 3;
+    return {
+      root: this.root, themeIcon: this.th() === 'clair' ? 'dark_mode' : 'light_mode', toggleTheme: () => this.setState({ theme: this.th() === 'clair' ? 'sombre' : 'clair' }),
+      stepper, s1: s.step === 0, s2: s.step === 1, s3: s.step === 2, s4: done, showFooter: !done, isFirst: s.step === 0, backInk: s.step === 0 ? 'var(--ink3)' : 'var(--pri)',
+      certs, pick, credId: s.cred, setCred: e => this.setState({ cred: e.target.value }), credBad: !credOk,
+      credBc: credOk ? 'var(--ok)' : 'var(--err)', credInk: credOk ? 'var(--ok)' : 'var(--err)', credIcon: credOk ? 'check_circle' : 'error', credMsg: credOk ? 'Valid format' : 'Expected format: 10 to 16 letters or digits',
+      noFile: !s.file, hasFile: s.file, addFile: () => this.setState({ file: true }), rmFile: () => this.setState({ file: false }),
+      vis, honor: s.honor, toggleHonor: () => this.setState({ honor: !s.honor }),
+      blocked, fwdLabel: s.step === 2 ? 'Submit for review' : 'Continue', fwdBg: blocked ? 'var(--sf2)' : 'var(--pri)', fwdInk: blocked ? 'var(--ink3)' : 'var(--pri-ink)', fwdCur: blocked ? 'not-allowed' : 'pointer',
+      fwd: () => { if (!blocked) this.setState({ step: s.step + 1 }); }, back: () => this.setState({ step: Math.max(0, s.step - 1) }), restart: () => this.setState({ step: 0, honor: false }),
+      pvDate: s.step >= 1 ? 'Sep 28, 2026' : '—', pvVis: V[s.vis][0],
+      pvStatus: done ? 'Under review' : 'Draft', pvIcon: done ? 'hourglass_top' : 'edit_note', pvBg: done ? 'var(--warn-sf)' : 'var(--sf2)', pvInk: done ? 'var(--warn)' : 'var(--ink2)'
+    };
+  }
+}
+</script>
+</body>
+</html>

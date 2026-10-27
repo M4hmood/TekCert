@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}@keyframes toastIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}</style>
+</helmet>
+<div ref="{{ root }}" style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;gap:56px;align-items:flex-start;color:var(--ink)">
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:16px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">08 · Student profile — Desktop 1440 ·</span>
+  <div role="tablist" aria-label="View" style="display:flex;background:#C9C3B6;border-radius:8px;padding:3px"><sc-for list="{{ views }}" as="v" hint-placeholder-count="2"><button role="tab" aria-selected="{{ v.on }}" onClick="{{ v.pick }}" style="height:32px;padding:0 12px;border:none;border-radius:6px;background:{{ v.bg }};color:#131A2C;font:600 12px 'IBM Plex Mono',monospace;cursor:pointer">{{ v.label }}</button></sc-for></div>
+</div>
+<div data-screen-label="08 Profile desktop" style="width:1440px;min-height:1120px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;box-shadow:0 1px 3px rgba(0,0,0,.08);position:relative">
+  <dc-import name="Sidebar" active="{{ navActive }}" hint-size="256px,1120px" style="align-self:stretch;flex:none"></dc-import>
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <section style="background:var(--sf);border-bottom:1px solid var(--ln);padding:28px 40px 32px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <sc-if value="{{ isOwn }}" hint-placeholder-val="{{ true }}"><span style="display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink2)"><span style="display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 7px;border-radius:14px;background:var(--ok-sf);color:var(--ok);font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">visibility</span>Public profile</span><span style="display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 7px;border-radius:14px;background:var(--ok-sf);color:var(--ok);font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">leaderboard</span>Visible on leaderboard</span><a href="#" style="font-weight:600;margin-left:4px">Edit</a></span></sc-if>
+        <sc-if value="{{ isOther }}" hint-placeholder-val="{{ false }}"><a href="Fiche-certification.dc.html" style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;text-decoration:none;min-height:44px"><span style="font-family:'Material Symbols Outlined';font-size:19px">arrow_back</span>Community · SAA-C03</a></sc-if>
+        <button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink2);display:grid;place-items:center;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ themeIcon }}</span></button>
+      </div>
+      <div style="display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:32px;align-items:center">
+        <div style="position:relative;width:132px;height:132px"><span style="position:absolute;inset:0;border-radius:50%;background:{{ p.avBg }};color:var(--ink);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:48px;font-weight:500;box-shadow:0 0 0 4px var(--sf),0 0 0 6px var(--gold-fill)">{{ p.ini }}</span><span title="{{ p.level }}" style="position:absolute;right:-4px;bottom:-4px;width:44px;height:44px;border-radius:50%;background:var(--gold-fill);color:#1A1406;display:grid;place-items:center;font-family:'Newsreader',serif;font-size:17px;font-weight:600;box-shadow:0 0 0 3px var(--sf)">{{ p.roman }}</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+          <h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:48px;letter-spacing:-0.02em;line-height:1.05">{{ p.name }}</h1>
+          <div style="display:flex;gap:8px 18px;flex-wrap:wrap;font-size:15px;color:var(--ink2)"><span style="display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ink3)">school</span>{{ p.cls }}</span><span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px 0 9px;border-radius:14px;background:{{ p.sBg }};border:1.5px {{ p.sBs }} {{ p.sBc }};font-size:13px;font-weight:600;color:var(--ink);box-sizing:border-box"><span style="width:9px;height:9px;border-radius:50%;background:{{ p.sc }}"></span>{{ p.specLabel }}</span></div>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:4px"><span style="font:500 14px 'IBM Plex Mono',monospace;color:var(--ink)">{{ p.email }}</span><button onClick="{{ copyEmail }}" aria-label="Copy email" style="width:36px;height:36px;border:none;border-radius:8px;background:transparent;color:var(--ink3);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--sf2)"><span style="font-family:'Material Symbols Outlined';font-size:18px">content_copy</span></button></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:stretch;width:240px">
+          <sc-if value="{{ isOwn }}" hint-placeholder-val="{{ true }}"><a href="#" style="height:46px;border-radius:10px;border:1.5px solid var(--ln2);color:var(--ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none"><span style="font-family:'Material Symbols Outlined';font-size:19px">edit</span>Edit profile</a></sc-if>
+          <sc-if value="{{ isOther }}" hint-placeholder-val="{{ false }}"><a href="{{ p.mailto }}" style="height:46px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none"><span style="font-family:'Material Symbols Outlined';font-size:19px">mail</span>Write to {{ p.first }}</a><span style="font-size:12.5px;color:var(--ink3);text-align:center;line-height:1.4">Opens your institute mail</span></sc-if>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ln);border-radius:14px;background:var(--bg)">
+        <sc-for list="{{ p.stats }}" as="s" hint-placeholder-count="4"><div style="padding:16px 20px;display:flex;flex-direction:column;gap:2px;border-left:1px solid {{ s.bl }}"><span style="font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:17px;color:{{ s.ic }}">{{ s.icon }}</span>{{ s.label }}</span><span style="font-family:'Newsreader',serif;font-size:30px;font-weight:500">{{ s.value }}</span></div></sc-for>
+      </div>
+    </section>
+
+    <section style="padding:32px 40px 56px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:32px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:32px">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Certification collection</h2><span style="font-size:13.5px;color:var(--ink3)">Only verified ones count for points</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <sc-for list="{{ p.creds }}" as="c" hint-placeholder-count="2">
+              <sc-if value="{{ c.verified }}">
+                <div style="background:var(--sf);border:1px solid var(--gold-fill);border-radius:14px;padding:6px">
+                  <div style="border:1px solid var(--gold-sf);border-radius:10px;padding:20px;display:flex;gap:16px;align-items:center;height:100%;box-sizing:border-box">
+                    <span style="width:64px;height:64px;border-radius:50%;background:var(--gold-fill);display:grid;place-items:center;flex:none;box-shadow:inset 0 0 0 5px var(--gold-fill),inset 0 0 0 6.5px #1A140633"><span style="font-family:'Material Symbols Outlined';font-size:30px;color:#1A1406;font-variation-settings:'FILL' 1">workspace_premium</span></span>
+                    <span style="display:flex;flex-direction:column;gap:5px;min-width:0"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--gold)">{{ c.code }}</span><span style="height:24px;padding:0 9px 0 6px;border-radius:12px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:15px;font-variation-settings:'FILL' 1">verified</span>Verified</span></span><span style="font-family:'Newsreader',serif;font-size:19px;font-weight:600;line-height:1.2">{{ c.name }}</span><span style="font-size:13px;color:var(--ink2)">{{ c.prov }} · earned in {{ c.date }}</span></span>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ c.unverified }}">
+                <div style="background:var(--bg);border:1.5px dashed var(--ln2);border-radius:14px;padding:26px;display:flex;gap:16px;align-items:center">
+                  <span style="width:64px;height:64px;border-radius:50%;border:2px dashed var(--ln2);display:grid;place-items:center;flex:none;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:30px;color:var(--ink3)">workspace_premium</span></span>
+                  <span style="display:flex;flex-direction:column;gap:5px;min-width:0"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">{{ c.code }}</span><span style="height:24px;padding:0 9px 0 6px;border-radius:12px;border:1.5px dashed var(--ln2);color:var(--ink2);display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:15px">pending</span>Unverified</span></span><span style="font-family:'Newsreader',serif;font-size:19px;font-weight:600;line-height:1.2;color:var(--ink2)">{{ c.name }}</span><span style="font-size:13px;color:var(--ink3)">{{ c.note }}</span></span>
+                </div>
+              </sc-if>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Preparing</h2>
+          <sc-for list="{{ p.prep }}" as="c" hint-placeholder-count="1">
+            <a href="Fiche-certification.dc.html" style="display:grid;grid-template-columns:auto minmax(0,1fr) 220px;gap:18px;align-items:center;padding:18px 20px;background:var(--sf);border:1px solid var(--ln);border-radius:14px;text-decoration:none;color:var(--ink)">
+              <span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 9px;border:1px solid var(--ln2);border-radius:6px;font-size:12px;font-weight:600;color:var(--ink2)"><span style="width:8px;height:8px;border-radius:2px;background:{{ c.dot }}"></span>{{ c.prov }}</span>
+              <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:15.5px;font-weight:600">{{ c.name }}</span><span style="font-size:13px;color:var(--ink3)">{{ c.code }} · {{ c.chap }}</span></span>
+              <span style="display:flex;align-items:center;gap:10px"><span style="flex:1;height:6px;border-radius:3px;background:var(--sf2)"><span style="display:block;width:{{ c.w }};height:100%;border-radius:3px;background:var(--pri)"></span></span><span style="font-family:'Newsreader',serif;font-size:18px;font-weight:600;width:48px;text-align:right">{{ c.pct }}</span></span>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="background:var(--hero);color:var(--hero-ink);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:14px">
+          <span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.7">Level {{ p.roman }}</span>
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Newsreader',serif;font-size:34px;font-weight:500">{{ p.level }}</span><span style="font-size:14px"><strong style="font-family:'Newsreader',serif;font-size:24px;font-weight:500">{{ p.pts }}</strong> pts</span></div>
+          <div style="height:6px;border-radius:3px;background:rgba(243,239,230,.18)"><div style="width:{{ p.lvlW }};height:100%;border-radius:3px;background:#D4A23A"></div></div>
+          <span style="font-size:13px;opacity:.8">{{ p.next }}</span>
+        </div>
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:4px">
+          <h3 style="margin:0 0 8px;font-family:'Newsreader',serif;font-weight:600;font-size:21px">Followed paths</h3>
+          <sc-for list="{{ p.paths }}" as="pa" hint-placeholder-count="2"><a href="Parcours.dc.html" style="display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid var(--ln);text-decoration:none;color:var(--ink)"><span style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:{{ pa.c }}"></span><span style="flex:1;font-size:15px;font-weight:600">{{ pa.name }}</span><span style="font-size:12px;font-weight:600;color:var(--ink3)">{{ pa.tag }}</span></span><span style="display:flex;align-items:center;gap:10px"><span style="flex:1;height:5px;border-radius:3px;background:var(--sf2)"><span style="display:block;width:{{ pa.w }};height:100%;border-radius:3px;background:var(--gold-fill)"></span></span><span style="font-size:12.5px;font-weight:600;color:var(--ink2)">{{ pa.ratio }}</span></span></a></sc-for>
+        </div>
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><h3 style="margin:0;font-family:'Newsreader',serif;font-weight:600;font-size:21px">Badges</h3><span style="font-size:13px;color:var(--ink3)">{{ p.badgeCount }} of 5</span></div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+            <sc-for list="{{ p.badges }}" as="b" hint-placeholder-count="5"><div title="{{ b.desc }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><span style="width:48px;height:48px;border-radius:50%;background:{{ b.bg }};border:2px {{ b.bs }} {{ b.bc }};color:{{ b.ink }};display:grid;place-items:center;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:23px">{{ b.icon }}</span></span><span style="font-size:11.5px;font-weight:600;line-height:1.25;color:{{ b.label }}">{{ b.name }}</span></div></sc-for>
+          </div>
+        </div>
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:10px">
+          <h3 style="margin:0;font-family:'Newsreader',serif;font-weight:600;font-size:21px">Recent activity</h3>
+          <sc-for list="{{ p.activity }}" as="a" hint-placeholder-count="3"><div style="display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--ln);font-size:14px;line-height:1.4"><span style="font-family:'Material Symbols Outlined';font-size:18px;color:var(--ink3);flex:none">{{ a.icon }}</span><span style="flex:1">{{ a.text }}</span><span style="font-size:12.5px;color:var(--ink3);flex:none">{{ a.when }}</span></div></sc-for>
+        </div>
+      </div>
+    </section>
+  </main>
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute;bottom:28px;left:calc(50% + 128px);transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;animation:toastIn .3s ease-out"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--gold-fill)">content_copy</span><span style="font-size:14.5px">Email copied</span></div></sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · another student's profile (ING-3, target specialty)</div>
+<div data-screen-label="08 Profile mobile other" style="width:390px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="padding:12px 8px 0;display:flex;justify-content:space-between"><a href="Fiche-certification.dc.html" aria-label="Back" style="width:44px;height:44px;display:grid;place-items:center;color:var(--ink)"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></a><button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border:none;background:none;color:var(--ink2);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">{{ themeIcon }}</span></button></div>
+  <div style="padding:4px 20px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px">
+    <div style="position:relative;width:96px;height:96px"><span style="position:absolute;inset:0;border-radius:50%;background:{{ o.avBg }};color:var(--ink);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:36px;font-weight:500;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--gold-fill)">{{ o.ini }}</span><span style="position:absolute;right:-4px;bottom:-4px;width:36px;height:36px;border-radius:50%;background:var(--gold-fill);color:#1A1406;display:grid;place-items:center;font-family:'Newsreader',serif;font-size:14px;font-weight:600;box-shadow:0 0 0 3px var(--bg)">{{ o.roman }}</span></div>
+    <h1 style="margin:6px 0 0;font-family:'Newsreader',serif;font-weight:500;font-size:30px">{{ o.name }}</h1>
+    <span style="font-size:14px;color:var(--ink2)">{{ o.cls }}</span>
+    <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px 0 9px;border-radius:14px;background:{{ o.sBg }};border:1.5px {{ o.sBs }} {{ o.sBc }};font-size:13px;font-weight:600;color:var(--ink);box-sizing:border-box"><span style="width:9px;height:9px;border-radius:50%;background:{{ o.sc }}"></span>{{ o.specLabel }}</span>
+    <span style="font-size:14px;color:var(--ink2)">{{ o.level }} · <strong style="color:var(--ink)">{{ o.pts }}</strong> pts</span>
+    <a href="{{ o.mailto }}" style="width:100%;height:48px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;margin-top:8px"><span style="font-family:'Material Symbols Outlined';font-size:19px">mail</span>{{ o.email }}</a>
+  </div>
+  <div style="padding:0 16px 24px;display:flex;flex-direction:column;gap:12px">
+    <span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;padding:8px 4px 0">Collection · {{ o.credCount }}</span>
+    <sc-for list="{{ o.creds }}" as="c" hint-placeholder-count="4">
+      <sc-if value="{{ c.verified }}"><div style="display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--sf);border:1px solid var(--gold-fill);border-radius:12px"><span style="width:44px;height:44px;border-radius:50%;background:var(--gold-fill);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:#1A1406;font-variation-settings:'FILL' 1">workspace_premium</span></span><span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14.5px;font-weight:600">{{ c.name }}</span><span style="font-size:12.5px;color:var(--ink3)">{{ c.code }} · {{ c.date }}</span></span><span style="display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;color:var(--ok)"><span style="font-family:'Material Symbols Outlined';font-size:16px;font-variation-settings:'FILL' 1">verified</span>Verified</span></div></sc-if>
+      <sc-if value="{{ c.unverified }}"><div style="display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--bg);border:1.5px dashed var(--ln2);border-radius:12px"><span style="width:44px;height:44px;border-radius:50%;border:2px dashed var(--ln2);display:grid;place-items:center;flex:none;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--ink3)">workspace_premium</span></span><span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14.5px;font-weight:600;color:var(--ink2)">{{ c.name }}</span><span style="font-size:12.5px;color:var(--ink3)">{{ c.code }}</span></span><span style="display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;color:var(--ink2)"><span style="font-family:'Material Symbols Outlined';font-size:16px">pending</span>Unverified</span></div></sc-if>
+    </sc-for>
+    <span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;padding:12px 4px 0">Preparing</span>
+    <sc-for list="{{ o.prep }}" as="c" hint-placeholder-count="2"><div style="display:flex;flex-direction:column;gap:8px;padding:14px;background:var(--sf);border:1px solid var(--ln);border-radius:12px"><span style="display:flex;justify-content:space-between;gap:8px"><span style="font-size:14.5px;font-weight:600">{{ c.name }}</span><span style="font-family:'Newsreader',serif;font-size:17px;font-weight:600">{{ c.pct }}</span></span><span style="height:5px;border-radius:3px;background:var(--sf2)"><span style="display:block;width:{{ c.w }};height:100%;border-radius:3px;background:var(--pri)"></span></span></div></sc-for>
+    <span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;padding:12px 4px 0">Followed paths</span>
+    <sc-for list="{{ o.paths }}" as="pa" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--sf);border:1px solid var(--ln);border-radius:12px"><span style="width:11px;height:11px;border-radius:50%;background:{{ pa.c }}"></span><span style="flex:1;display:flex;flex-direction:column;gap:1px"><span style="font-size:14.5px;font-weight:600">{{ pa.name }}</span><span style="font-size:12px;color:var(--ink3)">{{ pa.tag }}</span></span><span style="font-size:13px;font-weight:600">{{ pa.ratio }}</span></div></sc-for>
+    <span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;padding:12px 4px 0">Badges · {{ o.badgeCount }}/5</span>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px"><sc-for list="{{ o.badges }}" as="b" hint-placeholder-count="5"><div style="display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center"><span style="width:46px;height:46px;border-radius:50%;background:{{ b.bg }};border:2px {{ b.bs }} {{ b.bc }};color:{{ b.ink }};display:grid;place-items:center;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:22px">{{ b.icon }}</span></span><span style="font-size:11px;font-weight:600;line-height:1.2;color:{{ b.label }}">{{ b.name }}</span></div></sc-for></div>
+  </div>
+  <dc-import name="BottomNav" active="communaute" hint-size="390px,82px"></dc-import>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · private profile</div>
+<div data-screen-label="08 Profile mobile private" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="padding:12px 8px 0"><span style="width:44px;height:44px;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></span></div>
+  <div style="flex:1;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px">
+    <span style="width:96px;height:96px;border-radius:50%;background:var(--sf2);color:var(--ink3);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:40px">lock</span></span>
+    <span style="font-family:'Newsreader',serif;font-size:26px;font-weight:600">This profile is private</span>
+    <span style="font-size:14.5px;color:var(--ink2);line-height:1.55;max-width:300px">This student chose not to share their profile. Check the list of students who earned the certification to find someone else.</span>
+    <span style="height:48px;padding:0 20px;border-radius:10px;border:1.5px solid var(--ln2);font-size:15px;font-weight:600;display:flex;align-items:center;margin-top:6px">Back to community</span>
+  </div>
+  <dc-import name="BottomNav" active="communaute" hint-size="390px,82px"></dc-import>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;clair&quot;,&quot;sombre&quot;],&quot;default&quot;:&quot;clair&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;vue&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;my view&quot;,&quot;another student&quot;],&quot;default&quot;:&quot;my view&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static T = {
+    clair: {'--bg':'#F6F3EC','--sf':'#FFFDF8','--sf2':'#EEE9DE','--ln':'#E1DACB','--ln2':'#CBC2AF','--ink':'#131A2C','--ink2':'#474E63','--ink3':'#62677A','--pri':'#1C2F5E','--pri-ink':'#FFFFFF','--pri-sf':'#E4E8F2','--gold':'#86590C','--gold-fill':'#D4A23A','--gold-sf':'#F5EBD3','--ok':'#2C6A45','--ok-sf':'#E0EDE4','--warn':'#9C4F0C','--warn-sf':'#F7E6D6','--err':'#A3302A','--err-sf':'#F5DDDA','--hero':'#14244B','--hero-ink':'#F3EFE6','--focus':'#3B63C9'},
+    sombre: {'--bg':'#0D1220','--sf':'#141B2D','--sf2':'#1B2338','--ln':'#262F47','--ln2':'#38425F','--ink':'#ECEAE4','--ink2':'#B3B8C7','--ink3':'#9097AA','--pri':'#AFC2F4','--pri-ink':'#0D1220','--pri-sf':'#1F2B4C','--gold':'#E5BC62','--gold-fill':'#D9AE4E','--gold-sf':'#33291A','--ok':'#7CC79A','--ok-sf':'#15301F','--warn':'#EDA867','--warn-sf':'#36240F','--err':'#F0928A','--err-sf':'#3A1C1B','--hero':'#18213A','--hero-ink':'#ECEAE4','--focus':'#AFC2F4'}
+  };
+  static B = [['First step', 'footprint', 'First chapter completed'], ['Pioneer', 'flag', 'First verified certification'], ['Flawless', 'target', '100% on a practice test'], ['Multi-cloud', 'cloud', 'Certified with 3 providers'], ['Dedicated', 'local_library', '30 chapters completed']];
+  root = React.createRef();
+  state = { theme: null, view: null, toast: false };
+  th() { return this.state.theme ?? this.props.theme ?? 'clair'; }
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  componentWillUnmount() { clearTimeout(this.tt); }
+  apply() { const el = this.root.current; if (!el) return; const t = Component.T[this.th()] || Component.T.clair; for (const k in t) el.style.setProperty(k, t[k]); }
+  build(x) {
+    const badges = Component.B.map(([name, icon, desc], i) => { const on = x.earned.includes(i); return { name, icon, desc: desc + (on ? '' : ' · to unlock'), bg: on ? 'var(--gold-sf)' : 'transparent', bs: on ? 'solid' : 'dashed', bc: on ? 'var(--gold-fill)' : 'var(--ln2)', ink: on ? 'var(--gold)' : 'var(--ink3)', label: on ? 'var(--ink)' : 'var(--ink3)' }; });
+    const creds = x.creds.map(([code, name, prov, date, v, note]) => ({ code, name, prov, date, verified: v, unverified: !v, note }));
+    const prep = x.prep.map(([code, name, prov, dot, p, chap]) => ({ code, name, prov, dot, pct: p + '%', w: p + '%', chap }));
+    const nv = creds.filter(c => c.verified).length;
+    const SPH = { SDIA: 285, CIM: 225, GLOps: 165, SSIR: 15, AIOT: 130, DMWM: 340 };
+    const SPN = { SDIA: 'AI & Data Science', CIM: 'Cloud Infrastructure Management', GLOps: 'Software Engineering & DevOps', SSIR: 'Systems Security & Network Infra.', AIOT: 'AI & IoT', DMWM: 'Mobile, Web & Multimedia' };
+    const sc = 'oklch(0.6 0.13 ' + SPH[x.specCode] + ')';
+    const specBits = x.visee ? { sc, sBg: 'transparent', sBs: 'dashed', sBc: sc, specLabel: 'Target specialty: ' + x.specCode, avBg: 'var(--sf2)' } : { sc, sBg: 'color-mix(in oklch, ' + sc + ' 16%, var(--sf))', sBs: 'solid', sBc: 'transparent', specLabel: x.specCode + ' · ' + SPN[x.specCode], avBg: 'color-mix(in oklch, ' + sc + ' 22%, var(--sf))' };
+    const paths = x.paths.map(([code, got, total, tag]) => ({ name: code === 'FOND' ? 'Fundamentals' : code + ' · ' + SPN[code], c: code === 'FOND' ? 'var(--ink3)' : 'oklch(0.6 0.13 ' + SPH[code] + ')', tag, ratio: got + '/' + total, w: Math.round(got / total * 100) + '%' }));
+    return { ...x, ...specBits, paths, badges, creds, prep, badgeCount: x.earned.length, credCount: creds.length, mailto: 'mailto:' + x.email,
+      stats: [['Verified', nv, 'verified', 'var(--ok)'], ['Unverified', creds.length - nv, 'pending', 'var(--ink3)'], ['Preparing', prep.length, 'clock_loader_40', 'var(--pri)'], ['Practice tests passed', x.tests, 'quiz', 'var(--ink3)']].map(([label, value, icon, ic], i) => ({ label, value, icon, ic, bl: i ? 'var(--ln)' : 'transparent' })) };
+  }
+  renderVals() {
+    const AWS = 'oklch(0.66 0.14 55)', MS = 'oklch(0.66 0.14 245)', GC = 'oklch(0.66 0.14 150)';
+    const me = this.build({ ini: 'YB', name: 'Yassine Ben Amor', first: 'Yassine', cls: 'ING-4 CIM', specCode: 'CIM', paths: [['CIM', 2, 9, 'My specialty'], ['SSIR', 1, 8, 'Also following']], email: 'yassine.benamor@tek-up.de', level: 'Licentiate', roman: 'III', pts: '1 480', lvlW: '32%', next: '1,020 points to Master', tests: 2, earned: [0, 1, 2],
+      creds: [['AZ-900', 'Microsoft Azure Fundamentals', 'Microsoft Azure', 'Mar 2026', true], ['CLF-C02', 'AWS Certified Cloud Practitioner', 'AWS', '', false, 'Proof sent Oct 5 · under review']],
+      prep: [['SAA-C03', 'AWS Solutions Architect – Associate', 'AWS', AWS, 45, '5/11 chapters']],
+      activity: [{ icon: 'check_box', text: '“Databases” chapter completed', when: 'yesterday' }, { icon: 'upload_file', text: 'CLF-C02 proof sent', when: 'Oct 5' }, { icon: 'event_available', text: 'SAA-C03 exam request', when: 'Oct 2' }] });
+    const ons = this.build({ ini: 'OB', name: 'Ons Ben Salah', first: 'Ons', cls: 'ING-4 CIM', specCode: 'CIM', paths: [['CIM', 4, 9, 'Their specialty'], ['FOND', 3, 7, 'Also following']], email: 'ons.bensalah@tek-up.de', level: 'Master', roman: 'IV', pts: '2 740', lvlW: '10%', next: '2,260 points to Emeritus', tests: 6, earned: [0, 1, 2, 4],
+      creds: [['SAA-C03', 'AWS Solutions Architect – Associate', 'AWS', 'Jun 2026', true], ['AZ-900', 'Microsoft Azure Fundamentals', 'Microsoft Azure', 'Oct 2026', true], ['CLF-C02', 'AWS Certified Cloud Practitioner', 'AWS', 'Dec 2025', true], ['AZ-104', 'Microsoft Azure Administrator', 'Microsoft Azure', '', false, 'Declared Oct 2 · proof to come']],
+      prep: [['AZ-305', 'Azure Solutions Architect Expert', 'Microsoft Azure', MS, 30, '3/10 chapters'], ['CDL', 'Google Cloud Digital Leader', 'Google Cloud', GC, 60, '4/6 chapters']],
+      activity: [{ icon: 'workspace_premium', text: 'Earned AZ-900 · verified', when: '2 h ago' }, { icon: 'quiz', text: 'Passed AZ-305 practice test (78%)', when: 'Oct 3' }, { icon: 'military_tech', text: 'Reached Master level', when: 'Sep 28' }] });
+    const AWS2 = 'oklch(0.66 0.14 55)', GC2 = 'oklch(0.66 0.14 150)';
+    const mariem = this.build({ ini: 'MH', name: 'Mariem Hammami', first: 'Mariem', cls: 'ING-3 Group 2', specCode: 'CIM', visee: true, paths: [['FOND', 3, 7, 'Following'], ['CIM', 2, 9, 'Target specialty']], email: 'mariem.hammami@tek-up.de', level: 'Bachelor', roman: 'II', pts: '420', lvlW: '23%', next: '580 points to Licentiate', tests: 1, earned: [0, 1],
+      creds: [['AZ-900', 'Microsoft Azure Fundamentals', 'Microsoft Azure', 'Oct 2025', true], ['CLF-C02', 'AWS Certified Cloud Practitioner', 'AWS', '', false, 'Declared · proof to come']],
+      prep: [['CDL', 'Google Cloud Digital Leader', 'Google Cloud', GC2, 60, '4/6 chapters'], ['SAA-C03', 'AWS Solutions Architect – Associate', 'AWS', AWS2, 18, '2/11 chapters']], activity: [] });
+    const v = this.state.view ?? (this.props.vue === 'another student' ? 'other' : 'own');
+    const p = v === 'own' ? me : ons;
+    return {
+      root: this.root, themeIcon: this.th() === 'clair' ? 'dark_mode' : 'light_mode', toggleTheme: () => this.setState({ theme: this.th() === 'clair' ? 'sombre' : 'clair' }),
+      views: [['own', 'My view'], ['other', 'Another student’s view']].map(([k, label]) => ({ label, on: v === k, bg: v === k ? '#FFFDF8' : 'transparent', pick: () => this.setState({ view: k }) })),
+      p, o: mariem, isOwn: v === 'own', isOther: v !== 'own', navActive: v === 'own' ? 'profil' : 'communaute',
+      copyEmail: () => { try { navigator.clipboard.writeText(p.email); } catch (e) {} clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: false }), 2000); this.setState({ toast: true }); },
+      hasToast: this.state.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

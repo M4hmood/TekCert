@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}input::placeholder{color:#8A8E9C}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}@keyframes shimmer{0%,100%{opacity:.55}50%{opacity:1}}</style>
+</helmet>
+<div ref="{{ root }}" style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;gap:56px;align-items:flex-start;color:var(--ink)">
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">05 · Catalog — Desktop 1440 · working search and filters</div>
+<div data-screen-label="05 Catalog desktop" style="width:1440px;min-height:1100px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <dc-import name="Sidebar" active="catalogue" hint-size="256px,1100px" style="align-self:stretch;flex:none"></dc-import>
+  <main style="flex:1;min-width:0;padding:32px 40px 48px;display:flex;flex-direction:column;gap:28px">
+    <header style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:6px"><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.015em">Catalog</h1><span style="font-size:15px;color:var(--ink2)">Every certification funded by TEK-UP this academic year.</span></div>
+      <button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink2);display:grid;place-items:center;cursor:pointer;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ themeIcon }}</span></button>
+    </header>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) 248px;gap:32px;align-items:start">
+      <aside aria-label="Filters" style="display:flex;flex-direction:column;gap:26px;grid-column:2;grid-row:1">
+        <fieldset style="border:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px"><legend style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:0 0 8px">Provider</legend>
+          <sc-for list="{{ provOpts }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.pick }}" role="checkbox" aria-checked="{{ o.on }}" style="display:flex;align-items:center;gap:10px;min-height:40px;border:none;background:none;padding:0;cursor:pointer;text-align:left;font-size:14.5px"><span style="width:20px;height:20px;border-radius:5px;border:1.5px solid {{ o.bc }};background:{{ o.bg }};color:var(--pri-ink);display:grid;place-items:center;box-sizing:border-box;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ o.tick }}</span></span><span style="width:8px;height:8px;border-radius:2px;background:{{ o.dot }}"></span><span style="flex:1">{{ o.label }}</span><span style="font-size:13px;color:var(--ink3)">{{ o.count }}</span></button></sc-for>
+        </fieldset>
+        <fieldset style="border:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px"><legend style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:0 0 8px">Certification level</legend>
+          <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ lvlOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" style="height:36px;padding:0 12px;border-radius:18px;border:1.5px solid {{ o.bc }};background:{{ o.bg }};color:{{ o.ink }};font-size:13.5px;font-weight:600;cursor:pointer">{{ o.label }}</button></sc-for></div>
+        </fieldset>
+        <fieldset style="border:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px"><legend style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:0 0 8px">Specialty</legend>
+          <sc-for list="{{ domOpts }}" as="o" hint-placeholder-count="6"><button onClick="{{ o.pick }}" role="checkbox" aria-checked="{{ o.on }}" style="display:flex;align-items:center;gap:10px;min-height:40px;border:none;background:none;padding:0;cursor:pointer;text-align:left;font-size:14.5px"><span style="width:20px;height:20px;border-radius:5px;border:1.5px solid {{ o.bc }};background:{{ o.bg }};color:var(--pri-ink);display:grid;place-items:center;box-sizing:border-box;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ o.tick }}</span></span><span style="width:9px;height:9px;border-radius:50%;background:{{ o.dot }}"></span><span title="{{ o.name }}" style="flex:1;font-weight:600">{{ o.label }}</span><span style="font-size:13px;color:var(--ink3)">{{ o.count }}</span></button></sc-for>
+        </fieldset>
+        <fieldset style="border:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px"><legend style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:0 0 8px">Maximum difficulty</legend>
+          <div style="display:flex;gap:6px"><sc-for list="{{ diffOpts }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.pick }}" aria-label="{{ o.aria }}" aria-pressed="{{ o.on }}" style="width:40px;height:40px;border-radius:8px;border:1.5px solid {{ o.bc }};background:{{ o.bg }};color:{{ o.ink }};font-size:14px;font-weight:600;cursor:pointer">{{ o.n }}</button></sc-for></div>
+          <span style="font-size:13px;color:var(--ink3)">{{ diffLabel }}</span>
+        </fieldset>
+      </aside>
+      <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+        <div style="display:flex;gap:12px">
+          <label style="flex:1;height:48px;border:1.5px solid var(--ln2);border-radius:10px;background:var(--sf);display:flex;align-items:center;gap:10px;padding:0 14px"><span style="font-family:'Material Symbols Outlined';font-size:21px;color:var(--ink3)">search</span><input value="{{ q }}" onChange="{{ onQ }}" placeholder="Search by name or code (e.g. AZ-104)" aria-label="Search" style="flex:1;border:none;background:none;outline:none;font-size:15.5px;min-width:0"></input></label>
+          <span style="height:48px;padding:0 14px;border:1.5px solid var(--ln2);border-radius:10px;background:var(--sf);display:flex;align-items:center;gap:8px;font-size:14.5px;box-sizing:border-box"><span style="color:var(--ink3)">Sort:</span><strong>Most earned</strong><span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ink3)">expand_more</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:36px">
+          <span style="font-size:14.5px;color:var(--ink2)"><strong style="color:var(--ink)">{{ count }}</strong> {{ countLabel }}</span>
+          <sc-for list="{{ chips }}" as="c" hint-placeholder-count="0"><button onClick="{{ c.remove }}" aria-label="{{ c.aria }}" style="height:32px;padding:0 8px 0 12px;border-radius:16px;border:none;background:var(--pri-sf);color:var(--pri);display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;cursor:pointer">{{ c.label }}<span style="font-family:'Material Symbols Outlined';font-size:17px">close</span></button></sc-for>
+          <sc-if value="{{ hasChips }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clear }}" style="height:32px;border:none;background:none;color:var(--pri);font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:underline">Clear all</button></sc-if>
+        </div>
+        <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px">
+          <sc-for list="{{ results }}" as="c" hint-placeholder-count="9">
+            <a href="Fiche-certification.dc.html" style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;text-decoration:none;color:var(--ink)" style-hover="border-color:var(--ln2);box-shadow:0 10px 28px -14px rgba(19,26,44,.3)">
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 9px;border:1px solid var(--ln2);border-radius:6px;font-size:12px;font-weight:600;color:var(--ink2)"><span style="width:8px;height:8px;border-radius:2px;background:{{ c.dot }}"></span>{{ c.prov }}</span><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">{{ c.code }}</span></div>
+              <span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600;line-height:1.2;min-height:50px">{{ c.name }}</span>
+              <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink2);align-items:center">
+                <span style="display:inline-flex;align-items:center;gap:7px"><span style="display:inline-flex;align-items:flex-end;gap:2px;height:12px"><sc-for list="{{ c.bars }}" as="b" hint-placeholder-count="4"><span style="width:3px;height:{{ b.h }};background:{{ b.c }}"></span></sc-for></span>{{ c.lvl }}</span>
+                <span aria-label="{{ c.diffAria }}" style="display:inline-flex;align-items:center;gap:6px"><span style="display:inline-flex;gap:2px"><sc-for list="{{ c.dots }}" as="dt" hint-placeholder-count="5"><span style="width:7px;height:7px;border-radius:50%;background:{{ dt.bg }};border:1.5px solid {{ dt.bc }};box-sizing:border-box"></span></sc-for></span>{{ c.diff }}/5</span>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ c.specs }}" as="sp" hint-placeholder-count="2"><span title="{{ sp.name }}" style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:{{ sp.bg }};font-size:12px;font-weight:700;color:var(--ink)"><span style="width:8px;height:8px;border-radius:50%;background:{{ sp.c }}"></span>{{ sp.code }}</span></sc-for></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--ln);margin-top:auto;gap:8px"><span style="font-size:13px;color:var(--ink2)"><strong style="font-family:'Newsreader',serif;font-size:17px;color:var(--ink)">{{ c.got }}</strong> students earned it</span>
+                <sc-if value="{{ c.hasMine }}"><span style="height:26px;padding:0 9px 0 6px;border-radius:13px;background:{{ c.mBg }};color:{{ c.mInk }};display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ c.mIcon }}</span>{{ c.mine }}</span></sc-if>
+              </div>
+            </a>
+          </sc-for>
+        </div>
+        </sc-if>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--sf);border:1px dashed var(--ln2);border-radius:14px;padding:56px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px">
+            <span style="width:64px;height:64px;border-radius:50%;border:1.5px dashed var(--ln2);display:grid;place-items:center;color:var(--ink3);box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:30px">search_off</span></span>
+            <span style="font-family:'Newsreader',serif;font-size:24px;font-weight:600">No certification matches</span>
+            <span style="font-size:14.5px;color:var(--ink2);max-width:380px;line-height:1.55">Widen the difficulty or remove a filter. You can also suggest a certification to the administration.</span>
+            <button onClick="{{ clear }}" style="height:44px;padding:0 18px;border-radius:8px;border:none;background:var(--pri);color:var(--pri-ink);font-size:14.5px;font-weight:600;cursor:pointer;margin-top:6px">Clear filters</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · filled (shared filters)</div>
+<div data-screen-label="05 Catalog mobile" style="width:390px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <header style="padding:20px 16px 12px 20px;display:flex;justify-content:space-between;align-items:center"><span style="font-family:'Newsreader',serif;font-size:30px;font-weight:500">Catalog</span><button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border:none;background:none;color:var(--ink2);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">{{ themeIcon }}</span></button></header>
+  <div style="padding:0 16px 12px;display:flex;flex-direction:column;gap:12px">
+    <label style="height:48px;border:1.5px solid var(--ln2);border-radius:10px;background:var(--sf);display:flex;align-items:center;gap:10px;padding:0 14px"><span style="font-family:'Material Symbols Outlined';font-size:21px;color:var(--ink3)">search</span><input value="{{ q }}" onChange="{{ onQ }}" placeholder="Name or code" aria-label="Search" style="flex:1;border:none;background:none;outline:none;font-size:15.5px;min-width:0"></input></label>
+    <div style="display:flex;gap:8px;overflow-x:auto;margin-right:-16px;padding-right:16px">
+      <span style="height:40px;padding:0 14px;border-radius:20px;background:var(--pri);color:var(--pri-ink);display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:18px">tune</span>Filters · {{ chipCount }}</span>
+      <sc-for list="{{ provOpts }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" style="height:40px;padding:0 14px;border-radius:20px;border:1.5px solid {{ o.bc }};background:{{ o.chipBg }};color:{{ o.chipInk }};display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;flex:none;cursor:pointer"><span style="width:8px;height:8px;border-radius:2px;background:{{ o.dot }}"></span>{{ o.short }}</button></sc-for>
+    </div>
+    <span style="font-size:13.5px;color:var(--ink2)"><strong style="color:var(--ink)">{{ count }}</strong> {{ countLabel }}</span>
+  </div>
+  <div style="padding:0 16px 24px;display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ results }}" as="c" hint-placeholder-count="6">
+      <a href="Fiche-certification.dc.html" style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink)">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 9px;border:1px solid var(--ln2);border-radius:6px;font-size:12px;font-weight:600;color:var(--ink2)"><span style="width:8px;height:8px;border-radius:2px;background:{{ c.dot }}"></span>{{ c.prov }}</span><sc-if value="{{ c.hasMine }}"><span style="height:24px;padding:0 8px 0 5px;border-radius:12px;background:{{ c.mBg }};color:{{ c.mInk }};display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:15px">{{ c.mIcon }}</span>{{ c.mine }}</span></sc-if></div>
+        <span style="font-family:'Newsreader',serif;font-size:19px;font-weight:600;line-height:1.2">{{ c.name }}</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ c.specs }}" as="sp" hint-placeholder-count="2"><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px 0 6px;border-radius:11px;background:{{ sp.bg }};font-size:11.5px;font-weight:700;color:var(--ink)"><span style="width:7px;height:7px;border-radius:50%;background:{{ sp.c }}"></span>{{ sp.code }}</span></sc-for></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);align-items:center"><span style="font-family:'IBM Plex Mono',monospace">{{ c.code }}</span><span>{{ c.lvl }}</span><span>Difficulty {{ c.diff }}/5</span><span><strong style="color:var(--ink)">{{ c.got }}</strong> earned</span></div>
+      </a>
+    </sc-for>
+    <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}"><div style="padding:32px 16px;text-align:center;font-size:14.5px;color:var(--ink2)">No certification matches.</div></sc-if>
+  </div>
+  <dc-import name="BottomNav" active="catalogue" hint-size="390px,82px"></dc-import>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;gap:56px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · filter sheet</div>
+<div data-screen-label="05 Catalog mobile filters" style="width:390px;height:844px;background:rgba(19,26,44,.5);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div role="dialog" aria-label="Filters" style="background:var(--bg);border-radius:20px 20px 0 0;padding:10px 20px 24px;display:flex;flex-direction:column;gap:20px">
+    <span style="width:40px;height:4px;border-radius:2px;background:var(--ln2);align-self:center"></span>
+    <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'Newsreader',serif;font-size:24px;font-weight:600">Filters</span><span style="font-size:14.5px;font-weight:600;color:var(--pri);min-height:44px;display:flex;align-items:center">Reset</span></div>
+    <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Certification level</span><div style="display:flex;flex-wrap:wrap;gap:8px"><span style="height:40px;padding:0 14px;border-radius:20px;background:var(--pri);color:var(--pri-ink);display:inline-flex;align-items:center;font-size:14px;font-weight:600">Foundational</span><span style="height:40px;padding:0 14px;border-radius:20px;background:var(--pri);color:var(--pri-ink);display:inline-flex;align-items:center;font-size:14px;font-weight:600">Associate</span><span style="height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--ln2);display:inline-flex;align-items:center;font-size:14px;font-weight:600;box-sizing:border-box">Professional</span><span style="height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--ln2);display:inline-flex;align-items:center;font-size:14px;font-weight:600;box-sizing:border-box">Expert</span></div></div>
+    <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Specialty</span><div style="display:flex;flex-wrap:wrap;gap:8px"><span style="height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--ln2);display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;box-sizing:border-box"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 285)"></span>SDIA</span><span style="height:40px;padding:0 14px;border-radius:20px;background:var(--pri);color:var(--pri-ink);display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 225);box-shadow:0 0 0 1.5px var(--pri-ink)"></span>CIM</span><span style="height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--ln2);display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;box-sizing:border-box"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 165)"></span>GLOps</span><span style="height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--ln2);display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;box-sizing:border-box"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 15)"></span>SSIR</span><span style="height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--ln2);display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;box-sizing:border-box"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 130)"></span>AIOT</span><span style="height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--ln2);display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;box-sizing:border-box"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 340)"></span>DMWM</span></div></div>
+    <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Maximum difficulty</span><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px"><span style="height:44px;border-radius:8px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;font-weight:600">1</span><span style="height:44px;border-radius:8px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;font-weight:600">2</span><span style="height:44px;border-radius:8px;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center;font-weight:600">3</span><span style="height:44px;border-radius:8px;border:1.5px solid var(--ln2);display:grid;place-items:center;font-weight:600;box-sizing:border-box">4</span><span style="height:44px;border-radius:8px;border:1.5px solid var(--ln2);display:grid;place-items:center;font-weight:600;box-sizing:border-box">5</span></div></div>
+    <span style="height:52px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;display:grid;place-items:center">Show 6 certifications</span>
+  </div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · loading</div>
+<div data-screen-label="05 Catalog mobile loading" aria-busy="true" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <header style="padding:20px 20px 12px"><span style="font-family:'Newsreader',serif;font-size:30px;font-weight:500">Catalog</span></header>
+  <div style="flex:1;padding:0 16px;display:flex;flex-direction:column;gap:10px;animation:shimmer 1.6s ease-in-out infinite">
+    <span style="height:48px;border-radius:10px;background:var(--sf2)"></span>
+    <div style="display:flex;gap:8px"><span style="width:96px;height:40px;border-radius:20px;background:var(--sf2)"></span><span style="width:72px;height:40px;border-radius:20px;background:var(--sf2)"></span><span style="width:110px;height:40px;border-radius:20px;background:var(--sf2)"></span></div>
+    <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px"><span style="width:64px;height:22px;border-radius:6px;background:var(--sf2)"></span><span style="width:85%;height:20px;border-radius:5px;background:var(--sf2)"></span><span style="width:60%;height:12px;border-radius:4px;background:var(--sf2)"></span></div>
+    <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px"><span style="width:64px;height:22px;border-radius:6px;background:var(--sf2)"></span><span style="width:75%;height:20px;border-radius:5px;background:var(--sf2)"></span><span style="width:55%;height:12px;border-radius:4px;background:var(--sf2)"></span></div>
+    <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px"><span style="width:64px;height:22px;border-radius:6px;background:var(--sf2)"></span><span style="width:80%;height:20px;border-radius:5px;background:var(--sf2)"></span><span style="width:50%;height:12px;border-radius:4px;background:var(--sf2)"></span></div>
+  </div>
+  <dc-import name="BottomNav" active="catalogue" hint-size="390px,82px"></dc-import>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · no results</div>
+<div data-screen-label="05 Catalog mobile empty" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <header style="padding:20px 20px 12px"><span style="font-family:'Newsreader',serif;font-size:30px;font-weight:500">Catalog</span></header>
+  <div style="padding:0 16px;display:flex;flex-direction:column;gap:12px"><span style="height:48px;border:1.5px solid var(--pri);border-radius:10px;background:var(--sf);display:flex;align-items:center;gap:10px;padding:0 14px;font-size:15.5px;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:21px;color:var(--ink3)">search</span>kubernetes<span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ink3);margin-left:auto">close</span></span></div>
+  <div style="flex:1;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px">
+    <span style="width:64px;height:64px;border-radius:50%;border:1.5px dashed var(--ln2);display:grid;place-items:center;color:var(--ink3);box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:30px">search_off</span></span>
+    <span style="font-family:'Newsreader',serif;font-size:23px;font-weight:600">No results for “kubernetes”</span>
+    <span style="font-size:14.5px;color:var(--ink2);line-height:1.55">The institute doesn't fund this certification yet. Try “DevOps” or an exam code.</span>
+    <span style="height:44px;padding:0 18px;border-radius:8px;border:1.5px solid var(--ln2);font-size:14.5px;font-weight:600;display:flex;align-items:center;margin-top:6px">Clear search</span>
+  </div>
+  <dc-import name="BottomNav" active="catalogue" hint-size="390px,82px"></dc-import>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;clair&quot;,&quot;sombre&quot;],&quot;default&quot;:&quot;clair&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static T = {
+    clair: {'--bg':'#F6F3EC','--sf':'#FFFDF8','--sf2':'#EEE9DE','--ln':'#E1DACB','--ln2':'#CBC2AF','--ink':'#131A2C','--ink2':'#474E63','--ink3':'#62677A','--pri':'#1C2F5E','--pri-ink':'#FFFFFF','--pri-sf':'#E4E8F2','--gold':'#86590C','--gold-fill':'#D4A23A','--gold-sf':'#F5EBD3','--ok':'#2C6A45','--ok-sf':'#E0EDE4','--warn':'#9C4F0C','--warn-sf':'#F7E6D6','--err':'#A3302A','--err-sf':'#F5DDDA','--hero':'#14244B','--hero-ink':'#F3EFE6','--focus':'#3B63C9'},
+    sombre: {'--bg':'#0D1220','--sf':'#141B2D','--sf2':'#1B2338','--ln':'#262F47','--ln2':'#38425F','--ink':'#ECEAE4','--ink2':'#B3B8C7','--ink3':'#9097AA','--pri':'#AFC2F4','--pri-ink':'#0D1220','--pri-sf':'#1F2B4C','--gold':'#E5BC62','--gold-fill':'#D9AE4E','--gold-sf':'#33291A','--ok':'#7CC79A','--ok-sf':'#15301F','--warn':'#EDA867','--warn-sf':'#36240F','--err':'#F0928A','--err-sf':'#3A1C1B','--hero':'#18213A','--hero-ink':'#ECEAE4','--focus':'#AFC2F4'}
+  };
+  static P = { AWS: ['AWS', 'oklch(0.66 0.14 55)'], MS: ['Microsoft Azure', 'oklch(0.66 0.14 245)'], RH: ['Red Hat', 'oklch(0.66 0.14 25)'], GC: ['Google Cloud', 'oklch(0.66 0.14 150)'], CT: ['CompTIA', 'oklch(0.66 0.14 310)'] };
+  static LV = ['Foundational', 'Associate', 'Professional', 'Expert'];
+  static SP = { SDIA: ['AI & Data Science', 285], CIM: ['Cloud Infrastructure Management', 225], GLOps: ['Software Engineering & DevOps', 165], SSIR: ['Systems Security & Network Infrastructure', 15], AIOT: ['AI & IoT', 130], DMWM: ['Mobile, Web & Multimedia Development', 340] };
+  static C = [
+    ['AWS', 'CLF-C02', 'AWS Certified Cloud Practitioner', 0, 'ALL', 1, 41, 'nv'],
+    ['MS', 'AZ-900', 'Microsoft Azure Fundamentals', 0, 'ALL', 1, 31, 'ob'],
+    ['MS', 'AI-900', 'Microsoft Azure AI Fundamentals', 0, ['SDIA', 'AIOT'], 1, 15],
+    ['AWS', 'SAA-C03', 'AWS Solutions Architect – Associate', 1, ['CIM', 'GLOps', 'SSIR'], 3, 14, 'ec'],
+    ['MS', 'DP-900', 'Microsoft Azure Data Fundamentals', 0, ['SDIA'], 1, 12],
+    ['CT', 'SY0-701', 'CompTIA Security+', 1, ['SSIR', 'CIM'], 3, 11],
+    ['MS', 'AZ-104', 'Microsoft Azure Administrator', 1, ['CIM', 'GLOps'], 3, 9],
+    ['GC', 'CDL', 'Google Cloud Digital Leader', 0, 'ALL', 1, 8],
+    ['RH', 'RHCSA', 'Red Hat Certified System Administrator', 1, ['CIM', 'GLOps', 'SSIR'], 4, 7],
+    ['AWS', 'DVA-C02', 'AWS Developer – Associate', 1, ['GLOps', 'DMWM', 'AIOT'], 3, 6],
+    ['MS', 'AZ-204', 'Microsoft Azure Developer Associate', 1, ['GLOps', 'DMWM', 'AIOT'], 3, 5],
+    ['CT', 'N10-009', 'CompTIA Network+', 0, ['SSIR', 'AIOT'], 2, 4],
+    ['MS', 'AI-102', 'Microsoft Azure AI Engineer Associate', 1, ['SDIA', 'AIOT'], 4, 3],
+    ['GC', 'ACE', 'Google Associate Cloud Engineer', 1, ['CIM', 'DMWM'], 3, 3],
+    ['MS', 'AZ-400', 'Microsoft DevOps Engineer Expert', 3, ['GLOps'], 4, 3],
+    ['MS', 'AZ-500', 'Microsoft Azure Security Engineer', 1, ['SSIR'], 4, 2],
+    ['AWS', 'SAP-C02', 'AWS Solutions Architect – Professional', 2, ['CIM'], 5, 2],
+    ['RH', 'RHCE', 'Red Hat Certified Engineer', 2, ['GLOps', 'CIM'], 5, 1]
+  ];
+  root = React.createRef();
+  state = { theme: null, q: '', prov: [], lvl: [], dom: [], diff: 5 };
+  th() { return this.state.theme ?? this.props.theme ?? 'clair'; }
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() { const el = this.root.current; if (!el) return; const t = Component.T[this.th()] || Component.T.clair; for (const k in t) el.style.setProperty(k, t[k]); }
+  renderVals() {
+    const s = this.state, P = Component.P, LV = Component.LV;
+    const tog = (k, v) => this.setState({ [k]: s[k].includes(v) ? s[k].filter(x => x !== v) : [...s[k], v] });
+    const q = s.q.trim().toLowerCase();
+    const match = (c, skip) => (skip === 'prov' || !s.prov.length || s.prov.includes(c[0])) && (skip === 'lvl' || !s.lvl.length || s.lvl.includes(c[3])) && (skip === 'dom' || !s.dom.length || c[4] === 'ALL' || c[4].some(x => s.dom.includes(x))) && c[5] <= s.diff && (!q || (c[1] + ' ' + c[2]).toLowerCase().includes(q));
+    const all = Component.C;
+    const mineMap = { ob: ['Earned', 'var(--gold-sf)', 'var(--gold)', 'workspace_premium'], nv: ['Unverified', 'var(--sf2)', 'var(--ink2)', 'pending'], ec: ['In progress', 'var(--pri-sf)', 'var(--pri)', 'clock_loader_40'] };
+    const results = all.filter(c => match(c)).map(c => {
+      const [pk, code, name, lv, sps, diff, got, mine] = c; const m = mineMap[mine];
+      const specs = sps === 'ALL' ? [{ code: 'All specialties', name: 'Useful to every specialty', c: 'var(--ink3)', bg: 'var(--sf2)' }] : sps.map(k => { const col = 'oklch(0.6 0.13 ' + Component.SP[k][1] + ')'; return { code: k, name: Component.SP[k][0], c: col, bg: 'color-mix(in oklch, ' + col + ' 16%, var(--sf))' }; });
+      return { prov: P[pk][0], dot: P[pk][1], code, name, lvl: LV[lv], specs, diff, got, diffAria: 'Difficulty ' + diff + ' of 5',
+        bars: [4, 7, 10, 12].map((h, i) => ({ h: h + 'px', c: i <= lv ? 'var(--pri)' : 'var(--ln2)' })),
+        dots: [1, 2, 3, 4, 5].map(i => ({ bg: i <= diff ? 'var(--ink)' : 'transparent', bc: i <= diff ? 'var(--ink)' : 'var(--ln2)' })),
+        hasMine: !!m, mine: m ? m[0] : '', mBg: m ? m[1] : '', mInk: m ? m[2] : '', mIcon: m ? m[3] : '' };
+    });
+    const box = on => ({ bc: on ? 'var(--pri)' : 'var(--ln2)', bg: on ? 'var(--pri)' : 'transparent', tick: on ? 'check' : '' });
+    const provOpts = Object.keys(P).map(k => { const on = s.prov.includes(k); return { label: P[k][0], short: P[k][0].replace('Microsoft ', ''), dot: P[k][1], on, ...box(on), chipBg: on ? 'var(--pri-sf)' : 'var(--sf)', chipInk: on ? 'var(--pri)' : 'var(--ink)', count: all.filter(c => c[0] === k && match(c, 'prov')).length, pick: () => tog('prov', k) }; });
+    const lvlOpts = LV.map((label, i) => { const on = s.lvl.includes(i); return { label, on, bc: on ? 'var(--pri)' : 'var(--ln2)', bg: on ? 'var(--pri)' : 'var(--sf)', ink: on ? 'var(--pri-ink)' : 'var(--ink)', pick: () => tog('lvl', i) }; });
+    const domOpts = Object.keys(Component.SP).map(label => { const on = s.dom.includes(label); return { label, name: Component.SP[label][0], dot: 'oklch(0.6 0.13 ' + Component.SP[label][1] + ')', on, ...box(on), count: all.filter(c => (c[4] === 'ALL' || c[4].includes(label)) && match(c, 'dom')).length, pick: () => tog('dom', label) }; });
+    const diffOpts = [1, 2, 3, 4, 5].map(n => { const on = n === s.diff, inr = n <= s.diff; return { n, on, aria: 'Difficulty up to ' + n, bc: on ? 'var(--pri)' : (inr ? 'var(--pri-sf)' : 'var(--ln2)'), bg: on ? 'var(--pri)' : (inr ? 'var(--pri-sf)' : 'var(--sf)'), ink: on ? 'var(--pri-ink)' : (inr ? 'var(--pri)' : 'var(--ink2)'), pick: () => this.setState({ diff: n }) }; });
+    const chips = [
+      ...s.prov.map(k => ({ label: P[k][0], aria: 'Remove ' + P[k][0], remove: () => tog('prov', k) })),
+      ...s.lvl.map(i => ({ label: LV[i], aria: 'Remove ' + LV[i], remove: () => tog('lvl', i) })),
+      ...s.dom.map(d => ({ label: d, aria: 'Remove ' + d, remove: () => tog('dom', d) })),
+      ...(s.diff < 5 ? [{ label: 'Difficulty ≤ ' + s.diff, aria: 'Remove difficulty', remove: () => this.setState({ diff: 5 }) }] : [])
+    ];
+    return {
+      root: this.root, themeIcon: this.th() === 'clair' ? 'dark_mode' : 'light_mode', toggleTheme: () => this.setState({ theme: this.th() === 'clair' ? 'sombre' : 'clair' }),
+      q: s.q, onQ: e => this.setState({ q: e.target.value }),
+      provOpts, lvlOpts, domOpts, diffOpts, diffLabel: s.diff === 5 ? 'Any difficulty' : 'Up to ' + s.diff + '/5',
+      results, count: results.length, countLabel: results.length > 1 ? 'certifications' : 'certification', hasResults: results.length > 0, noResults: results.length === 0,
+      chips, hasChips: chips.length > 0, chipCount: chips.length,
+      clear: () => this.setState({ q: '', prov: [], lvl: [], dom: [], diff: 5 })
+    };
+  }
+}
+</script>
+</body>
+</html>

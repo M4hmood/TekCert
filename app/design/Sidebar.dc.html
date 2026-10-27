@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+<aside style="width:256px;height:100%;box-sizing:border-box;background:var(--sf);border-right:1px solid var(--ln);display:flex;flex-direction:column;padding:20px 14px 16px;gap:28px;font-family:'Instrument Sans',sans-serif;color:var(--ink)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding-left:6px">
+    <a href="Tableau-de-bord.dc.html" style="display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)">
+      <div style="width:34px;height:34px;border-radius:50%;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:19px;font-weight:600;box-shadow:0 0 0 2px var(--sf),0 0 0 3.5px var(--gold-fill)">T</div>
+      <div style="display:flex;flex-direction:column;gap:3px"><span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;letter-spacing:-0.01em;line-height:1">TekCert</span><span style="font-size:10.5px;color:var(--ink3);letter-spacing:.12em;text-transform:uppercase;line-height:1">TEK-UP</span></div>
+    </a>
+    <button onClick="{{ toggle }}" aria-label="Collapse menu" title="Collapse menu" style="width:44px;height:44px;border:none;background:transparent;border-radius:8px;color:var(--ink3);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--sf2);color:var(--ink)"><span style="font-family:'Material Symbols Outlined';font-size:21px">left_panel_close</span></button>
+  </div>
+  <nav aria-label="Main navigation" style="display:flex;flex-direction:column;gap:2px">
+    <sc-for list="{{ main }}" as="it" hint-placeholder-count="5">
+      <sc-if value="{{ it.active }}"><a href="{{ it.href }}" aria-current="page" style="display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;background:var(--pri-sf);color:var(--pri);font-weight:600;font-size:14.5px;text-decoration:none"><span style="font-family:'Material Symbols Outlined';font-size:21px;font-variation-settings:'FILL' 1">{{ it.icon }}</span>{{ it.label }}</a></sc-if>
+      <sc-if value="{{ it.inactive }}"><a href="{{ it.href }}" style="display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--ink2);font-weight:500;font-size:14.5px;text-decoration:none" style-hover="background:var(--sf2);color:var(--ink)"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ it.icon }}</span>{{ it.label }}</a></sc-if>
+    </sc-for>
+  </nav>
+  <div style="display:flex;flex-direction:column;gap:2px">
+    <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:0 12px 8px">My space</div>
+    <sc-for list="{{ perso }}" as="it" hint-placeholder-count="4">
+      <sc-if value="{{ it.active }}"><a href="{{ it.href }}" aria-current="page" style="display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;background:var(--pri-sf);color:var(--pri);font-weight:600;font-size:14.5px;text-decoration:none"><span style="font-family:'Material Symbols Outlined';font-size:21px;font-variation-settings:'FILL' 1">{{ it.icon }}</span>{{ it.label }}</a></sc-if>
+      <sc-if value="{{ it.inactive }}"><a href="{{ it.href }}" style="display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--ink2);font-weight:500;font-size:14.5px;text-decoration:none" style-hover="background:var(--sf2);color:var(--ink)"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ it.icon }}</span><span style="flex:1">{{ it.label }}</span><sc-if value="{{ it.hasBadge }}"><span style="min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;background:var(--pri);color:var(--pri-ink);font-size:12px;font-weight:600;display:grid;place-items:center">{{ it.badge }}</span></sc-if></a></sc-if>
+    </sc-for>
+  </div>
+  <a href="Profil.dc.html" style="margin-top:auto;display:flex;align-items:center;gap:11px;padding:10px;border-radius:10px;border:1px solid var(--ln);text-decoration:none;color:var(--ink)" style-hover="background:var(--sf2)">
+    <div style="width:38px;height:38px;border-radius:50%;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;font-family:'Newsreader',serif;font-weight:600;font-size:16px;flex:none">YB</div>
+    <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Yassine Ben Amor</span><span style="font-size:12px;color:var(--ink3)">ING-4 CIM · Licentiate</span></div>
+  </a>
+</aside>
+</sc-if>
+<sc-if value="{{ collapsed }}" hint-placeholder-val="{{ false }}">
+<aside style="width:76px;height:100%;box-sizing:border-box;background:var(--sf);border-right:1px solid var(--ln);display:flex;flex-direction:column;align-items:center;padding:20px 0 16px;gap:24px;font-family:'Instrument Sans',sans-serif">
+  <div style="width:34px;height:34px;border-radius:50%;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:19px;font-weight:600;box-shadow:0 0 0 2px var(--sf),0 0 0 3.5px var(--gold-fill)">T</div>
+  <button onClick="{{ toggle }}" aria-label="Expand menu" title="Expand menu" style="width:44px;height:44px;border:none;background:transparent;border-radius:8px;color:var(--ink3);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--sf2);color:var(--ink)"><span style="font-family:'Material Symbols Outlined';font-size:21px">left_panel_open</span></button>
+  <nav aria-label="Main navigation" style="display:flex;flex-direction:column;gap:4px">
+    <sc-for list="{{ all }}" as="it" hint-placeholder-count="9">
+      <sc-if value="{{ it.active }}"><a href="{{ it.href }}" aria-label="{{ it.label }}" title="{{ it.label }}" aria-current="page" style="width:48px;height:44px;border-radius:8px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;text-decoration:none"><span style="font-family:'Material Symbols Outlined';font-size:21px;font-variation-settings:'FILL' 1">{{ it.icon }}</span></a></sc-if>
+      <sc-if value="{{ it.inactive }}"><a href="{{ it.href }}" aria-label="{{ it.label }}" title="{{ it.label }}" style="width:48px;height:44px;border-radius:8px;color:var(--ink2);display:grid;place-items:center;text-decoration:none" style-hover="background:var(--sf2);color:var(--ink)"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ it.icon }}</span></a></sc-if>
+    </sc-for>
+  </nav>
+  <div style="margin-top:auto;width:38px;height:38px;border-radius:50%;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;font-family:'Newsreader',serif;font-weight:600;font-size:16px">YB</div>
+</aside>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:256,&quot;height&quot;:800},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dashboard&quot;,&quot;catalogue&quot;,&quot;parcours&quot;,&quot;communaute&quot;,&quot;classement&quot;,&quot;profil&quot;,&quot;demandes&quot;,&quot;notifications&quot;,&quot;parametres&quot;],&quot;default&quot;:&quot;dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;collapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { collapsed: null };
+  renderVals() {
+    const collapsed = this.state.collapsed ?? !!this.props.collapsed;
+    const a = this.props.active ?? 'dashboard';
+    const mk = (k, label, icon, href, badge) => ({ k, label, icon, href: href || '#', badge, active: a === k, inactive: a !== k, hasBadge: !!badge });
+    const main = [
+      mk('dashboard', 'Dashboard', 'space_dashboard', 'Tableau-de-bord.dc.html'),
+      mk('catalogue', 'Catalog', 'menu_book', 'Catalogue.dc.html'),
+      mk('parcours', 'Paths', 'route', 'Parcours.dc.html'),
+      mk('communaute', 'Community', 'groups', 'Communaute.dc.html'),
+      mk('classement', 'Leaderboard', 'leaderboard', 'Classement.dc.html')
+    ];
+    const perso = [
+      mk('profil', 'My profile', 'person', 'Profil.dc.html'),
+      mk('demandes', 'My requests', 'assignment', 'Demande-passage.dc.html', '2'),
+      mk('notifications', 'Notifications', 'notifications', 'Notifications.dc.html', '3'),
+      mk('parametres', 'Settings', 'settings', 'Parametres.dc.html')
+    ];
+    return { collapsed, expanded: !collapsed, main, perso, all: [...main, ...perso], toggle: () => this.setState({ collapsed: !collapsed }) };
+  }
+}
+</script>
+</body>
+</html>
