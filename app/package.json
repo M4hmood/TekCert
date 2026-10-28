@@ -12,7 +12,7 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:api": "pnpm --filter backend test:e2e",
-    "test:e2e": "pnpm --filter e2e test",
+    "test:e2e": "pnpm --filter e2e test:e2e",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "bundle": "pnpm --filter backend deploy:bundle && pnpm --filter frontend deploy:bundle",

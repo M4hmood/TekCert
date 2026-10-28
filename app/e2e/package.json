@@ -4,7 +4,7 @@
   "private": true,
   "description": "Playwright smoke tests: the built frontend and backend running side by side.",
   "scripts": {
-    "test": "playwright test",
+    "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "install-browsers": "playwright install --with-deps chromium"
   },

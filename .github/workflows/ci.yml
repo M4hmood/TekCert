@@ -40,13 +40,13 @@ jobs:
       DATABASE_URL: postgresql://tekcert:tekcert@localhost:5432/tekcert_test
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           package_json_file: app/package.json
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version-file: app/.nvmrc
           cache: pnpm
@@ -81,7 +81,7 @@ jobs:
 
       - name: Upload Playwright report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: app/e2e/playwright-report
