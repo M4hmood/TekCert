@@ -15,7 +15,7 @@ cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 pnpm install
 pnpm db:up          # start Postgres in Docker
-pnpm db:migrate     # apply migrations
+pnpm db:migrate     # apply TypeORM migrations
 pnpm db:seed        # load the 44 certifications, chapters, classes and paths
 pnpm dev            # db + API on :4000 + web on :3000
 ```
@@ -34,6 +34,7 @@ Once it's running:
 | `pnpm test:api` | API e2e tests against the `tekcert_test` database |
 | `pnpm build && pnpm test:e2e` | Playwright smoke tests against the production builds |
 | `pnpm db:reset` | Drops, migrates and re-seeds the dev database |
+| `pnpm --filter backend db:migration:generate src/database/migrations/<Name>` | Generates a migration from entity changes |
 | `pnpm bundle` | Builds the self-contained deploy folders in `deploy/backend` and `deploy/frontend` |
 
 Before the first Playwright run, install the browser once with `pnpm --filter e2e install-browsers`.
@@ -43,8 +44,10 @@ The frontend and backend deploy separately (one EC2 group each). After `pnpm bui
 ```bash
 # API
 cd deploy/backend
-DATABASE_URL=postgresql://… npx prisma migrate deploy
-DATABASE_URL=postgresql://… PORT=4000 node dist/main.js
+export DATABASE_URL=postgresql://…
+npx typeorm migration:run -d dist/database/data-source.js   # apply migrations
+node dist/database/seed/index.js                            # optional: (re)load the catalog
+PORT=4000 node dist/main.js
 
 # Web
 cd deploy/frontend/frontend
@@ -56,7 +59,7 @@ Health checks: `GET /health` on the API (includes a database ping) and `GET /hea
 | Path | Contents |
 |---|---|
 | `frontend/` | Next.js 16 app (App Router, server components by default) |
-| `backend/` | NestJS 11 REST API, Prisma schema, migrations and seed (`prisma/seed/data/`) |
+| `backend/` | NestJS 11 REST API with TypeORM: entities, migrations and seed in `src/database/` |
 | `packages/types` | Shared zod schemas: the API contract used by both apps |
 | `packages/ui` | Design tokens (CSS variables, light and dark) and base components |
 | `packages/config` | Shared tsconfig and ESLint presets |

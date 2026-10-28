@@ -1,7 +1,7 @@
 import { type ArgumentsHost, BadRequestException, Logger, NotFoundException } from '@nestjs/common';
 import { ZodValidationException } from 'nestjs-zod';
+import { QueryFailedError } from 'typeorm';
 import { z } from 'zod';
-import { Prisma } from '../generated/prisma/client';
 import { ProblemDetailsFilter, VALIDATION_PROBLEM_TYPE } from './problem-details.filter';
 
 function run(exception: unknown) {
@@ -52,11 +52,9 @@ describe('ProblemDetailsFilter', () => {
     expect(body).not.toHaveProperty('detail');
   });
 
-  it('maps a Prisma unique violation to 409', () => {
-    const error = new Prisma.PrismaClientKnownRequestError('Unique constraint failed', {
-      code: 'P2002',
-      clientVersion: 'test',
-    });
+  it('maps a Postgres unique violation to 409', () => {
+    const driverError = Object.assign(new Error('duplicate key value'), { code: '23505' });
+    const error = new QueryFailedError('INSERT …', [], driverError);
     expect(run(error).body).toMatchObject({ status: 409, title: 'Conflict' });
   });
 

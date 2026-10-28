@@ -3,13 +3,11 @@
 module.exports = {
   testEnvironment: 'node',
   rootDir: '.',
-  roots: ['<rootDir>/src', '<rootDir>/prisma'],
+  roots: ['<rootDir>/src'],
   testRegex: '.*\\.spec\\.ts$',
   // Full type-aware compilation keeps Nest's decorator metadata intact; 151002 only warns about NodeNext.
   transform: {
     '^.+\\.ts$': ['ts-jest', { tsconfig: 'tsconfig.json', diagnostics: { ignoreCodes: [151002] } }],
   },
   moduleFileExtensions: ['ts', 'js', 'json'],
-  // The generated Prisma client imports its siblings with .js extensions (NodeNext style).
-  moduleNameMapper: { '^(\\.{1,2}/.*)\\.js$': '$1' },
 };

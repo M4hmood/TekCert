@@ -10,8 +10,6 @@ module.exports = {
     '^.+\\.ts$': ['ts-jest', { tsconfig: 'tsconfig.json', diagnostics: { ignoreCodes: [151002] } }],
   },
   moduleFileExtensions: ['ts', 'js', 'json'],
-  // The generated Prisma client imports its siblings with .js extensions (NodeNext style).
-  moduleNameMapper: { '^(\\.{1,2}/.*)\\.js$': '$1' },
   setupFiles: ['<rootDir>/test/setup-env.ts'],
   globalSetup: '<rootDir>/test/global-setup.ts',
   testTimeout: 30000,

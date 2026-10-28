@@ -2,22 +2,25 @@
   "name": "backend",
   "version": "0.0.0",
   "private": true,
-  "description": "TekCert REST API (NestJS + Prisma).",
+  "description": "TekCert REST API (NestJS + TypeORM).",
   "main": "dist/main.js",
   "scripts": {
-    "prebuild": "prisma generate",
     "build": "tsc -p tsconfig.build.json",
-    "dev": "prisma generate && tsc -p tsconfig.build.json && concurrently -k -n tsc,api -c blue,green \"tsc -p tsconfig.build.json --watch --preserveWatchOutput\" \"node --watch --env-file-if-exists=.env dist/main.js\"",
+    "dev": "tsc -p tsconfig.build.json && concurrently -k -n tsc,api -c blue,green \"tsc -p tsconfig.build.json --watch --preserveWatchOutput\" \"node --watch --env-file-if-exists=.env dist/main.js\"",
     "start": "node dist/main.js",
     "lint": "eslint .",
-    "typecheck": "prisma generate && tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:e2e": "jest --config jest.e2e.config.js --runInBand",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
-    "db:seed": "prisma db seed",
-    "db:reset": "prisma migrate reset --force",
-    "deploy:bundle": "pnpm --filter backend deploy --prod --legacy ../deploy/backend"
+    "typeorm": "tsx ./node_modules/typeorm/cli.js -d src/database/data-source.ts",
+    "db:migrate": "pnpm typeorm migration:run",
+    "db:migration:generate": "pnpm typeorm migration:generate",
+    "db:revert": "pnpm typeorm migration:revert",
+    "db:deploy": "typeorm migration:run -d dist/database/data-source.js",
+    "db:seed:deploy": "node dist/database/seed/index.js",
+    "db:seed": "tsx src/database/seed/index.ts",
+    "db:reset": "pnpm typeorm schema:drop && pnpm db:migrate && pnpm db:seed",
+    "deploy:bundle": "node -e \"require('node:fs').rmSync('../deploy/backend',{recursive:true,force:true})\" && pnpm --filter backend deploy --prod --legacy ../deploy/backend"
   },
   "dependencies": {
     "@nestjs/common": "^11.2.8",
@@ -26,18 +29,18 @@
     "@nestjs/platform-express": "^11.2.8",
     "@nestjs/swagger": "^11.4.7",
     "@nestjs/terminus": "^11.1.1",
-    "@prisma/adapter-pg": "7.10.1",
-    "@prisma/client": "7.10.1",
+    "@nestjs/typeorm": "^11.0.3",
     "@tekcert/types": "workspace:*",
     "dotenv": "^17.2.3",
     "helmet": "^8.3.0",
     "nestjs-pino": "^5.3.1",
     "nestjs-zod": "^5.5.0",
+    "pg": "^8.23.1",
     "pino": "^10.4.0",
     "pino-http": "^11.0.0",
-    "prisma": "7.10.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "typeorm": "^1.1.2",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -46,6 +49,7 @@
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.0",
+    "@types/pg": "^8.23.1",
     "@types/supertest": "^6.0.3",
     "concurrently": "^9.2.1",
     "eslint": "^9.39.5",
@@ -57,8 +61,6 @@
     "typescript": "~6.0.3"
   },
   "files": [
-    "dist",
-    "prisma",
-    "prisma.config.ts"
+    "dist"
   ]
 }

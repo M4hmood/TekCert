@@ -7,8 +7,8 @@ import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { CertificationsModule } from './certifications/certifications.module';
 import { ProblemDetailsFilter } from './common/problem-details.filter';
 import { type Env, validateEnv } from './config/env';
+import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
-import { PrismaModule } from './prisma/prisma.module';
 
 export const REQUEST_ID_HEADER = 'x-request-id';
 
@@ -36,7 +36,7 @@ export const REQUEST_ID_HEADER = 'x-request-id';
         },
       }),
     }),
-    PrismaModule,
+    DatabaseModule,
     HealthModule,
     CertificationsModule,
   ],

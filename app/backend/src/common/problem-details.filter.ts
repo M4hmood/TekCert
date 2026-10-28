@@ -10,15 +10,15 @@ import {
 import type { ProblemDetails } from '@tekcert/types';
 import type { Request, Response } from 'express';
 import { ZodSerializationException, ZodValidationException } from 'nestjs-zod';
+import { EntityNotFoundError, QueryFailedError } from 'typeorm';
 import { ZodError } from 'zod';
-import { Prisma } from '../generated/prisma/client';
 
 export const VALIDATION_PROBLEM_TYPE = 'urn:tekcert:problem:validation';
 
-/** Prisma errors that map to a client error rather than a 500. */
-const PRISMA_STATUS: Record<string, HttpStatus> = {
-  P2002: HttpStatus.CONFLICT, // unique constraint
-  P2025: HttpStatus.NOT_FOUND, // record not found
+/** Postgres error codes that map to a client error rather than a 500. */
+const POSTGRES_STATUS: Record<string, HttpStatus> = {
+  '23505': HttpStatus.CONFLICT, // unique_violation
+  '23503': HttpStatus.CONFLICT, // foreign_key_violation
 };
 
 /**
@@ -76,8 +76,12 @@ export class ProblemDetailsFilter implements ExceptionFilter {
             : undefined;
       return problem(status, detail);
     }
-    if (exception instanceof Prisma.PrismaClientKnownRequestError) {
-      const status = PRISMA_STATUS[exception.code];
+    if (exception instanceof EntityNotFoundError) {
+      return problem(HttpStatus.NOT_FOUND);
+    }
+    if (exception instanceof QueryFailedError) {
+      const code: unknown = (exception.driverError as { code?: unknown }).code;
+      const status = typeof code === 'string' ? POSTGRES_STATUS[code] : undefined;
       if (status) return problem(status);
     }
     return problem(HttpStatus.INTERNAL_SERVER_ERROR);

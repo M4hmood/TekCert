@@ -9,7 +9,7 @@
 ## Stack
 - Monorepo: pnpm workspaces + Turborepo
 - frontend/: Next.js (App Router, TypeScript, server components by default)
-- backend/: NestJS (REST, OpenAPI), Prisma ORM
+- backend/: NestJS (REST, OpenAPI), TypeORM
 - PostgreSQL 16 (Docker Compose locally)
 - packages/types: shared zod schemas; packages/ui: design tokens + base components
 - Tests: Vitest (web), Jest (api), Playwright (e2e)

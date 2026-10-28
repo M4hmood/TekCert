@@ -35,7 +35,7 @@ export default defineConfig({
     {
       name: 'api',
       command:
-        'pnpm --filter backend db:deploy && pnpm --filter backend exec tsx prisma/seed/index.ts && pnpm --filter backend start',
+        'pnpm --filter backend db:deploy && pnpm --filter backend db:seed:deploy && pnpm --filter backend start',
       url: `http://127.0.0.1:${API_PORT}/health`,
       env: { DATABASE_URL, PORT: String(API_PORT), NODE_ENV: 'production', LOG_LEVEL: 'warn' },
       reuseExistingServer: !process.env.CI,

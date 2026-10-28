@@ -20,7 +20,7 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - NestJS 11, which is still patched.
   - TypeScript 6.0.
   - ESLint 9 with flat config.
-  - Prisma 7.10 (the stable line; 8 is still RC).
+  - TypeORM 1.1 (see ADR-007).
 - **Consequences:**
   - Move to NestJS 12 once `nestjs-zod` supports it.
   - Move to ESLint 10 once `eslint-config-next` does. ESLint 9 is already marked unsupported upstream.
@@ -42,11 +42,21 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - Logs are JSON through `nestjs-pino`, pretty-printed in development. Every request gets an `x-request-id`, reused from the caller when one is sent.
 - **Consequences:** Clients handle one error shape. Request ids correlate frontend, proxy and API logs.
 
-## ADR-007 Database access (S00)
+## ADR-007 Database access: TypeORM (S00, revised)
+- **Context:** S00 was first built with Prisma 7. On review, the team chose TypeORM instead, before the PR was merged.
 - **Decision:**
-  - Prisma 7 with the `prisma-client` generator (CommonJS output in `backend/src/generated`) and the `@prisma/adapter-pg` driver adapter. The connection URL is set in `prisma.config.ts`.
-  - The seed is idempotent: it upserts by natural key and never deletes certifications, only deactivates them. Chapters keep their ids when their titles change.
-- **Consequences:** Re-seeding staging is safe. Chapter progress (S04) can reference chapter ids.
+  - TypeORM 1.1 with `@nestjs/typeorm` and the `pg` driver.
+  - Entities are decorated classes in `backend/src/database/entities`. Every column has an explicit type, so the CLI also works under `tsx`, which emits no decorator metadata.
+  - A snake_case naming strategy maps `providerId` to `provider_id`.
+  - Enums are native Postgres enums. UUIDs come from `gen_random_uuid()`.
+  - One `dataSourceOptions()` function feeds both the Nest app and the TypeORM CLI (`src/database/data-source.ts`).
+  - The schema only changes through generated, reviewed migrations in `src/database/migrations`. `synchronize` and `migrationsRun` are both off. Migrations run explicitly: `pnpm db:migrate` in dev, and `db:deploy` from compiled JS on servers.
+  - The seed lives in `src/database/seed` and compiles with the app, so a deploy bundle can seed itself (`db:seed:deploy`). It is idempotent: it upserts by natural key and never deletes certifications, only deactivates them. Chapters keep their ids when their titles change.
+  - `autoInstallPeers: false` in pnpm, so optional peers such as `mysql2` or Prisma are not pulled into the bundles.
+- **Consequences:**
+  - Re-seeding staging is safe, and chapter progress (S04) can reference chapter ids.
+  - Database errors map to Problem Details: `23505`/`23503` become 409 and `EntityNotFoundError` becomes 404.
+  - TypeORM 1.x removed `loadRelationCountAndMap`, so chapter counts use a `@VirtualColumn` subquery.
 
 ## ADR-008 Catalog source of truth (S00)
 - **Context:** The Landing design lists 44 certifications from 10 providers. Catalogue, Parcours and Onboarding use a different sample that includes CompTIA, Google Cloud, SAP-C02, AI-102 and others.
@@ -92,4 +102,4 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).
 - SMTP provider for transactional email
 - File storage provider (S3-compatible)
-- Who administers the certification catalog before the staff console exists (seed files vs. a minimal admin page). For now the answer is the seed files in `backend/prisma/seed/data/`.
+- Who administers the certification catalog before the staff console exists (seed files vs. a minimal admin page). For now the answer is the seed files in `backend/src/database/seed/data/`.

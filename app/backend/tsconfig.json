@@ -9,5 +9,5 @@
     "isolatedModules": false,
     "types": ["node", "jest"]
   },
-  "include": ["src", "test", "prisma", "prisma.config.ts"]
+  "include": ["src", "test"]
 }

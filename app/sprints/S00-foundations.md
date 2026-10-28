@@ -169,11 +169,11 @@ Where the build differs from the plan:
 - **Two Oracle certs would share a code**, so the codes are suffixed: `OCA-JAVA`, `OCA-DB`, `OCP-JAVA`, `OCP-DB`.
 - **The `/api/*` proxy is a route handler, not a Next rewrite.** Rewrites bake `API_URL` in at build time; the handler reads it per request, so one build runs anywhere.
 - **`packages/ui` ships TypeScript source** that Next transpiles (`transpilePackages`). `packages/types` is compiled to JS, because the backend needs it at runtime. Navigation links live in the frontend (they need `next/link`), and `EmptyState` was added to the UI package.
-- **Prisma 7 has no query engine binary**, so `binaryTargets` isn't needed. The backend deploy bundle (`pnpm bundle`) includes the Prisma CLI for `migrate deploy`.
+- **The ORM is TypeORM, not Prisma.** It was switched on review (2026-10-28, before merge); see ADR-007. The plan's Prisma details (schema file, `binaryTargets`, P2002/P2025 mapping) are replaced by TypeORM entities, generated migrations, the `pg` driver and Postgres error codes. The tables and the API behaviour are unchanged. The backend deploy bundle includes the TypeORM CLI for `migration:run`.
 - **`User.email` is a plain unique string**, not citext. S01 lowercases emails before writing.
-- **The seed validation schemas live in `backend/prisma/seed/schema.ts`.** They reuse the enums from `packages/types`.
+- **The seed lives in `backend/src/database/seed/`**, with its validation schemas in `schema.ts`. They reuse the enums from `packages/types`. It compiles with the app, so a deploy bundle can seed itself.
 - **CI is a single job** (one install). Turbo runs the tasks in parallel inside it.
-- **Version choices:** NestJS 11, TypeScript 6.0, ESLint 9, Prisma 7.10. The reasons are in ADR-004.
+- **Version choices:** NestJS 11, TypeScript 6.0, ESLint 9, TypeORM 1.1. The reasons are in ADR-004 and ADR-007.
 
 Known caveats:
 - Catalog chapters, levels, difficulty, specialties and paths are drafts (`DRAFT` in the seed files) and need staff review. This is in the backlog.
