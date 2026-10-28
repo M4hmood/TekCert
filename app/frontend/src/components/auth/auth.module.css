@@ -100,12 +100,12 @@
 /* Badge wall: three slowly scrolling columns, decorative only. */
 .wall {
   display: flex;
+  justify-content: center;
   gap: 14px;
   height: 380px;
-  margin-left: 6px;
   overflow: hidden;
   transform: rotate(-6deg);
-  transform-origin: left center;
+  transform-origin: center;
   mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
 }
 
