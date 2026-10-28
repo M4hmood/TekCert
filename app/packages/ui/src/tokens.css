@@ -4,10 +4,10 @@
  */
 
 :root {
-  /* Typography: families come from next/font variables when present */
-  --font-serif: var(--font-newsreader, 'Newsreader'), Georgia, serif;
-  --font-sans: var(--font-instrument-sans, 'Instrument Sans'), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono, 'IBM Plex Mono'), ui-monospace, monospace;
+  /* Typography: self-hosted fonts loaded by styles.css */
+  --font-serif: 'Newsreader Variable', Georgia, serif;
+  --font-sans: 'Instrument Sans Variable', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
   --font-icons: 'Material Symbols Outlined';
 
   /* Type scale: size / line-height (Design-System › Typographie) */

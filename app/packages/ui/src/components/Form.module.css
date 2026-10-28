@@ -1,0 +1,162 @@
+/* Form controls from the Connexion and Design-System screens. */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+  border: 1.5px solid var(--ln2);
+  border-radius: var(--radius-field);
+  background: var(--sf);
+  font-size: 15.5px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--pri);
+  box-shadow: 0 0 0 3px var(--pri-sf);
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--err);
+}
+
+.input::placeholder {
+  color: var(--ink3);
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.error {
+  color: var(--err);
+}
+
+.success {
+  color: var(--ok);
+}
+
+.hint {
+  color: var(--ink3);
+}
+
+.passwordWrap {
+  position: relative;
+  display: flex;
+}
+
+.passwordWrap .input {
+  padding-right: 52px;
+}
+
+.reveal {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: var(--radius-field);
+  background: none;
+  color: var(--ink3);
+  cursor: pointer;
+}
+
+/* Checkbox: a real input, visually replaced by the 22 px box from the design. */
+.checkbox {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding: 11px 0;
+  font-size: 15px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.checkbox input {
+  position: absolute;
+  opacity: 0;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+}
+
+.box {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border: 1.5px solid var(--ln2);
+  border-radius: 6px;
+  background: var(--sf);
+  color: transparent;
+}
+
+.checkbox input:checked + .box {
+  border-color: var(--pri);
+  background: var(--pri);
+  color: var(--pri-ink);
+}
+
+.checkbox input:focus-visible + .box {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.alert {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.alert .alertIcon {
+  flex: none;
+  font-size: 20px;
+}
+
+.alertError {
+  background: var(--err-sf);
+  color: var(--err);
+}
+
+.alertInfo {
+  background: var(--pri-sf);
+  color: var(--pri);
+}
+
+.alertSuccess {
+  background: var(--ok-sf);
+  color: var(--ok);
+}
