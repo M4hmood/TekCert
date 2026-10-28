@@ -28,7 +28,7 @@
 
 ## Plan
 
-Status: **draft, waiting for approval.** Branch `sprint/S01-authentication`, one PR at the end. The first commit also carries the S00 "CI green on main" checkbox.
+Status: **approved 2026-10-28, building.** Branch `sprint/S01-authentication`, one PR at the end. The first commit also carries the S00 "CI green on main" checkbox.
 
 ### 1. How the session works
 - **Access token:** a JWT signed with HS256 (`jose`), valid for 15 minutes. It holds `sub` (user id) and `role`. It travels in the `tc_access` cookie.
@@ -136,6 +136,7 @@ Status: **draft, waiting for approval.** Branch `sprint/S01-authentication`, one
 5. ADRs, README, checklist
 
 ### Decisions from review (2026-10-28)
+1. The visibility consent checkbox is optional and unticked by default. Ticked sets `profile_visible = true` and records `visibility_consented_at`. Unticked means a private profile, which the student can change later in Settings.
 2. The verification link is valid for 24 hours. Reset links stay at 30 minutes.
 3. "Stay signed in" lasts 30 days (sliding). Without it, the session lasts as long as the browser, capped at 12 hours.
 4. `GET /certifications` and `GET /certifications/:slug` stay public. All app screens require sign-in.

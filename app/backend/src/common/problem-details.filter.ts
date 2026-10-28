@@ -12,6 +12,7 @@ import type { Request, Response } from 'express';
 import { ZodSerializationException, ZodValidationException } from 'nestjs-zod';
 import { EntityNotFoundError, QueryFailedError } from 'typeorm';
 import { ZodError } from 'zod';
+import { ProblemException } from './problem.exception';
 
 export const VALIDATION_PROBLEM_TYPE = 'urn:tekcert:problem:validation';
 
@@ -61,6 +62,9 @@ export class ProblemDetailsFilter implements ExceptionFilter {
               }))
             : [],
       };
+    }
+    if (exception instanceof ProblemException) {
+      return { ...exception.problem };
     }
     if (exception instanceof ZodSerializationException) {
       return problem(HttpStatus.INTERNAL_SERVER_ERROR);

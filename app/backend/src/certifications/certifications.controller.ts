@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ZodResponse } from 'nestjs-zod';
+import { Public } from '../auth/decorators';
 import {
   CertificationDetailDto,
   CertificationListDto,
@@ -9,6 +10,8 @@ import {
 } from './certifications.dto';
 import { CertificationsService } from './certifications.service';
 
+/** Read-only catalog, public: the sign-in page and the landing page show it. */
+@Public()
 @ApiTags('certifications')
 @Controller('certifications')
 export class CertificationsController {
