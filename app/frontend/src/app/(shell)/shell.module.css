@@ -1,0 +1,37 @@
+.shell {
+  display: flex;
+  min-height: 100dvh;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+  padding: 32px 40px 48px;
+}
+
+@media (max-width: 767px) {
+  .main {
+    gap: 16px;
+    padding: 20px 16px calc(var(--bottom-nav-height) + 24px);
+  }
+}
+
+.skipLink {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 20;
+  padding: 10px 14px;
+  border-radius: var(--radius-field);
+  background: var(--pri);
+  color: var(--pri-ink);
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+
+.skipLink:focus {
+  transform: none;
+}

@@ -1,0 +1,35 @@
+/* Outlined 44 px button on desktop, plain icon on mobile (Tableau-de-bord headers). */
+button.toggle {
+  border-color: var(--ln2);
+  background: var(--sf);
+}
+
+@media (max-width: 767px) {
+  button.toggle {
+    border-color: transparent;
+    background: transparent;
+  }
+}
+
+/* Both icons are rendered; CSS shows the one matching the active theme, so SSR and hydration agree. */
+.toLight {
+  display: none;
+}
+
+:global(:root[data-theme='dark']) .toDark {
+  display: none;
+}
+
+:global(:root[data-theme='dark']) .toLight {
+  display: inline;
+}
+
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme='light'])) .toDark {
+    display: none;
+  }
+
+  :global(:root:not([data-theme='light'])) .toLight {
+    display: inline;
+  }
+}
