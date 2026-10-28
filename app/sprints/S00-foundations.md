@@ -10,28 +10,28 @@
 3. Stop and wait for approval.
 
 ## Scope
-- [ ] Monorepo: pnpm workspaces + Turborepo — apps/web (Next.js 15, App Router, TypeScript), apps/api (NestJS), packages/types (shared zod schemas + DTO types), packages/ui (design tokens + base components)
-- [ ] PostgreSQL 16 in Docker Compose; Prisma schema + first migration (users, specialties, classes, certifications, chapters, paths)
-- [ ] Seed script: 6 specialties, ING-1…ING-5 years and groups, full certification catalog (10 providers, 44 certs) with chapters, the 7 paths
-- [ ] Design tokens from the design system → CSS variables (light + dark), Newsreader / Instrument Sans / IBM Plex Mono, Material Symbols
-- [ ] App shell: Sidebar (desktop) + BottomNav (mobile), theme toggle, empty routes for every MVP screen
-- [ ] API: health check, global validation pipe, error format, OpenAPI at /docs, config module (.env), request logging
-- [ ] Quality: ESLint + Prettier, strict TS, Vitest (web) / Jest (api), Playwright smoke test, GitHub Actions (lint, typecheck, test, build)
-- [ ] Staging deploy (web + api + db) with one command
-- [ ] docs/decisions.md: record each stack decision as a short ADR
+- [x] Monorepo: pnpm workspaces + Turborepo — apps/web (Next.js 15, App Router, TypeScript), apps/api (NestJS), packages/types (shared zod schemas + DTO types), packages/ui (design tokens + base components)
+- [x] PostgreSQL 16 in Docker Compose; Prisma schema + first migration (users, specialties, classes, certifications, chapters, paths)
+- [x] Seed script: 6 specialties, ING-1…ING-5 years and groups, full certification catalog (10 providers, 44 certs) with chapters, the 7 paths
+- [x] Design tokens from the design system → CSS variables (light + dark), Newsreader / Instrument Sans / IBM Plex Mono, Material Symbols
+- [x] App shell: Sidebar (desktop) + BottomNav (mobile), theme toggle, empty routes for every MVP screen
+- [x] API: health check, global validation pipe, error format, OpenAPI at /docs, config module (.env), request logging
+- [x] Quality: ESLint + Prettier, strict TS, Vitest (web) / Jest (api), Playwright smoke test, GitHub Actions (lint, typecheck, test, build)
+- [ ] Staging deploy (web + api + db) with one command: **deferred**, moved to the PLAN.md backlog (decision 3)
+- [x] docs/decisions.md: record each stack decision as a short ADR
 
 ## Done when
-- [ ] pnpm dev starts web, api and db locally
-- [ ] CI is green on main
-- [ ] Staging URL shows the app shell with working navigation
-- [ ] Seeded catalog is queryable at GET /certifications
+- [x] pnpm dev starts web, api and db locally
+- [ ] CI is green on main: the workflow is ready and every step passes locally; it goes green on `main` once the S00 PR is merged
+- [ ] Staging URL shows the app shell with working navigation: **deferred** with staging. Playwright checks the navigation against the production builds instead
+- [x] Seeded catalog is queryable at GET /certifications
 
 ## Out of scope
 - Any auth, any feature logic
 
 ## Plan
 
-Status: **revised with your answers, waiting for approval.**
+Status: **approved 2026-10-28, built.** See "Outcome" under Notes for what differs from this plan.
 
 Branch `sprint/S00-foundations`, small conventional commits, one PR to `main` at the end.
 
@@ -160,3 +160,21 @@ The frontend and backend will later run on **separate EC2 instances**, so in S00
 Remaining assumption: ING-1–3 classes are named `ING-1-A`…`ING-3-D` (no specialty in the name). Tell me if the real pattern differs.
 
 ## Notes / decisions
+
+### Outcome (2026-10-28)
+Tests: types 10 (Vitest), backend 14 unit + 9 API e2e (Jest), frontend 16 (Vitest), Playwright 14 (desktop 1440 + mobile 390). Format, lint, typecheck and build all pass.
+
+Where the build differs from the plan:
+- **Certification URLs use a slug** (`/catalog/[slug]`, `GET /certifications/:slug`), because some codes aren't URL-safe (`PCPP-32-1/2`).
+- **Two Oracle certs would share a code**, so the codes are suffixed: `OCA-JAVA`, `OCA-DB`, `OCP-JAVA`, `OCP-DB`.
+- **The `/api/*` proxy is a route handler, not a Next rewrite.** Rewrites bake `API_URL` in at build time; the handler reads it per request, so one build runs anywhere.
+- **`packages/ui` ships TypeScript source** that Next transpiles (`transpilePackages`). `packages/types` is compiled to JS, because the backend needs it at runtime. Navigation links live in the frontend (they need `next/link`), and `EmptyState` was added to the UI package.
+- **Prisma 7 has no query engine binary**, so `binaryTargets` isn't needed. The backend deploy bundle (`pnpm bundle`) includes the Prisma CLI for `migrate deploy`.
+- **`User.email` is a plain unique string**, not citext. S01 lowercases emails before writing.
+- **The seed validation schemas live in `backend/prisma/seed/schema.ts`.** They reuse the enums from `packages/types`.
+- **CI is a single job** (one install). Turbo runs the tasks in parallel inside it.
+- **Version choices:** NestJS 11, TypeScript 6.0, ESLint 9, Prisma 7.10. The reasons are in ADR-004.
+
+Known caveats:
+- Catalog chapters, levels, difficulty, specialties and paths are drafts (`DRAFT` in the seed files) and need staff review. This is in the backlog.
+- The Material Symbols font is about 3 MB; subsetting it is in the backlog for S08.
