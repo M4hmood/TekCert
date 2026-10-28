@@ -1,6 +1,8 @@
 import { CertificationListSchema } from '@tekcert/types';
-import type { ReactNode } from 'react';
+import { type ReactNode, Suspense } from 'react';
 import styles from '@/components/auth/auth.module.css';
+import { AuthContent } from '@/components/auth/AuthContent';
+import { AuthTabs } from '@/components/auth/AuthTabs';
 import { BadgeWall } from '@/components/auth/BadgeWall';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { apiGet } from '@/lib/api';
@@ -41,7 +43,13 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
           <ThemeToggle />
         </div>
         <div className={styles.center}>
-          <div className={styles.column}>{children}</div>
+          <div className={styles.column}>
+            {/* Tabs live here, not in the pages, so they stay mounted and the pill can slide. */}
+            <Suspense>
+              <AuthTabs />
+            </Suspense>
+            <AuthContent>{children}</AuthContent>
+          </div>
         </div>
       </main>
     </div>

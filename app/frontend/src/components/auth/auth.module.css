@@ -85,9 +85,10 @@
 .center {
   display: flex;
   flex: 1;
-  align-items: center;
+  /* Top-aligned (not centred) so the tabs stay put when the form below changes height. */
+  align-items: flex-start;
   justify-content: center;
-  padding: 24px 0;
+  padding: clamp(24px, 14vh, 160px) 0 24px;
 }
 
 .column {
@@ -168,6 +169,7 @@
 
 /* Tabs: segmented control linking /sign-in and /sign-up. */
 .tabs {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 4px;
@@ -175,7 +177,25 @@
   background: var(--sf2);
 }
 
+/* The white pill behind the active tab; it slides when switching. */
+.tabIndicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 7px;
+  background: var(--sf);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: transform 260ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.tabs[data-active='1'] .tabIndicator {
+  transform: translateX(100%);
+}
+
 .tab {
+  position: relative;
   display: grid;
   place-items: center;
   height: 44px;
@@ -184,12 +204,23 @@
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
+  transition: color 200ms ease;
 }
 
 .tab[aria-current='page'] {
-  background: var(--sf);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   color: var(--ink);
+}
+
+/* In-page steps (e.g. form → "Check your inbox") fade in; page switches use view transitions. */
+.result {
+  animation: auth-enter 240ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@keyframes auth-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 
 /* Form content */
@@ -374,5 +405,54 @@
 @media (max-width: 479px) {
   .names {
     grid-template-columns: 1fr;
+  }
+}
+
+/*
+ * Page switches (see AuthContent): the old form fades out first, then the new one fades in at its
+ * final position (they never overlap), while the box resizes to the new height. Nothing else on
+ * the page is cross-faded, and the tab bar stays live so only its pill moves.
+ */
+:global(::view-transition-group(.auth-swap)) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+:global(::view-transition-image-pair(.auth-swap)) {
+  isolation: auto;
+}
+
+:global(::view-transition-old(.auth-swap)) {
+  animation: auth-fade-out 120ms ease-in both;
+  mix-blend-mode: normal;
+}
+
+:global(::view-transition-new(.auth-swap)) {
+  animation: auth-fade-in 200ms 120ms ease-out both;
+  mix-blend-mode: normal;
+}
+
+:global(::view-transition-old(root)),
+:global(::view-transition-new(root)) {
+  animation: none;
+}
+
+:global(::view-transition-old(auth-tabs)) {
+  display: none;
+}
+
+:global(::view-transition-new(auth-tabs)) {
+  animation: none;
+}
+
+@keyframes auth-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes auth-fade-in {
+  from {
+    opacity: 0;
   }
 }
