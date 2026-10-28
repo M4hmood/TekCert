@@ -14,7 +14,7 @@ describe('validateEnv', () => {
       WEB_URL: 'http://localhost:3000',
       CORS_ORIGIN: ['http://localhost:3000'],
       COOKIE_SECURE: false,
-      SMTP_URL: 'smtp://localhost:1025',
+      SMTP_URL: 'smtp://127.0.0.1:1025',
       AUTH_RATE_LIMIT: 20,
     });
   });

@@ -135,7 +135,7 @@ export class AuthService {
     if (!user) return;
     const token = await this.emailTokens.issue(user.id, 'reset_password');
     if (!token) return;
-    await this.deliver(
+    this.deliver(
       resetPasswordMail(user.email, {
         firstName: user.firstName,
         url: `${this.webUrl}/reset-password?token=${token}`,
@@ -175,7 +175,7 @@ export class AuthService {
   private async sendVerification(user: User): Promise<void> {
     const token = await this.emailTokens.issue(user.id, 'verify_email');
     if (!token) return;
-    await this.deliver(
+    this.deliver(
       verifyEmailMail(user.email, {
         firstName: user.firstName,
         url: `${this.webUrl}/verify-email?token=${token}`,
@@ -187,7 +187,7 @@ export class AuthService {
     // Reuses the reset cooldown so repeated sign-ups can't flood the owner's inbox.
     const token = await this.emailTokens.issue(user.id, 'reset_password');
     if (!token) return;
-    await this.deliver(
+    this.deliver(
       accountExistsMail(user.email, {
         firstName: user.firstName,
         signInUrl: `${this.webUrl}/sign-in`,
@@ -196,13 +196,15 @@ export class AuthService {
     );
   }
 
-  /** Email failures are logged, not surfaced: the student can use "Resend". */
-  private async deliver(mail: Parameters<MailSender['send']>[0]): Promise<void> {
-    try {
-      await this.mail.send(mail);
-    } catch (error) {
+  /**
+   * Sends in the background: responses never wait for SMTP, so a slow mail server can't slow
+   * sign-up down or reveal through timing which branch ran. Failures are logged; the student
+   * can use "Resend".
+   */
+  private deliver(mail: Parameters<MailSender['send']>[0]): void {
+    this.mail.send(mail).catch((error: unknown) => {
       this.logger.error({ err: error, subject: mail.subject }, 'Email delivery failed');
-    }
+    });
   }
 }
 

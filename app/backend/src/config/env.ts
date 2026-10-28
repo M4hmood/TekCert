@@ -21,8 +21,8 @@ export const EnvSchema = z
     JWT_ACCESS_SECRET: z.string().min(32, 'Must be at least 32 characters'),
     /** Cookies are Secure (HTTPS only) unless explicitly disabled for local HTTP. */
     COOKIE_SECURE: BooleanString.optional(),
-    /** SMTP connection, e.g. smtp://localhost:1025 for Mailpit or smtps://user:pass@host:465. */
-    SMTP_URL: z.string().min(1).default('smtp://localhost:1025'),
+    /** SMTP connection, e.g. smtp://127.0.0.1:1025 for Mailpit or smtps://user:pass@host:465. */
+    SMTP_URL: z.string().min(1).default('smtp://127.0.0.1:1025'),
     MAIL_FROM: z.string().min(3).default('TekCert <no-reply@tek-up.de>'),
     /** Requests per minute per IP on /auth/* (brute-force brake on top of the per-account lockout). */
     AUTH_RATE_LIMIT: z.coerce.number().int().positive().default(20),
