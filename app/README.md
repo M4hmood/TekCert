@@ -14,7 +14,7 @@ A web platform where TEK-UP students prepare the IT certifications funded by the
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 pnpm install
-pnpm db:up          # start Postgres in Docker
+pnpm db:up          # start Postgres and Mailpit in Docker
 pnpm db:migrate     # apply TypeORM migrations
 pnpm db:seed        # load the 44 certifications, chapters, classes and paths
 pnpm dev            # db + API on :4000 + web on :3000
@@ -24,6 +24,9 @@ Once it's running:
 - the app is at http://localhost:3000
 - the API docs (OpenAPI) are at http://localhost:4000/docs
 - `GET http://localhost:4000/certifications` returns the seeded catalog
+- every email the app sends (verification, password reset) lands in Mailpit at http://localhost:8025
+
+Create an account at http://localhost:3000/sign-up with any `@tek-up.de` address, then open the confirmation link from Mailpit.
 
 ### Everyday commands
 | Command | What it does |

@@ -35,6 +35,8 @@ Solo developer + Claude Code · 1-week sprints · English only at launch · emai
 - Staff review of the drafted catalog data: chapters, levels, difficulty, specialties and the 7 paths (`backend/src/database/seed/data/`). Also confirm that retired vendor certs (LFCE, CHSA, MCSA, AAD, EX180) are still funded.
 - Add the certifications the designs use outside the funded 44 (CompTIA, Google Cloud, SAP-C02, AI-102, AZ-305, DP-900/100, SC-900, SCS-C02, MLA-C01), if the institute funds them.
 - Upgrade to NestJS 12 once `nestjs-zod` supports it, and to ESLint 10 once `eslint-config-next` does (ADR-004).
+- Clean up expired rows in `sessions`, `email_tokens` and `login_attempts` (a scheduled job).
+- Move the per-IP auth rate limit to a shared store (e.g. Redis) once the API runs on several instances.
 - Subset the Material Symbols font to the icons actually used (it is about 3 MB today). Fits with the S08 performance pass.
 
 ## Note on MVP scope

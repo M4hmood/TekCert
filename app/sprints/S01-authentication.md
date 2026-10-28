@@ -10,17 +10,17 @@
 3. Stop and wait for approval.
 
 ## Scope
-- [ ] Sign up (first name, last name, institute email, password rules: 8 chars, a number, a symbol, visibility consent)
-- [ ] Email domain restricted to @tek-up.de, with inline error state
-- [ ] Email verification link (dev: Mailpit; staging: real SMTP)
-- [ ] Sign in, “stay signed in”, sign out; httpOnly cookie session (access + refresh tokens)
-- [ ] Forgot / reset password (30-minute link, resend timer)
-- [ ] Rate limit: 5 attempts then 15-minute lock, with the remaining-attempts message
-- [ ] Route guards on web + api; roles column (student, staff, admin) present but only student used
+- [x] Sign up (first name, last name, institute email, password rules: 8 chars, a number, a symbol, visibility consent)
+- [x] Email domain restricted to @tek-up.de, with inline error state
+- [x] Email verification link (dev: Mailpit; staging: real SMTP). Mailpit is done; the real SMTP provider comes with staging (backlog)
+- [x] Sign in, “stay signed in”, sign out; httpOnly cookie session (access + refresh tokens)
+- [x] Forgot / reset password (30-minute link, resend timer)
+- [x] Rate limit: 5 attempts then 15-minute lock, with the remaining-attempts message
+- [x] Route guards on web + api; roles column (student, staff, admin) present but only student used
 
 ## Done when
-- [ ] All Connexion states from the design work: sign-in, error, sign-up, forgot, link sent
-- [ ] Passwords hashed with argon2; tokens rotate; e2e test covers sign-up → verify → sign-in
+- [x] All Connexion states from the design work: sign-in, error, sign-up, forgot, link sent
+- [x] Passwords hashed with argon2; tokens rotate; e2e test covers sign-up → verify → sign-in
 
 ## Out of scope
 - SSO
@@ -28,7 +28,7 @@
 
 ## Plan
 
-Status: **approved 2026-10-28, building.** Branch `sprint/S01-authentication`, one PR at the end. The first commit also carries the S00 "CI green on main" checkbox.
+Status: **approved 2026-10-28, built.** Branch `sprint/S01-authentication`, one PR at the end. The first commit also carries the S00 "CI green on main" checkbox.
 
 ### 1. How the session works
 - **Access token:** a JWT signed with HS256 (`jose`), valid for 15 minutes. It holds `sub` (user id) and `role`. It travels in the `tc_access` cookie.
@@ -155,3 +155,21 @@ Status: **approved 2026-10-28, building.** Branch `sprint/S01-authentication`, o
 6. **Hero stat.** Replace "142 certifications verified by TEK-UP students this semester" with a live "44 certifications funded by the institute" until verified certifications exist (Release 2)?
 
 ## Notes / decisions
+
+### Outcome (2026-10-28)
+Tests:
+- types: 25 (Vitest)
+- backend: 26 unit + 32 API e2e (Jest)
+- frontend: 36 (Vitest)
+- Playwright: 28, at 1440 and 390 px, run twice from a cold start
+
+Format, lint, typecheck and build all pass.
+
+Where the build differs from the plan:
+- **Cookie path and SameSite.** Both cookies use `Path=/` and `SameSite=Lax`. The plan had the refresh cookie on `/api/auth`, but then `proxy.ts` never receives it on page requests, so it could not refresh the session before rendering. CSRF protection still comes from `SameSite=Lax` plus the API's `Origin` check (ADR-013).
+- **JWT library.** `jsonwebtoken` instead of `jose`. `jose` v6 is ESM-only, and Jest's CommonJS runtime can't load it.
+- **Emails send in the background.** API responses don't wait for SMTP. On Windows, nodemailer took 6.6 s to resolve `localhost`, so the default is now `smtp://127.0.0.1:1025` (ADR-015).
+- **Fonts are self-hosted from `@fontsource`.** With `next/font/google`, every page returned 500 whenever Google Fonts was slow (ADR-010).
+- **Badge images.** The 18 badge-wall images are in `frontend/public/badges/`, using the naming planned for S03.
+- **New, undesigned pages.** `/verify-email` and `/reset-password` reuse the Connexion card and copy style.
+- **Playwright tweaks.** The suite now has a warm-up project, and runs with 2 workers. On Windows, the first read of each freshly bundled file was slow enough to time out the first tests.
