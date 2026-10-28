@@ -1,6 +1,8 @@
 import request from 'supertest';
 import type { TestApp } from './test-app';
 
+type TestAppModule = typeof import('./test-app.js');
+
 describe('Per-IP rate limit on /auth (e2e)', () => {
   let t: TestApp;
   const previous = process.env.AUTH_RATE_LIMIT;
@@ -9,7 +11,8 @@ describe('Per-IP rate limit on /auth (e2e)', () => {
     // ConfigModule reads the environment when AppModule is first loaded, so set the limit
     // before importing anything that pulls it in.
     process.env.AUTH_RATE_LIMIT = '3';
-    const { createTestApp } = await import('./test-app');
+    // require, not import(): Jest runs these files as CommonJS.
+    const { createTestApp } = jest.requireActual<TestAppModule>('./test-app');
     t = await createTestApp();
   });
 
