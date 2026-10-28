@@ -1,0 +1,136 @@
+/*
+ * TekCert design tokens, from design/Design-System.dc.html.
+ * Theme: no attribute or data-theme="system" follows the OS; data-theme="light|dark" forces it.
+ */
+
+:root {
+  /* Typography: families come from next/font variables when present */
+  --font-serif: var(--font-newsreader, 'Newsreader'), Georgia, serif;
+  --font-sans: var(--font-instrument-sans, 'Instrument Sans'), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono, 'IBM Plex Mono'), ui-monospace, monospace;
+  --font-icons: 'Material Symbols Outlined';
+
+  /* Type scale: size / line-height (Design-System › Typographie) */
+  --text-display: 500 64px / 68px var(--font-serif);
+  --text-h1: 500 44px / 52px var(--font-serif);
+  --text-h2: 500 30px / 38px var(--font-serif);
+  --text-h3: 600 22px / 28px var(--font-serif);
+  --text-title: 600 17px / 24px var(--font-sans);
+  --text-body: 400 16px / 26px var(--font-sans);
+  --text-small: 500 14px / 20px var(--font-sans);
+  --text-overline: 600 12px / 16px var(--font-sans);
+  --text-code: 500 13px / 18px var(--font-mono);
+  --tracking-overline: 0.1em;
+  --tracking-heading: -0.015em;
+
+  /* Shapes */
+  --radius-tag: 4px;
+  --radius-field: 8px;
+  --radius-card: 14px;
+  --radius-pill: 999px;
+  --control-height: 44px;
+  --control-height-sm: 36px;
+  --touch-target: 44px;
+
+  /* Elevation: flat = border only; elevated = modals, toasts */
+  --shadow-raised: 0 1px 2px rgba(19, 26, 44, 0.12);
+  --shadow-elevated: 0 1px 2px rgba(19, 26, 44, 0.06), 0 12px 32px -8px rgba(19, 26, 44, 0.18);
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus);
+
+  /* Layout */
+  --sidebar-width: 256px;
+  --sidebar-width-collapsed: 76px;
+  --bottom-nav-height: 82px;
+
+  /* Specialty identity colours: identical in light and dark */
+  --spec-sdia: oklch(0.6 0.13 285);
+  --spec-cim: oklch(0.6 0.13 225);
+  --spec-glops: oklch(0.6 0.13 165);
+  --spec-ssir: oklch(0.6 0.13 15);
+  --spec-aiot: oklch(0.6 0.13 130);
+  --spec-dmwm: oklch(0.6 0.13 340);
+
+  /* Light palette */
+  --bg: #f6f3ec;
+  --sf: #fffdf8;
+  --sf2: #eee9de;
+  --ln: #e1dacb;
+  --ln2: #cbc2af;
+  --ink: #131a2c;
+  --ink2: #474e63;
+  --ink3: #62677a;
+  --pri: #1c2f5e;
+  --pri-ink: #ffffff;
+  --pri-sf: #e4e8f2;
+  --gold: #86590c;
+  --gold-fill: #d4a23a;
+  --gold-sf: #f5ebd3;
+  --ok: #2c6a45;
+  --ok-sf: #e0ede4;
+  --warn: #9c4f0c;
+  --warn-sf: #f7e6d6;
+  --err: #a3302a;
+  --err-sf: #f5ddda;
+  --hero: #14244b;
+  --hero-ink: #f3efe6;
+  --focus: #3b63c9;
+  color-scheme: light;
+}
+
+/* Dark palette, applied when forced… */
+:root[data-theme='dark'] {
+  --bg: #0d1220;
+  --sf: #141b2d;
+  --sf2: #1b2338;
+  --ln: #262f47;
+  --ln2: #38425f;
+  --ink: #eceae4;
+  --ink2: #b3b8c7;
+  --ink3: #9097aa;
+  --pri: #afc2f4;
+  --pri-ink: #0d1220;
+  --pri-sf: #1f2b4c;
+  --gold: #e5bc62;
+  --gold-fill: #d9ae4e;
+  --gold-sf: #33291a;
+  --ok: #7cc79a;
+  --ok-sf: #15301f;
+  --warn: #eda867;
+  --warn-sf: #36240f;
+  --err: #f0928a;
+  --err-sf: #3a1c1b;
+  --hero: #18213a;
+  --hero-ink: #eceae4;
+  --focus: #afc2f4;
+  color-scheme: dark;
+}
+
+/* …or when the OS prefers dark and the user hasn't forced light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0d1220;
+    --sf: #141b2d;
+    --sf2: #1b2338;
+    --ln: #262f47;
+    --ln2: #38425f;
+    --ink: #eceae4;
+    --ink2: #b3b8c7;
+    --ink3: #9097aa;
+    --pri: #afc2f4;
+    --pri-ink: #0d1220;
+    --pri-sf: #1f2b4c;
+    --gold: #e5bc62;
+    --gold-fill: #d9ae4e;
+    --gold-sf: #33291a;
+    --ok: #7cc79a;
+    --ok-sf: #15301f;
+    --warn: #eda867;
+    --warn-sf: #36240f;
+    --err: #f0928a;
+    --err-sf: #3a1c1b;
+    --hero: #18213a;
+    --hero-ink: #eceae4;
+    --focus: #afc2f4;
+    color-scheme: dark;
+  }
+}
