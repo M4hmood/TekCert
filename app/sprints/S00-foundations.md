@@ -22,7 +22,7 @@
 
 ## Done when
 - [x] pnpm dev starts web, api and db locally
-- [ ] CI is green on main: green on PR #1 (all steps, 2m25s); ticks once the PR is merged to `main`
+- [x] CI is green on main (merge of PR #1, 2026-10-28)
 - [ ] Staging URL shows the app shell with working navigation: **deferred** with staging. Playwright checks the navigation against the production builds instead
 - [x] Seeded catalog is queryable at GET /certifications
 
