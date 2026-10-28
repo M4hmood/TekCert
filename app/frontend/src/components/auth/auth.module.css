@@ -85,10 +85,9 @@
 .center {
   display: flex;
   flex: 1;
-  /* Top-aligned (not centred) so the tabs stay put when the form below changes height. */
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: clamp(24px, 14vh, 160px) 0 24px;
+  padding: 24px 0;
 }
 
 .column {
@@ -389,7 +388,6 @@
   }
 
   .center {
-    align-items: flex-start;
     padding: 16px 0 0;
   }
 
@@ -409,11 +407,13 @@
 }
 
 /*
- * Page switches (see AuthContent): the old form fades out first, then the new one fades in at its
- * final position (they never overlap), while the box resizes to the new height. Nothing else on
- * the page is cross-faded, and the tab bar stays live so only its pill moves.
+ * Page switches (see AuthContent): the old form fades out first, then the new one fades in (they
+ * never overlap). The form stays vertically centred, so when its height changes the box and the
+ * tab bar glide together to their new place. Nothing else on the page is cross-faded, and the tab
+ * bar stays live so its pill keeps sliding.
  */
-:global(::view-transition-group(.auth-swap)) {
+:global(::view-transition-group(.auth-swap)),
+:global(::view-transition-group(auth-tabs)) {
   animation-duration: 300ms;
   animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
