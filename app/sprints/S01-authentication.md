@@ -135,8 +135,15 @@ Status: **draft, waiting for approval.** Branch `sprint/S01-authentication`, one
 4. Mailpit in Compose and CI, Playwright auth flow, signed-in smoke tests
 5. ADRs, README, checklist
 
+### Decisions from review (2026-10-28)
+2. The verification link is valid for 24 hours. Reset links stay at 30 minutes.
+3. "Stay signed in" lasts 30 days (sliding). Without it, the session lasts as long as the browser, capped at 12 hours.
+4. `GET /certifications` and `GET /certifications/:slug` stay public. All app screens require sign-in.
+5. Sign-up with an existing email gives the same "Check your inbox" response as a new sign-up. The owner gets an email saying someone tried to create an account, with links to sign in or reset the password. Nothing on screen reveals that the account exists.
+6. The sign-in hero shows a live "44 certifications funded by the institute" until verified certifications exist in Release 2.
+
 ### Questions
-1. **Visibility consent at sign-up.** The design shows it pre-ticked: "my name, class and certifications are visible to TEK-UP students. You can change this at any time." Should it be:
+1. **Visibility consent at sign-up (still open).** The design shows it pre-ticked: "my name, class and certifications are visible to TEK-UP students. You can change this at any time." Should it be:
    - (a) optional and unticked by default, where unticked means a private profile **(Recommended: consent shouldn't be pre-ticked, and the text itself says it can be changed later)**
    - (b) required to create an account
    - (c) optional but pre-ticked, as in the design
