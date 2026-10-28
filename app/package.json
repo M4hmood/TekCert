@@ -1,0 +1,29 @@
+{
+  "name": "tekcert",
+  "private": true,
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "scripts": {
+    "dev": "pnpm db:up && turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:api": "pnpm --filter backend test:e2e",
+    "test:e2e": "pnpm --filter e2e test:e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "bundle": "pnpm --filter backend deploy:bundle && pnpm --filter frontend deploy:bundle",
+    "db:up": "docker compose up -d --wait db",
+    "db:down": "docker compose down",
+    "db:migrate": "pnpm --filter backend db:migrate",
+    "db:seed": "pnpm --filter backend db:seed",
+    "db:reset": "pnpm --filter backend db:reset"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10",
+    "turbo": "^2.11.10"
+  }
+}

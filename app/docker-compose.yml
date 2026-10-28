@@ -1,0 +1,23 @@
+name: tekcert
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tekcert
+      POSTGRES_PASSWORD: tekcert
+      POSTGRES_DB: tekcert
+    ports:
+      - '5432:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U tekcert -d tekcert']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  db-data:

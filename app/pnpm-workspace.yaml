@@ -1,0 +1,19 @@
+packages:
+  - frontend
+  - backend
+  - packages/*
+  - e2e
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - esbuild
+  - sharp
+  - unrs-resolver
+
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@scarf/scarf'
+
+# Only install peers we declare; otherwise optional peers (e.g. Prisma for @nestjs/terminus,
+# mysql2 for typeorm) get pulled in and bloat the deploy bundles.
+autoInstallPeers: false

@@ -1,0 +1,50 @@
+/* design/BottomNav.dc.html: five tabs, phones only. */
+.nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: none;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 6px 4px max(20px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--ln);
+  background: var(--sf);
+  font-family: var(--font-sans);
+}
+
+@media (max-width: 767px) {
+  .nav {
+    display: grid;
+  }
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 56px;
+  color: var(--ink3);
+  font-size: 11.5px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.pill {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 30px;
+  border-radius: 15px;
+}
+
+.tab[aria-current='page'] {
+  color: var(--pri);
+  font-weight: 600;
+}
+
+.tab[aria-current='page'] .pill {
+  background: var(--pri-sf);
+}

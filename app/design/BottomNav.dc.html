@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<nav aria-label="Main navigation" style="display:grid;grid-template-columns:repeat(5,1fr);background:var(--sf);border-top:1px solid var(--ln);padding:6px 4px 20px;font-family:'Instrument Sans',sans-serif">
+  <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+    <sc-if value="{{ it.active }}"><a href="{{ it.href }}" aria-current="page" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;text-decoration:none;color:var(--pri);font-size:11.5px;font-weight:600"><span style="width:56px;height:30px;border-radius:15px;background:var(--pri-sf);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px;font-variation-settings:'FILL' 1">{{ it.icon }}</span></span>{{ it.label }}</a></sc-if>
+    <sc-if value="{{ it.inactive }}"><a href="{{ it.href }}" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;text-decoration:none;color:var(--ink3);font-size:11.5px;font-weight:500"><span style="width:56px;height:30px;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">{{ it.icon }}</span></span>{{ it.label }}</a></sc-if>
+  </sc-for>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:90},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dashboard&quot;,&quot;catalogue&quot;,&quot;parcours&quot;,&quot;communaute&quot;,&quot;profil&quot;],&quot;default&quot;:&quot;dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const a = this.props.active ?? 'dashboard';
+    const mk = (k, label, icon, href) => ({ label, icon, href: href || '#', active: a === k, inactive: a !== k });
+    return { items: [
+      mk('dashboard', 'Home', 'space_dashboard', 'Tableau-de-bord.dc.html'),
+      mk('catalogue', 'Catalog', 'menu_book', 'Catalogue.dc.html'),
+      mk('parcours', 'Paths', 'route', 'Parcours.dc.html'),
+      mk('communaute', 'Community', 'groups', 'Communaute.dc.html'),
+      mk('profil', 'Profile', 'person', 'Profil.dc.html')
+    ] };
+  }
+}
+</script>
+</body>
+</html>

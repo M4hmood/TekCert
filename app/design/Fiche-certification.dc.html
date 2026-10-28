@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}@keyframes toastIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}@keyframes sealIn{0%{transform:scale(.6) rotate(-20deg);opacity:0}70%{transform:scale(1.08) rotate(4deg);opacity:1}100%{transform:none}}</style>
+</helmet>
+<div ref="{{ root }}" style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;gap:56px;align-items:flex-start;color:var(--ink)">
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">07 · Certification page — Desktop 1440 · interactive tabs, chapters and actions · set the status to “disponible” in Tweaks to see the exam request with a warning</div>
+<div data-screen-label="07 Certification page desktop" style="width:1440px;min-height:1200px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;box-shadow:0 1px 3px rgba(0,0,0,.08);position:relative">
+  <dc-import name="Sidebar" active="catalogue" hint-size="256px,1200px" style="align-self:stretch;flex:none"></dc-import>
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <section style="padding:28px 40px 0;display:flex;flex-direction:column;gap:22px;background:var(--sf);border-bottom:1px solid var(--ln)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink3)"><a href="Catalogue.dc.html" style="color:var(--ink2);text-decoration:none;min-height:32px;display:flex;align-items:center">Catalog</a><span style="font-family:'Material Symbols Outlined';font-size:16px">chevron_right</span><span>AWS</span><span style="font-family:'Material Symbols Outlined';font-size:16px">chevron_right</span><span style="font-family:'IBM Plex Mono',monospace;color:var(--ink)">SAA-C03</span></nav>
+        <button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink2);display:grid;place-items:center;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ themeIcon }}</span></button>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:48px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+            <span style="display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 10px;border:1px solid var(--ln2);border-radius:6px;font-size:12.5px;font-weight:600;color:var(--ink2)"><span style="width:8px;height:8px;border-radius:2px;background:oklch(0.66 0.14 55)"></span>AWS</span>
+            <span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">SAA-C03</span>
+            <span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500"><span style="display:inline-flex;align-items:flex-end;gap:2px;height:14px"><span style="width:4px;height:5px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:8px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:11px;background:var(--ln2);border-radius:1px"></span><span style="width:4px;height:14px;background:var(--ln2);border-radius:1px"></span></span>Associate</span>
+            <span aria-label="Difficulty 3 of 5" style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink2)"><span style="display:inline-flex;gap:3px"><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ln2);box-sizing:border-box"></span><span style="width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ln2);box-sizing:border-box"></span></span>Difficulty 3/5</span>
+            <span style="display:inline-flex;align-items:center;gap:6px"><span style="font-size:13px;color:var(--ink3)">Useful in</span><span title="CIM" style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:color-mix(in oklch, oklch(0.6 0.13 225) 16%, var(--sf));font-size:12px;font-weight:700;color:var(--ink)"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 225)"></span>CIM</span><span title="GLOps" style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:color-mix(in oklch, oklch(0.6 0.13 165) 16%, var(--sf));font-size:12px;font-weight:700;color:var(--ink)"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 165)"></span>GLOps</span><span title="SSIR" style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:color-mix(in oklch, oklch(0.6 0.13 15) 16%, var(--sf));font-size:12px;font-weight:700;color:var(--ink)"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 15)"></span>SSIR</span></span>
+          </div>
+          <h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:52px;line-height:1.05;letter-spacing:-0.02em">AWS Solutions Architect – Associate</h1>
+          <p style="margin:0;font-size:16.5px;line-height:1.6;color:var(--ink2);max-width:680px">Validates your ability to design secure, resilient, high-performing and cost-optimised architectures on AWS. The most taken Associate certification at TEK-UP.</p>
+          <div style="display:flex;gap:28px;font-size:14px;color:var(--ink2);padding:4px 0 2px">
+            <span style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ink3)">timer</span>130 min</span>
+            <span style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ink3)">format_list_numbered</span>65 questions</span>
+            <span style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ink3)">flag</span>720 / 1,000 required</span>
+            <span style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ink3)">payments</span>Covered by TEK-UP</span>
+          </div>
+        </div>
+
+        <aside style="background:var(--bg);border:1px solid var(--ln);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <sc-if value="{{ isEc }}" hint-placeholder-val="{{ true }}"><div style="position:relative;width:64px;height:64px;flex:none"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" style="stroke:var(--sf2)" stroke-width="6"></circle><circle cx="32" cy="32" r="27" fill="none" style="stroke:var(--pri);transition:stroke-dashoffset .7s cubic-bezier(.2,.8,.2,1)" stroke-width="6" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="{{ ringOff }}" transform="rotate(-90 32 32)"></circle></svg><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Newsreader',serif;font-size:17px;font-weight:600"><span>{{ pct }}%</span></span></div></sc-if>
+            <sc-if value="{{ isDi }}" hint-placeholder-val="{{ false }}"><span style="width:64px;height:64px;border-radius:50%;border:1.5px solid var(--ln2);display:grid;place-items:center;color:var(--ink2);flex:none;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:28px">radio_button_unchecked</span></span></sc-if>
+            <sc-if value="{{ isNv }}" hint-placeholder-val="{{ false }}"><span style="width:64px;height:64px;border-radius:50%;border:2px dashed var(--gold-fill);display:grid;place-items:center;color:var(--gold);flex:none;box-sizing:border-box;animation:sealIn .6s cubic-bezier(.2,.8,.2,1)"><span style="font-family:'Material Symbols Outlined';font-size:30px">workspace_premium</span></span></sc-if>
+            <sc-if value="{{ isOb }}" hint-placeholder-val="{{ false }}"><span style="width:64px;height:64px;border-radius:50%;background:var(--gold-fill);display:grid;place-items:center;color:#1A1406;flex:none;animation:sealIn .6s cubic-bezier(.2,.8,.2,1)"><span style="font-family:'Material Symbols Outlined';font-size:32px;font-variation-settings:'FILL' 1">workspace_premium</span></span></sc-if>
+            <div style="display:flex;flex-direction:column;gap:5px"><span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">My status</span><span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:{{ chipBg }};color:{{ chipInk }};border:1.5px {{ chipBs }} {{ chipBc }};display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;align-self:flex-start;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:17px">{{ chipIcon }}</span>{{ chipLabel }}</span><span style="font-size:13px;color:var(--ink2)">{{ statusNote }}</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-if value="{{ isDi }}" hint-placeholder-val="{{ false }}"><button onClick="{{ start }}" style="height:48px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">play_arrow</span>Start</button></sc-if><sc-if value="{{ showReqBtn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ openReq }}" style="height:48px;border:1.5px solid var(--ln2);border-radius:10px;background:var(--sf);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">event_available</span>Request an exam</button></sc-if>
+            <sc-if value="{{ isEc }}" hint-placeholder-val="{{ true }}"><button onClick="{{ goProgramme }}" style="height:48px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">Continue the syllabus<span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_forward</span></button></sc-if><sc-if value="{{ showReqBox }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--ln);border-radius:10px;background:var(--sf)"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600">Exam request</span><span style="font-size:12.5px;color:var(--ink3)">November 18 session</span></span><span style="height:26px;padding:0 10px 0 7px;border-radius:13px;background:var(--warn-sf);color:var(--warn);display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:16px">schedule</span>Pending</span></div></sc-if>
+            <sc-if value="{{ canDeclare }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openModal }}" style="height:48px;border:1.5px solid var(--gold-fill);border-radius:10px;background:var(--gold-sf);color:var(--gold);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">workspace_premium</span>Declare as earned</button></sc-if>
+            <sc-if value="{{ isNv }}" hint-placeholder-val="{{ false }}"><button onClick="{{ verify }}" style="height:48px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">upload_file</span>Add proof</button><span style="font-size:12.5px;color:var(--ink3);line-height:1.45">Without verified proof it earns no points and no leaderboard place. (Demo: the button simulates validation.)</span></sc-if>
+            <sc-if value="{{ isOb }}" hint-placeholder-val="{{ false }}"><a href="Profil.dc.html" style="height:48px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none">View on my profile</a></sc-if>
+          </div>
+        </aside>
+      </div>
+      <nav role="tablist" style="display:flex;gap:4px;margin-top:4px">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button role="tab" aria-selected="{{ t.on }}" onClick="{{ t.pick }}" style="height:48px;padding:0 16px;border:none;background:none;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:{{ t.fw }};color:{{ t.ink }};box-shadow:{{ t.sh }};cursor:pointer">{{ t.label }}<sc-if value="{{ t.hasCount }}"><span style="font-size:12px;font-weight:600;padding:2px 7px;border-radius:9px;background:var(--sf2);color:var(--ink2)">{{ t.count }}</span></sc-if></button></sc-for>
+      </nav>
+    </section>
+
+    <section style="padding:32px 40px 56px">
+      <sc-if value="{{ tOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px">
+          <div style="display:flex;flex-direction:column;gap:32px">
+            <div style="display:flex;flex-direction:column;gap:12px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Description</h2><p style="margin:0;font-size:16px;line-height:1.7;color:var(--ink2);max-width:680px">The exam tests your ability to choose the right AWS services for a given need: networking, compute, storage, databases, security. Questions are scenarios where several answers work, but only one best meets the cost, availability or security constraints.</p></div>
+            <div style="display:flex;flex-direction:column;gap:14px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Domains assessed</h2>
+              <div style="display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px"><span style="width:30%;background:var(--pri)"></span><span style="width:26%;background:var(--pri);opacity:.75"></span><span style="width:24%;background:var(--pri);opacity:.5"></span><span style="width:20%;background:var(--pri);opacity:.3"></span></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 32px;font-size:14.5px"><span style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--ln)">1. Secure architectures<strong>30%</strong></span><span style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--ln)">2. Resilient architectures<strong>26%</strong></span><span style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--ln)">3. High performance<strong>24%</strong></span><span style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--ln)">4. Cost optimisation<strong>20%</strong></span></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Prerequisites</h2>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--ln);border-radius:12px;background:var(--sf)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--ok)">check_circle</span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">AWS Certified Cloud Practitioner (CLF-C02)</span><span style="font-size:13px;color:var(--ink3)">Recommended · you declared it, proof under review</span></span></div>
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--ln);border-radius:12px;background:var(--sf)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--ink3)">info</span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">Hands-on AWS console experience</span><span style="font-size:13px;color:var(--ink3)">Advised · the labs in the recommended resources are enough</span></span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:24px;display:flex;flex-direction:column"><h3 style="margin:0 0 10px;font-family:'Newsreader',serif;font-weight:600;font-size:21px">Exam format</h3>
+              <dl style="margin:0;display:grid;grid-template-columns:auto 1fr;font-size:14.5px">
+                <dt style="padding:11px 0;border-top:1px solid var(--ln);color:var(--ink2)">Duration</dt><dd style="margin:0;padding:11px 0;border-top:1px solid var(--ln);text-align:right;font-weight:600">130 minutes</dd>
+                <dt style="padding:11px 0;border-top:1px solid var(--ln);color:var(--ink2)">Questions</dt><dd style="margin:0;padding:11px 0;border-top:1px solid var(--ln);text-align:right;font-weight:600">65 · single or multiple choice</dd>
+                <dt style="padding:11px 0;border-top:1px solid var(--ln);color:var(--ink2)">Passing score</dt><dd style="margin:0;padding:11px 0;border-top:1px solid var(--ln);text-align:right;font-weight:600">720 / 1 000</dd>
+                <dt style="padding:11px 0;border-top:1px solid var(--ln);color:var(--ink2)">Languages</dt><dd style="margin:0;padding:11px 0;border-top:1px solid var(--ln);text-align:right;font-weight:600">English, French and 8 others</dd>
+                <dt style="padding:11px 0;border-top:1px solid var(--ln);color:var(--ink2)">Delivery</dt><dd style="margin:0;padding:11px 0;border-top:1px solid var(--ln);text-align:right;font-weight:600">Test centre or online</dd>
+                <dt style="padding:11px 0;border-top:1px solid var(--ln);color:var(--ink2)">Validity</dt><dd style="margin:0;padding:11px 0;border-top:1px solid var(--ln);text-align:right;font-weight:600">3 years</dd>
+              </dl>
+            </div>
+            <div style="background:var(--gold-sf);border-radius:16px;padding:20px 22px;display:flex;gap:14px;align-items:center"><span style="width:44px;height:44px;border-radius:50%;background:var(--gold-fill);color:#1A1406;display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:22px;font-variation-settings:'FILL' 1">workspace_premium</span></span><span style="font-size:14.5px;line-height:1.5"><strong>+500 points</strong> once verified, plus 10 per chapter and 50 per practice test passed.</span></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ tProgramme }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:40px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:24px">
+            <div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Official syllabus</h2><span style="font-size:15px;color:var(--ink2)"><strong style="font-family:'Newsreader',serif;font-size:22px;color:var(--ink)">{{ doneCount }}</strong> / 11 chapters</span></div><div role="progressbar" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100" style="height:8px;border-radius:4px;background:var(--sf2);overflow:hidden"><div style="width:{{ pctW }};height:100%;border-radius:4px;background:{{ barColor }};transition:width .6s cubic-bezier(.2,.8,.2,1)"></div></div></div>
+            <sc-for list="{{ domains }}" as="d" hint-placeholder-count="4">
+              <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;overflow:hidden">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--sf2)"><span style="font-size:14.5px;font-weight:600">{{ d.title }}</span><span style="font-size:13px;color:var(--ink2)">{{ d.done }}/{{ d.total }} · {{ d.weight }}</span></div>
+                <sc-for list="{{ d.items }}" as="c" hint-placeholder-count="3">
+                  <button onClick="{{ c.toggle }}" role="checkbox" aria-checked="{{ c.done }}" style="width:100%;display:flex;align-items:center;gap:14px;min-height:56px;padding:0 18px;border:none;border-top:1px solid var(--ln);background:none;cursor:pointer;text-align:left">
+                    <span style="width:22px;height:22px;border-radius:6px;border:1.5px solid {{ c.boxBorder }};background:{{ c.boxBg }};color:var(--pri-ink);display:grid;place-items:center;box-sizing:border-box;flex:none;transition:background .2s"><span style="font-family:'Material Symbols Outlined';font-size:17px">{{ c.tick }}</span></span>
+                    <span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3);width:22px">{{ c.num }}</span>
+                    <span style="flex:1;font-size:15px;font-weight:500;color:{{ c.ink }}">{{ c.title }}</span>
+                    <span style="font-size:13px;color:var(--ink3)">{{ c.meta }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px"><span style="font-size:14.5px;font-weight:600">How it works</span><span style="font-size:14px;color:var(--ink2);line-height:1.6">Tick a chapter once you've revised it with the recommended resources. Each chapter earns 10 points. Classmates see your percentage, never the details.</span></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ tRes }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Recommended resources</h2><span style="font-size:14px;color:var(--ink3);display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:18px">open_in_new</span>External links · TekCert hosts no courses</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ resTypes }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.pick }}" aria-pressed="{{ t.on }}" style="height:38px;padding:0 14px;border-radius:19px;border:1.5px solid {{ t.bc }};background:{{ t.bg }};color:{{ t.ink }};font-size:13.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:17px">{{ t.icon }}</span>{{ t.label }}</button></sc-for></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <sc-for list="{{ resources }}" as="r" hint-placeholder-count="8">
+              <a href="#" style="display:flex;gap:16px;align-items:center;padding:16px 18px;background:var(--sf);border:1px solid var(--ln);border-radius:14px;text-decoration:none;color:var(--ink)" style-hover="border-color:var(--ln2)">
+                <span style="width:44px;height:44px;border-radius:10px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:22px">{{ r.icon }}</span></span>
+                <span style="flex:1;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:15px;font-weight:600">{{ r.title }}</span><span style="font-size:13px;color:var(--ink3)">{{ r.type }} · {{ r.src }} · {{ r.dur }}</span></span>
+                <span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ink3)">open_in_new</span>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ tTests }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Practice tests</h2><span style="font-size:14px;color:var(--ink2)">+50 points per test passed · unlimited attempts</span></div>
+          <sc-for list="{{ tests }}" as="t" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 130px 120px 230px 140px;gap:24px;align-items:center;padding:20px 24px;background:var(--sf);border:1px solid var(--ln);border-radius:14px">
+              <span style="display:flex;flex-direction:column;gap:3px"><span style="font-family:'Newsreader',serif;font-size:20px;font-weight:600">{{ t.title }}</span><span style="font-size:13px;color:var(--ink3)">{{ t.desc }}</span></span>
+              <span style="font-size:14px;color:var(--ink2)">{{ t.q }} questions<br>{{ t.dur }}</span>
+              <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:var(--ink3)">Best score</span><span style="font-family:'Newsreader',serif;font-size:24px;font-weight:600">{{ t.best }}</span></span>
+              <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:{{ t.bg }};color:{{ t.ink }};display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;justify-self:start;white-space:nowrap"><span style="font-family:'Material Symbols Outlined';font-size:17px">{{ t.icon }}</span>{{ t.status }}</span>
+              <a href="Test-blanc.dc.html" style="height:44px;padding:0 18px;border-radius:8px;border:1.5px solid var(--ln2);font-size:14.5px;font-weight:600;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--ink)">{{ t.cta }}</a>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ tComm }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Who to ask?</h2><span style="font-size:14.5px;color:var(--ink2)">Their institute email is on their profile. Only public profiles are shown.</span></div>
+            </div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div role="tablist" aria-label="Scope" style="display:inline-flex;background:var(--sf2);border-radius:10px;padding:4px;gap:2px"><sc-for list="{{ scopes }}" as="sc" hint-placeholder-count="4"><button role="tab" aria-selected="{{ sc.on }}" onClick="{{ sc.pick }}" style="height:38px;padding:0 14px;border:none;border-radius:7px;background:{{ sc.bg }};color:{{ sc.ink }};box-shadow:{{ sc.sh }};font-size:13.5px;font-weight:600;cursor:pointer">{{ sc.label }}</button></sc-for></div>
+            <label style="display:flex;align-items:center;gap:8px;height:46px;padding:0 6px 0 14px;border:1.5px solid var(--ln2);border-radius:10px;background:var(--sf);font-size:14px;box-sizing:border-box"><span style="color:var(--ink3)">Specialty</span><select value="{{ fSpec }}" onChange="{{ onSpec }}" style="border:none;background:transparent;font-weight:600;font-size:14px;height:40px;cursor:pointer;outline:none"><sc-for list="{{ specOpts }}" as="o" hint-placeholder-count="0"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
+            <label style="display:flex;align-items:center;gap:8px;height:46px;padding:0 6px 0 14px;border:1.5px solid var(--ln2);border-radius:10px;background:var(--sf);font-size:14px;box-sizing:border-box"><span style="color:var(--ink3)">Level</span><select value="{{ fLvl }}" onChange="{{ onLvl }}" style="border:none;background:transparent;font-weight:600;font-size:14px;height:40px;cursor:pointer;outline:none"><sc-for list="{{ lvlOpts }}" as="o" hint-placeholder-count="0"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label>
+            <sc-if value="{{ hasCommFilter }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearComm }}" style="height:44px;border:none;background:none;color:var(--pri);font-size:14px;font-weight:600;text-decoration:underline;cursor:pointer">Reset</button></sc-if>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+            <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;padding-bottom:12px"><span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600">Earned it</span><span style="font-size:14px;color:var(--ink2)">{{ gotCount }}</span></div>
+              <sc-if value="{{ gotEmpty }}" hint-placeholder-val="{{ false }}"><span style="padding:20px 0;border-top:1px solid var(--ln);font-size:14px;color:var(--ink3)">Nobody for this filter yet.</span></sc-if><sc-for list="{{ gotList }}" as="m" hint-placeholder-count="5"><a href="Profil.dc.html" style="display:flex;align-items:center;gap:12px;min-height:60px;border-top:1px solid var(--ln);text-decoration:none;color:var(--ink)"><span style="width:40px;height:40px;border-radius:50%;background:{{ m.bg }};color:{{ m.ink }};display:grid;place-items:center;font-family:'Newsreader',serif;font-size:15px;font-weight:600;flex:none">{{ m.ini }}</span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14.5px;font-weight:600">{{ m.name }}</span><span style="font-size:13px;color:var(--ink3)">{{ m.cls }} · {{ m.date }}</span></span><span style="height:24px;padding:0 9px 0 6px;border-radius:12px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:15px;font-variation-settings:'FILL' 1">verified</span>Verified</span></a></sc-for>
+            </div>
+            <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;padding-bottom:12px"><span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600">Preparing it</span><span style="font-size:14px;color:var(--ink2)">{{ prepCount }}</span></div>
+              <sc-if value="{{ prepEmpty }}" hint-placeholder-val="{{ false }}"><span style="padding:20px 0;border-top:1px solid var(--ln);font-size:14px;color:var(--ink3)">Nobody for this filter yet.</span></sc-if><sc-for list="{{ prepList }}" as="m" hint-placeholder-count="5"><a href="Profil.dc.html" style="display:flex;align-items:center;gap:12px;min-height:60px;border-top:1px solid var(--ln);text-decoration:none;color:var(--ink)"><span style="width:40px;height:40px;border-radius:50%;background:{{ m.bg }};color:{{ m.ink }};display:grid;place-items:center;font-family:'Newsreader',serif;font-size:15px;font-weight:600;flex:none">{{ m.ini }}</span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14.5px;font-weight:600">{{ m.name }}</span><span style="font-size:13px;color:var(--ink3)">{{ m.cls }}</span></span><span style="width:72px;height:5px;border-radius:3px;background:var(--sf2)"><span style="display:block;width:{{ m.w }};height:100%;border-radius:3px;background:var(--pri)"></span></span><span style="font-size:13px;font-weight:600;width:38px;text-align:right">{{ m.pct }}</span></a></sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+  </main>
+
+  <sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(19,26,44,.5);display:grid;place-items:center">
+      <div role="dialog" aria-modal="true" aria-labelledby="decl-t" style="width:480px;background:var(--sf);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:0 24px 48px -12px rgba(0,0,0,.4)">
+        <span id="decl-t" style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;line-height:1.2">Declare SAA-C03 as earned?</span>
+        <span style="font-size:14.5px;color:var(--ink2);line-height:1.6">It will appear on your profile right away marked “Unverified”. It counts towards your points and the leaderboards once an administrator validates your proof.</span>
+        <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Date earned</span><span style="height:46px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:15px">October 9, 2026<span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ink3)">calendar_today</span></span></label>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px"><a href="Declarer-certification.dc.html" style="height:46px;padding:0 4px;margin-right:auto;font-size:14px;font-weight:600;display:flex;align-items:center">Add proof</a><button onClick="{{ closeModal }}" style="height:46px;padding:0 16px;border:none;background:none;color:var(--pri);font-size:15px;font-weight:600;cursor:pointer">Cancel</button><button onClick="{{ declare }}" style="height:46px;padding:0 20px;border:none;border-radius:10px;background:var(--gold-fill);color:#1A1406;font-size:15px;font-weight:600;cursor:pointer">Declare</button></div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ reqModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(19,26,44,.5);display:grid;place-items:center">
+      <div role="dialog" aria-modal="true" aria-labelledby="req-t" style="width:520px;background:var(--sf);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 48px -12px rgba(0,0,0,.4)">
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">SAA-C03 · covered by TEK-UP</span><span id="req-t" style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;line-height:1.2">Request an exam</span></div>
+        <div role="note" style="display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--warn-sf);color:var(--warn)"><span style="font-family:'Material Symbols Outlined';font-size:22px;flex:none">warning</span><span style="display:flex;flex-direction:column;gap:4px;font-size:14px;line-height:1.5"><strong>Recommended prerequisite not verified</strong><span style="color:var(--ink)">AWS Cloud Practitioner (CLF-C02) est déclarée mais pas encore vérifiée. Tu peux quand même envoyer ta demande ; l'administration en tiendra compte.</span></span></div>
+        <fieldset style="border:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><legend style="font-size:14px;font-weight:600;padding:0 0 8px">Preferred session</legend>
+          <sc-for list="{{ sessions }}" as="se" hint-placeholder-count="2"><button onClick="{{ se.pick }}" role="radio" aria-checked="{{ se.on }}" style="display:flex;align-items:center;gap:12px;min-height:56px;padding:0 14px;border-radius:10px;border:1.5px solid {{ se.bc }};background:{{ se.bg }};text-align:left;cursor:pointer"><span style="width:20px;height:20px;border-radius:50%;border:{{ se.ring }} solid {{ se.rc }};box-sizing:border-box;flex:none"></span><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">{{ se.date }}</span><span style="font-size:13px;color:var(--ink3)">{{ se.meta }}</span></span></button></sc-for>
+        </fieldset>
+        <label style="display:flex;flex-direction:column;gap:7px"><span style="display:flex;justify-content:space-between"><span style="font-size:14px;font-weight:600">Motivation <span style="font-weight:400;color:var(--ink3)">· short</span></span><span style="font-size:12.5px;color:var(--ink3)">{{ motLen }}/300</span></span><textarea value="{{ mot }}" onChange="{{ onMot }}" maxLength="300" rows="3" placeholder="E.g. 5 of 11 chapters done, diagnostic test passed." style="border:1.5px solid var(--ln2);border-radius:8px;background:var(--bg);padding:12px 14px;font-size:15px;resize:none;outline:none;line-height:1.5" style-focus="border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-sf)"></textarea></label>
+        <div style="display:flex;justify-content:flex-end;gap:8px"><button onClick="{{ closeReq }}" style="height:46px;padding:0 16px;border:none;background:none;color:var(--pri);font-size:15px;font-weight:600;cursor:pointer">Cancel</button><button onClick="{{ sendReq }}" style="height:46px;padding:0 20px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;cursor:pointer">Send request</button></div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position:absolute;bottom:28px;left:calc(50% + 128px);transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 32px -8px rgba(19,26,44,.4);animation:toastIn .3s ease-out;white-space:nowrap"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--gold-fill);font-variation-settings:'FILL' 1">check_circle</span><span style="font-size:14.5px">{{ toast }}</span></div>
+  </sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · same state as desktop (shared tabs)</div>
+<div data-screen-label="07 Certification page mobile" style="width:390px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="background:var(--sf);border-bottom:1px solid var(--ln)">
+    <div style="padding:12px 8px 0;display:flex;justify-content:space-between"><a href="Catalogue.dc.html" aria-label="Back to catalog" style="width:44px;height:44px;display:grid;place-items:center;color:var(--ink)"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></a><button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border:none;background:none;color:var(--ink2);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">{{ themeIcon }}</span></button></div>
+    <div style="padding:4px 20px 16px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 9px;border:1px solid var(--ln2);border-radius:6px;font-size:12px;font-weight:600;color:var(--ink2)"><span style="width:8px;height:8px;border-radius:2px;background:oklch(0.66 0.14 55)"></span>AWS</span><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">SAA-C03</span><span style="font-size:13px;color:var(--ink2)">Associate · Difficulty 3/5</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span title="CIM" style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:color-mix(in oklch, oklch(0.6 0.13 225) 16%, var(--sf));font-size:12px;font-weight:700;color:var(--ink)"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 225)"></span>CIM</span><span title="GLOps" style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:color-mix(in oklch, oklch(0.6 0.13 165) 16%, var(--sf));font-size:12px;font-weight:700;color:var(--ink)"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 165)"></span>GLOps</span><span title="SSIR" style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:color-mix(in oklch, oklch(0.6 0.13 15) 16%, var(--sf));font-size:12px;font-weight:700;color:var(--ink)"><span style="width:8px;height:8px;border-radius:50%;background:oklch(0.6 0.13 15)"></span>SSIR</span></div>
+      <h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:32px;line-height:1.08">AWS Solutions Architect – Associate</h1>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--ln);border-radius:12px;background:var(--bg)">
+        <sc-if value="{{ isEc }}" hint-placeholder-val="{{ true }}"><div style="position:relative;width:48px;height:48px;flex:none"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" style="stroke:var(--sf2)" stroke-width="5"></circle><circle cx="24" cy="24" r="20" fill="none" style="stroke:var(--pri);transition:stroke-dashoffset .7s" stroke-width="5" stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="{{ ringOffS }}" transform="rotate(-90 24 24)"></circle></svg><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700"><span>{{ pct }}%</span></span></div></sc-if>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="height:26px;padding:0 10px 0 7px;border-radius:13px;background:{{ chipBg }};color:{{ chipInk }};border:1.5px {{ chipBs }} {{ chipBc }};display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;align-self:flex-start;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ chipIcon }}</span>{{ chipLabel }}</span><span style="font-size:12.5px;color:var(--ink2)">{{ statusNote }}</span></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <sc-if value="{{ isDi }}" hint-placeholder-val="{{ false }}"><button onClick="{{ start }}" style="flex:1;height:48px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;cursor:pointer">Start</button><button onClick="{{ openReq }}" style="flex:1;height:48px;border:1.5px solid var(--ln2);border-radius:10px;background:var(--sf);font-size:14px;font-weight:600;cursor:pointer">Request an exam</button></sc-if>
+        <sc-if value="{{ isEc }}" hint-placeholder-val="{{ true }}"><button onClick="{{ goProgramme }}" style="flex:1;height:48px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;cursor:pointer">Continue</button></sc-if>
+        <sc-if value="{{ canDeclare }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openModal }}" aria-label="Declare as earned" style="height:48px;padding:0 14px;border:1.5px solid var(--gold-fill);border-radius:10px;background:var(--gold-sf);color:var(--gold);font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:19px">workspace_premium</span>Declare</button></sc-if>
+        <sc-if value="{{ isNv }}" hint-placeholder-val="{{ false }}"><button onClick="{{ verify }}" style="flex:1;height:48px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;cursor:pointer">Add proof</button></sc-if>
+        <sc-if value="{{ isOb }}" hint-placeholder-val="{{ false }}"><a href="Profil.dc.html" style="flex:1;height:48px;border-radius:10px;border:1.5px solid var(--ln2);color:var(--ink);font-size:15px;font-weight:600;display:grid;place-items:center;text-decoration:none">View on my profile</a></sc-if>
+      </div>
+    </div>
+    <nav role="tablist" style="display:flex;overflow-x:auto;padding:0 8px"><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button role="tab" aria-selected="{{ t.on }}" onClick="{{ t.pick }}" style="height:48px;padding:0 12px;border:none;background:none;font-size:14.5px;font-weight:{{ t.fw }};color:{{ t.ink }};box-shadow:{{ t.sh }};white-space:nowrap;flex:none;cursor:pointer">{{ t.short }}</button></sc-for></nav>
+  </div>
+  <div style="padding:20px 16px 28px;display:flex;flex-direction:column;gap:14px">
+    <sc-if value="{{ tOverview }}" hint-placeholder-val="{{ true }}">
+      <p style="margin:0;font-size:15px;line-height:1.65;color:var(--ink2)">The exam tests your ability to choose the right AWS services for a given need, under cost, availability and security constraints.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12.5px;color:var(--ink3)">Duration</span><span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600">130 min</span></div>
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12.5px;color:var(--ink3)">Questions</span><span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600">65</span></div>
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12.5px;color:var(--ink3)">Passing score</span><span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600">720/1000</span></div>
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12.5px;color:var(--ink3)">Language</span><span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600">FR, EN +8</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--ln);border-radius:12px;background:var(--sf)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--ok)">check_circle</span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14.5px;font-weight:600">Prerequisite: CLF-C02</span><span style="font-size:12.5px;color:var(--ink3)">Recommended · declared</span></span></div>
+    </sc-if>
+    <sc-if value="{{ tProgramme }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600">{{ doneCount }}/11 chapters</span><span style="font-family:'Newsreader',serif;font-size:17px;font-weight:600">{{ pct }}%</span></div><div style="height:8px;border-radius:4px;background:var(--sf2);overflow:hidden"><div style="width:{{ pctW }};height:100%;border-radius:4px;background:{{ barColor }};transition:width .6s"></div></div></div>
+      <sc-for list="{{ domains }}" as="d" hint-placeholder-count="4">
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:12px;overflow:hidden"><div style="display:flex;justify-content:space-between;padding:12px 14px;background:var(--sf2);font-size:13.5px"><span style="font-weight:600">{{ d.short }}</span><span style="color:var(--ink2)">{{ d.done }}/{{ d.total }}</span></div>
+          <sc-for list="{{ d.items }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.toggle }}" role="checkbox" aria-checked="{{ c.done }}" style="width:100%;display:flex;align-items:center;gap:12px;min-height:52px;padding:0 14px;border:none;border-top:1px solid var(--ln);background:none;cursor:pointer;text-align:left"><span style="width:22px;height:22px;border-radius:6px;border:1.5px solid {{ c.boxBorder }};background:{{ c.boxBg }};color:var(--pri-ink);display:grid;place-items:center;box-sizing:border-box;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:17px">{{ c.tick }}</span></span><span style="flex:1;font-size:14.5px;font-weight:500;color:{{ c.ink }}">{{ c.title }}</span></button></sc-for>
+        </div>
+      </sc-for>
+    </sc-if>
+    <sc-if value="{{ tRes }}" hint-placeholder-val="{{ false }}">
+      <sc-for list="{{ resources }}" as="r" hint-placeholder-count="6"><a href="#" style="display:flex;gap:12px;align-items:center;padding:14px;background:var(--sf);border:1px solid var(--ln);border-radius:12px;text-decoration:none;color:var(--ink)"><span style="width:40px;height:40px;border-radius:10px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:20px">{{ r.icon }}</span></span><span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14.5px;font-weight:600">{{ r.title }}</span><span style="font-size:12.5px;color:var(--ink3)">{{ r.type }} · {{ r.dur }}</span></span><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ink3)">open_in_new</span></a></sc-for>
+    </sc-if>
+    <sc-if value="{{ tTests }}" hint-placeholder-val="{{ false }}">
+      <sc-for list="{{ tests }}" as="t" hint-placeholder-count="3"><div style="padding:16px;background:var(--sf);border:1px solid var(--ln);border-radius:12px;display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'Newsreader',serif;font-size:19px;font-weight:600">{{ t.title }}</span><span style="font-size:12.5px;color:var(--ink3)">{{ t.q }} questions · {{ t.dur }}</span></span><span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600">{{ t.best }}</span></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="height:26px;padding:0 10px 0 7px;border-radius:13px;background:{{ t.bg }};color:{{ t.ink }};display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ t.icon }}</span>{{ t.status }}</span><a href="Test-blanc.dc.html" style="height:44px;padding:0 16px;border-radius:8px;border:1.5px solid var(--ln2);font-size:14px;font-weight:600;display:flex;align-items:center;text-decoration:none;color:var(--ink)">{{ t.cta }}</a></div></div></sc-for>
+    </sc-if>
+    <sc-if value="{{ tComm }}" hint-placeholder-val="{{ false }}">
+      <div role="tablist" aria-label="Scope" style="display:flex;gap:6px;overflow-x:auto;margin-right:-16px;padding-right:16px"><sc-for list="{{ scopes }}" as="sc" hint-placeholder-count="4"><button role="tab" aria-selected="{{ sc.on }}" onClick="{{ sc.pick }}" style="height:40px;padding:0 14px;border-radius:20px;border:1.5px solid {{ sc.bc }};background:{{ sc.chipBg }};color:{{ sc.chipInk }};font-size:13.5px;font-weight:600;flex:none;cursor:pointer">{{ sc.label }}</button></sc-for></div>
+      <span style="font-family:'Newsreader',serif;font-size:20px;font-weight:600">Earned it · {{ gotCount }}</span>
+      <sc-for list="{{ gotList3 }}" as="m" hint-placeholder-count="3"><a href="Profil.dc.html" style="display:flex;align-items:center;gap:12px;min-height:56px;padding:0 4px;border-bottom:1px solid var(--ln);text-decoration:none;color:var(--ink)"><span style="width:38px;height:38px;border-radius:50%;background:{{ m.bg }};color:{{ m.ink }};display:grid;place-items:center;font-size:13px;font-weight:600">{{ m.ini }}</span><span style="flex:1;display:flex;flex-direction:column;gap:1px"><span style="font-size:14.5px;font-weight:600">{{ m.name }}</span><span style="font-size:12.5px;color:var(--ink3)">{{ m.cls }}</span></span><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ok);font-variation-settings:'FILL' 1" aria-label="Verified">verified</span></a></sc-for>
+      <span style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;margin-top:10px">Preparing it · {{ prepCount }}</span>
+      <sc-for list="{{ prepList3 }}" as="m" hint-placeholder-count="3"><a href="Profil.dc.html" style="display:flex;align-items:center;gap:12px;min-height:56px;padding:0 4px;border-bottom:1px solid var(--ln);text-decoration:none;color:var(--ink)"><span style="width:38px;height:38px;border-radius:50%;background:{{ m.bg }};color:{{ m.ink }};display:grid;place-items:center;font-size:13px;font-weight:600">{{ m.ini }}</span><span style="flex:1;display:flex;flex-direction:column;gap:1px"><span style="font-size:14.5px;font-weight:600">{{ m.name }}</span><span style="font-size:12.5px;color:var(--ink3)">{{ m.cls }}</span></span><span style="font-size:13px;font-weight:600">{{ m.pct }}</span></a></sc-for>
+    </sc-if>
+  </div>
+  <dc-import name="BottomNav" active="catalogue" hint-size="390px,82px"></dc-import>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;clair&quot;,&quot;sombre&quot;],&quot;default&quot;:&quot;clair&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;statut&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;available&quot;,&quot;in progress&quot;,&quot;earned unverified&quot;,&quot;verified&quot;],&quot;default&quot;:&quot;in progress&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static T = {
+    clair: {'--bg':'#F6F3EC','--sf':'#FFFDF8','--sf2':'#EEE9DE','--ln':'#E1DACB','--ln2':'#CBC2AF','--ink':'#131A2C','--ink2':'#474E63','--ink3':'#62677A','--pri':'#1C2F5E','--pri-ink':'#FFFFFF','--pri-sf':'#E4E8F2','--gold':'#86590C','--gold-fill':'#D4A23A','--gold-sf':'#F5EBD3','--ok':'#2C6A45','--ok-sf':'#E0EDE4','--warn':'#9C4F0C','--warn-sf':'#F7E6D6','--err':'#A3302A','--err-sf':'#F5DDDA','--hero':'#14244B','--hero-ink':'#F3EFE6','--focus':'#3B63C9'},
+    sombre: {'--bg':'#0D1220','--sf':'#141B2D','--sf2':'#1B2338','--ln':'#262F47','--ln2':'#38425F','--ink':'#ECEAE4','--ink2':'#B3B8C7','--ink3':'#9097AA','--pri':'#AFC2F4','--pri-ink':'#0D1220','--pri-sf':'#1F2B4C','--gold':'#E5BC62','--gold-fill':'#D9AE4E','--gold-sf':'#33291A','--ok':'#7CC79A','--ok-sf':'#15301F','--warn':'#EDA867','--warn-sf':'#36240F','--err':'#F0928A','--err-sf':'#3A1C1B','--hero':'#18213A','--hero-ink':'#ECEAE4','--focus':'#AFC2F4'}
+  };
+  static CH = ['Identity and access: IAM, Organizations', 'Networking: VPC, subnets, routing', 'Compute: EC2, Auto Scaling, ELB', 'Storage: S3, EBS, EFS', 'Databases: RDS, Aurora, DynamoDB', 'Decoupling: SQS, SNS, EventBridge', 'Serverless: Lambda, API Gateway', 'High availability and disaster recovery', 'Caching and delivery: ElastiCache, CloudFront', 'Monitoring: CloudWatch, CloudTrail', 'Cost optimisation'];
+  static DUR = ['3 h', '4 h', '4 h', '3 h', '4 h', '2 h', '3 h', '3 h', '2 h', '2 h', '2 h'];
+  static DOMS = [['Domain 1 · Secure architectures', 'Security', '30%', [0, 1]], ['Domain 2 · Resilient architectures', 'Resilience', '26%', [5, 6, 7]], ['Domain 3 · High performance', 'Performance', '24%', [2, 3, 4, 8]], ['Domain 4 · Cost optimisation', 'Cost', '20%', [9, 10]]];
+  static RES = [
+    ['doc', 'Official SAA-C03 exam guide', 'Official documentation', 'aws.amazon.com', '30 min', 'description'],
+    ['doc', 'AWS Well-Architected Framework', 'Official documentation', 'docs.aws.amazon.com', '3 h', 'description'],
+    ['video', 'Exam Prep SAA-C03 (Skill Builder)', 'Video', 'skillbuilder.aws', '6 h', 'play_circle'],
+    ['video', 'Complete SAA-C03 prep', 'Video', 'youtube.com', '≈ 10 h', 'play_circle'],
+    ['lab', 'Guided labs: VPC, EC2, S3', 'Hands-on lab', 'skillbuilder.aws', '4 h', 'science'],
+    ['lab', 'Step-by-step serverless workshop', 'Hands-on lab', 'workshops.aws', '3 h', 'science'],
+    ['practice', 'Official sample questions', 'Practice', 'aws.amazon.com', '1 h', 'quiz'],
+    ['practice', 'Timed practice tests', 'Practice', 'tutorialsdojo.com', '8 h', 'quiz']
+  ];
+  root = React.createRef();
+  state = { theme: null, tab: 'overview', status: null, done: [true, true, true, true, true, false, false, false, false, false, false], resType: 'all', scope: 'ecole', fSpec: 'all', fLvl: 'all', modal: false, reqModal: false, reqSent: false, session: 0, mot: '', toast: null };
+  th() { return this.state.theme ?? this.props.theme ?? 'clair'; }
+  st() { if (this.state.status) return this.state.status; const m = { 'available': 'di', 'in progress': 'ec', 'earned unverified': 'nv', 'verified': 'ob' }; return m[this.props.statut] || 'ec'; }
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  componentWillUnmount() { clearTimeout(this.tt); }
+  apply() { const el = this.root.current; if (!el) return; const t = Component.T[this.th()] || Component.T.clair; for (const k in t) el.style.setProperty(k, t[k]); }
+  toast(msg) { clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2800); this.setState({ toast: msg }); }
+  renderVals() {
+    const s = this.state, st = this.st(), d = s.done, n = d.filter(Boolean).length, pct = Math.round(n / 11 * 100);
+    const SM = {
+      di: ['Available', 'radio_button_unchecked', 'var(--sf2)', 'var(--ink)', 'solid', 'var(--sf2)', 'Prerequisites met · 23 students preparing it'],
+      ec: ['In progress', 'clock_loader_40', 'var(--pri-sf)', 'var(--pri)', 'solid', 'var(--pri-sf)', 'Started September 2 · ' + n + '/11 chapters'],
+      nv: ['Unverified', 'pending', 'transparent', 'var(--ink2)', 'dashed', 'var(--ln2)', 'Declared October 9 · add your proof'],
+      ob: ['Verified', 'verified', 'var(--ok-sf)', 'var(--ok)', 'solid', 'var(--ok-sf)', 'Validated by the administration · +500 points']
+    }[st];
+    const tabDefs = [['overview', 'Overview', 'Overview', ''], ['programme', 'Syllabus', 'Syllabus', n + '/11'], ['res', 'Recommended resources', 'Resources', '8'], ['tests', 'Practice tests', 'Tests', '3'], ['comm', 'Community', 'Community', '15']];
+    const tabs = tabDefs.map(([k, label, short, count]) => { const on = s.tab === k; return { label, short, count, hasCount: !!count, on, fw: on ? 600 : 500, ink: on ? 'var(--pri)' : 'var(--ink2)', sh: on ? 'inset 0 -2.5px 0 var(--pri)' : 'none', pick: () => this.setState({ tab: k }) }; });
+    const chap = i => ({ title: Component.CH[i], num: String(i + 1).padStart(2, '0'), done: d[i], meta: d[i] ? 'Done' : Component.DUR[i], tick: d[i] ? 'check' : '', boxBorder: d[i] ? 'var(--pri)' : 'var(--ln2)', boxBg: d[i] ? 'var(--pri)' : 'transparent', ink: d[i] ? 'var(--ink3)' : 'var(--ink)',
+      toggle: () => { const nd = d.slice(); nd[i] = !nd[i]; this.setState({ done: nd }); const all = nd.every(Boolean); this.toast(all ? 'Syllabus complete · you’re ready for the exam' : (nd[i] ? 'Chapter done · +10 points' : 'Chapter unticked · −10 points')); } });
+    const domains = Component.DOMS.map(([title, short, weight, idx]) => ({ title, short, weight, total: idx.length, done: idx.filter(i => d[i]).length, items: idx.map(chap) }));
+    const types = [['all', 'All', 'apps'], ['doc', 'Documentation', 'description'], ['video', 'Videos', 'play_circle'], ['lab', 'Labs', 'science'], ['practice', 'Practice', 'quiz']];
+    const resTypes = types.map(([k, label, icon]) => { const on = s.resType === k; return { label, icon, on, bc: on ? 'var(--pri)' : 'var(--ln2)', bg: on ? 'var(--pri)' : 'var(--sf)', ink: on ? 'var(--pri-ink)' : 'var(--ink)', pick: () => this.setState({ resType: k }) }; });
+    const resources = Component.RES.filter(r => s.resType === 'all' || r[0] === s.resType).map(([k, title, type, src, dur, icon]) => ({ title, type, src, dur, icon }));
+    const T = { ok: ['var(--ok-sf)', 'var(--ok)', 'check_circle'], ko: ['var(--err-sf)', 'var(--err)', 'cancel'], no: ['var(--sf2)', 'var(--ink2)', 'radio_button_unchecked'] };
+    const tests = [['Diagnostic test', 'Find your weak spots by domain', 20, '30 min', '70%', 'Passed · 65% threshold', 'ok', 'Restart'], ['Practice test #1', 'Real conditions, 4 domains', 65, '130 min', '64%', '72% threshold not reached', 'ko', 'Restart'], ['Practice test #2', 'Focus on resilience and cost', 65, '130 min', '—', 'Not attempted yet', 'no', 'Start']].map(([title, desc, q, dur, best, status, t, cta]) => ({ title, desc, q, dur, best, status, cta, bg: T[t][0], ink: T[t][1], icon: T[t][2] }));
+    const av = [['var(--pri-sf)', 'var(--pri)'], ['var(--gold-sf)', 'var(--gold)'], ['var(--ok-sf)', 'var(--ok)'], ['var(--warn-sf)', 'var(--warn)'], ['var(--sf2)', 'var(--ink2)']];
+    const SPH = { SDIA: 285, CIM: 225, GLOps: 165, SSIR: 15, AIOT: 130, DMWM: 340 };
+    const person = ([ini, name, lvl, spec, extra]) => { const cls = lvl <= 3 ? 'ING-' + lvl + ' Group ' + spec : 'ING-' + lvl + ' ' + spec; const sp = lvl <= 3 ? null : spec; const c = sp ? 'oklch(0.6 0.13 ' + SPH[sp] + ')' : null; return { ini, name, lvl, spec: sp, cls, bg: c ? 'color-mix(in oklch, ' + c + ' 22%, var(--sf))' : 'var(--sf2)', ink: 'var(--ink)', extra }; };
+    const got = [['OB', 'Ons Ben Salah', 4, 'CIM', 'Jun 2026'], ['NK', 'Nour Khelifi', 5, 'CIM', 'May 2026'], ['MJ', 'Mohamed Aziz Jlassi', 5, 'GLOps', 'May 2026'], ['RM', 'Rania Mejri', 4, 'SSIR', 'Apr 2026'], ['AF', 'Amine Ferchichi', 4, 'CIM', 'Mar 2026'], ['YG', 'Yasmine Gharbi', 5, 'SSIR', 'Jan 2026'], ['MA', 'Malek Ayari', 5, 'CIM', 'Dec 2025'], ['IB', 'Ines Bouzid', 3, '1', 'Nov 2025']].map(person).map(p => ({ ...p, date: p.extra }));
+    const prep = [['SB', 'Skander Bouazizi', 4, 'CIM', 72], ['AT', 'Ali Trabelsi', 4, 'GLOps', 54], ['HS', 'Hiba Sassi', 4, 'CIM', 48], ['FC', 'Firas Chaabane', 2, '1', 36], ['WD', 'Wassim Dridi', 5, 'GLOps', 30], ['MH', 'Mariem Hammami', 3, '2', 18], ['SK', 'Sarra Kefi', 4, 'SSIR', 12]].map(person).map(p => ({ ...p, pct: p.extra + '%', w: p.extra + '%' }));
+    const sc = s.scope;
+    const keep = m => (sc === 'ecole' || (sc === 'classe' && m.cls === 'ING-4 CIM') || (sc === 'specialite' && m.spec === 'CIM') || (sc === 'niveau' && m.lvl === 4)) && (s.fSpec === 'all' || m.spec === s.fSpec || (s.fSpec === 'none' && !m.spec)) && (s.fLvl === 'all' || String(m.lvl) === s.fLvl);
+    const gotList = got.filter(keep), prepList = prep.filter(keep);
+    const scopes = [['classe', 'My class'], ['specialite', 'My specialty'], ['niveau', 'My level'], ['ecole', 'Whole institute']].map(([k, label]) => { const on = sc === k; return { label, on, bg: on ? 'var(--sf)' : 'transparent', ink: on ? 'var(--ink)' : 'var(--ink2)', sh: on ? '0 1px 2px rgba(19,26,44,.12)' : 'none', bc: on ? 'var(--pri)' : 'var(--ln2)', chipBg: on ? 'var(--pri)' : 'var(--sf)', chipInk: on ? 'var(--pri-ink)' : 'var(--ink)', pick: () => this.setState({ scope: k }) }; });
+    const specOpts = [{ v: 'all', label: 'All' }, ...Object.keys(SPH).map(k => ({ v: k, label: k })), { v: 'none', label: 'Not yet (ING-1 to 3)' }];
+    const lvlOpts = [{ v: 'all', label: 'All' }, ...[1, 2, 3, 4, 5].map(n => ({ v: String(n), label: 'ING-' + n }))];
+    const sessions = [['November 18, 2026', 'Online · 6 seats left'], ['December 16, 2026', 'Test centre, Tunis · 12 seats']].map(([date, meta], i) => { const on = s.session === i; return { date, meta, on, bc: on ? 'var(--pri)' : 'var(--ln2)', bg: on ? 'var(--pri-sf)' : 'var(--sf)', ring: on ? '6px' : '1.5px', rc: on ? 'var(--pri)' : 'var(--ln2)', pick: () => this.setState({ session: i }) }; });
+
+    return {
+      root: this.root, themeIcon: this.th() === 'clair' ? 'dark_mode' : 'light_mode', toggleTheme: () => this.setState({ theme: this.th() === 'clair' ? 'sombre' : 'clair' }),
+      isDi: st === 'di', isEc: st === 'ec', isNv: st === 'nv', isOb: st === 'ob', canDeclare: st === 'di' || st === 'ec',
+      chipLabel: SM[0], chipIcon: SM[1], chipBg: SM[2], chipInk: SM[3], chipBs: SM[4], chipBc: SM[5], statusNote: SM[6],
+      pct, pctW: pct + '%', doneCount: n, ringOff: (169.6 * (1 - n / 11)).toFixed(1), ringOffS: (125.7 * (1 - n / 11)).toFixed(1), barColor: n === 11 ? 'var(--gold-fill)' : 'var(--pri)',
+      tabs, tOverview: s.tab === 'overview', tProgramme: s.tab === 'programme', tRes: s.tab === 'res', tTests: s.tab === 'tests', tComm: s.tab === 'comm',
+      goProgramme: () => this.setState({ tab: 'programme' }),
+      start: () => { this.setState({ status: 'ec', tab: 'programme' }); this.toast('Added to your dashboard'); },
+      openModal: () => this.setState({ modal: true }), closeModal: () => this.setState({ modal: false }), modal: s.modal,
+      declare: () => { this.setState({ modal: false, status: 'nv' }); this.toast('Declared · shown on your profile as “Unverified”'); },
+      verify: () => { this.setState({ status: 'ob' }); this.toast('Proof validated · +500 points'); },
+      domains, resTypes, resources, tests,
+      gotList, prepList, gotList3: gotList.slice(0, 3), prepList3: prepList.slice(0, 3), gotCount: gotList.length, prepCount: prepList.length, gotEmpty: !gotList.length, prepEmpty: !prepList.length,
+      scopes, specOpts, lvlOpts, fSpec: s.fSpec, fLvl: s.fLvl, onSpec: e => this.setState({ fSpec: e.target.value }), onLvl: e => this.setState({ fLvl: e.target.value }),
+      hasCommFilter: s.fSpec !== 'all' || s.fLvl !== 'all' || s.scope !== 'ecole', clearComm: () => this.setState({ scope: 'ecole', fSpec: 'all', fLvl: 'all' }),
+      showReqBtn: st === 'di' && !s.reqSent, showReqBox: st === 'ec' || (st === 'di' && s.reqSent),
+      reqModal: s.reqModal, openReq: () => this.setState({ reqModal: true }), closeReq: () => this.setState({ reqModal: false }),
+      sendReq: () => { this.setState({ reqModal: false, reqSent: true }); this.toast('Request sent · awaiting approval'); },
+      sessions, mot: s.mot, motLen: s.mot.length, onMot: e => this.setState({ mot: e.target.value.slice(0, 300) }),
+      hasToast: !!s.toast, toast: s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

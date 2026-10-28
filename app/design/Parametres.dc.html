@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}</style>
+</helmet>
+<div ref="{{ root }}" style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;flex-direction:column;gap:72px;color:var(--ink)">
+
+<div style="display:flex;gap:56px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">14b · Settings — Desktop 1440 · working sections, toggles and theme</div>
+<div data-screen-label="14b Settings desktop" style="width:1440px;min-height:980px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;box-shadow:0 1px 3px rgba(0,0,0,.08);position:relative">
+  <dc-import name="Sidebar" active="parametres" hint-size="256px,980px" style="align-self:stretch;flex:none"></dc-import>
+  <main style="flex:1;min-width:0;padding:32px 40px 40px;display:flex;flex-direction:column;gap:24px">
+    <h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:44px;letter-spacing:-0.015em;line-height:1.05">Settings</h1>
+    <div style="display:grid;grid-template-columns:220px minmax(0,760px);gap:40px;align-items:start">
+      <nav aria-label="Sections" style="display:flex;flex-direction:column;gap:2px;position:sticky;top:0">
+        <sc-for list="{{ secs }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.pick }}" aria-current="{{ t.cur }}" style="height:44px;padding:0 12px;border:none;border-radius:8px;background:{{ t.bg }};color:{{ t.ink }};font-size:14.5px;font-weight:{{ t.fw }};display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">{{ t.icon }}</span>{{ t.label }}</button></sc-for>
+      </nav>
+      <section style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:28px 32px;display:flex;flex-direction:column;gap:24px">
+        <sc-if value="{{ isScol }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Enrolment</h2><span style="font-size:14.5px;color:var(--ink2)">Sets your recommended path, and your class and specialty in the community and leaderboard.</span></div>
+          <div style="display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--warn-sf)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--warn);flex:none">event_repeat</span><span style="font-size:14.5px;line-height:1.5;flex:1"><strong style="color:var(--warn)">2026-27 academic year not confirmed</strong><br>Check your year and group to stay in the right class.</span><button onClick="{{ openRentree }}" style="height:40px;padding:0 14px;border-radius:9px;border:none;background:var(--warn);color:var(--sf);font-size:14px;font-weight:600;cursor:pointer;align-self:center;flex:none">Confirm</button></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Year</span><select value="{{ lv }}" onChange="{{ setLv }}" style="height:48px;padding:0 12px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px"><option value="1">ING-1</option><option value="2">ING-2</option><option value="3">ING-3</option><option value="4">ING-4</option><option value="5">ING-5</option></select></label>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Group</span><select value="{{ grp }}" onChange="{{ setGrp }}" style="height:48px;padding:0 12px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px"><option value="A">Group A</option><option value="B">Group B</option><option value="C">Group C</option></select></label>
+          </div>
+          <sc-if value="{{ hasSpec }}"><fieldset style="border:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><legend style="font-size:14px;font-weight:600;padding:0;margin-bottom:8px">Specialty</legend><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><sc-for list="{{ specs }}" as="c" hint-placeholder-count="4"><button role="radio" aria-checked="{{ c.on }}" onClick="{{ c.pick }}" style="min-height:56px;padding:10px 14px;border-radius:12px;border:{{ c.bw }} solid {{ c.bc }};background:{{ c.bg }};display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer"><span style="width:12px;height:12px;border-radius:50%;background:{{ c.c }};flex:none"></span><span style="display:flex;flex-direction:column;gap:1px"><span style="font-size:14.5px;font-weight:600">{{ c.code }}</span><span style="font-size:12.5px;color:var(--ink3)">{{ c.name }}</span></span></button></sc-for></div></fieldset></sc-if>
+          <sc-if value="{{ noSpec }}"><div style="display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--pri-sf)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--pri)">info</span><span style="font-size:14.5px;line-height:1.5">You choose your specialty in ING-4. Until then, your recommended path stays <strong>Fundamentals</strong>.</span></div></sc-if>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--ln)"><span style="font-size:13.5px;color:var(--ink3)">{{ scolLine }}</span><button onClick="{{ save }}" style="height:46px;padding:0 20px;border-radius:10px;border:none;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;cursor:pointer">Save</button></div>
+        </sc-if>
+        <sc-if value="{{ isConf }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Privacy</h2><span style="font-size:14.5px;color:var(--ink2)">The teaching team always sees your certifications and requests.</span></div>
+          <fieldset style="border:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><legend style="font-size:14px;font-weight:600;padding:0;margin-bottom:8px">Profile visibility</legend><sc-for list="{{ vis }}" as="v" hint-placeholder-count="3"><button role="radio" aria-checked="{{ v.on }}" onClick="{{ v.pick }}" style="display:flex;align-items:center;gap:14px;min-height:56px;padding:10px 16px;border-radius:12px;border:{{ v.bw }} solid {{ v.bc }};background:{{ v.bg }};text-align:left;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:21px;color:var(--ink2)">{{ v.icon }}</span><span style="flex:1;font-size:15px;font-weight:600">{{ v.label }}</span><span style="width:20px;height:20px;border-radius:50%;border:2px solid {{ v.rc }};box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:{{ v.dot }}"></span></span></button></sc-for></fieldset>
+          <div style="display:flex;flex-direction:column;border-top:1px solid var(--ln)"><sc-for list="{{ privToggles }}" as="t" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:16px;min-height:72px;border-bottom:1px solid var(--ln)"><span style="flex:1;display:flex;flex-direction:column;gap:3px"><span id="{{ t.id }}" style="font-size:15px;font-weight:600">{{ t.label }}</span><span style="font-size:13.5px;color:var(--ink3)">{{ t.sub }}</span></span><button role="switch" aria-checked="{{ t.on }}" aria-labelledby="{{ t.id }}" onClick="{{ t.flip }}" style="width:52px;height:32px;border-radius:16px;border:none;background:{{ t.track }};padding:3px;display:flex;justify-content:{{ t.just }};cursor:pointer;flex:none"><span style="width:26px;height:26px;border-radius:50%;background:var(--sf);box-shadow:0 1px 3px rgba(0,0,0,.25)"></span></button></div></sc-for></div>
+        </sc-if>
+        <sc-if value="{{ isNotif }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Notifications</h2><span style="font-size:14.5px;color:var(--ink2)">Choose where to receive each type of alert.</span></div>
+          <div role="table" style="display:flex;flex-direction:column">
+            <div role="row" style="display:grid;grid-template-columns:minmax(0,1fr) 96px 96px;gap:12px;padding:0 0 10px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--ln)"><span role="columnheader">Type</span><span role="columnheader" style="text-align:center">In the app</span><span role="columnheader" style="text-align:center">Email</span></div>
+            <sc-for list="{{ notifRows }}" as="r" hint-placeholder-count="5"><div role="row" style="display:grid;grid-template-columns:minmax(0,1fr) 96px 96px;gap:12px;align-items:center;min-height:68px;border-bottom:1px solid var(--ln)"><span role="cell" style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">{{ r.label }}</span><span style="font-size:13px;color:var(--ink3)">{{ r.sub }}</span></span><sc-for list="{{ r.ch }}" as="t"><span role="cell" style="display:flex;justify-content:center"><button role="switch" aria-checked="{{ t.on }}" aria-label="{{ t.aria }}" onClick="{{ t.flip }}" style="width:52px;height:32px;border-radius:16px;border:none;background:{{ t.track }};padding:3px;display:flex;justify-content:{{ t.just }};cursor:pointer"><span style="width:26px;height:26px;border-radius:50%;background:var(--sf);box-shadow:0 1px 3px rgba(0,0,0,.25)"></span></button></span></sc-for></div></sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Appearance</h2><span style="font-size:14.5px;color:var(--ink2)">Changes apply immediately.</span></div>
+          <div role="radiogroup" aria-label="Theme" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px"><sc-for list="{{ themes }}" as="t" hint-placeholder-count="3"><button role="radio" aria-checked="{{ t.on }}" onClick="{{ t.pick }}" style="padding:10px;border-radius:14px;border:{{ t.bw }} solid {{ t.bc }};background:var(--sf);display:flex;flex-direction:column;gap:10px;cursor:pointer;text-align:left"><span style="height:96px;border-radius:9px;background:{{ t.pv }};border:1px solid var(--ln);display:flex;flex-direction:column;gap:6px;padding:12px;box-sizing:border-box"><span style="width:60%;height:8px;border-radius:4px;background:{{ t.pvInk }}"></span><span style="width:40%;height:8px;border-radius:4px;background:{{ t.pvInk }};opacity:.5"></span><span style="margin-top:auto;width:36px;height:14px;border-radius:4px;background:{{ t.pvPri }}"></span></span><span style="font-size:14.5px;font-weight:600;padding:0 4px 4px">{{ t.label }}</span></button></sc-for></div>
+        </sc-if>
+        <sc-if value="{{ isCompte }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:28px">Account</h2><span style="font-size:14.5px;color:var(--ink2)">Signed in with your TEK-UP account.</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Display name</span><input value="Yassine Ben Amor" style="height:48px;padding:0 14px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px"></label>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Email</span><input value="yassine.benamor@tek-up.de" readonly="" style="height:48px;padding:0 14px;border-radius:10px;border:1.5px solid var(--ln);background:var(--sf2);font-size:15px;color:var(--ink2)"></label>
+          </div>
+          <div style="display:flex;flex-direction:column;border-top:1px solid var(--ln)">
+            <div style="display:flex;align-items:center;justify-content:space-between;min-height:68px;border-bottom:1px solid var(--ln)"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">Export my data</span><span style="font-size:13px;color:var(--ink3)">Certifications, practice tests and requests as CSV</span></span><button style="height:42px;padding:0 14px;border-radius:9px;border:1.5px solid var(--ln2);background:var(--sf);font-size:14px;font-weight:600;cursor:pointer">Export</button></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;min-height:68px"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">Sign out</span><span style="font-size:13px;color:var(--ink3)">On this device</span></span><a href="Connexion.dc.html" style="height:42px;padding:0 14px;border-radius:9px;border:1.5px solid var(--ln2);font-size:14px;font-weight:600;display:flex;align-items:center;text-decoration:none;color:var(--err)">Sign out</a></div>
+          </div>
+        </sc-if>
+      </section>
+    </div>
+  </main>
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%);height:48px;padding:0 18px;border-radius:12px;background:var(--ink);color:var(--bg);display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:500;box-shadow:0 12px 24px -8px rgba(0,0,0,.35)"><span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ok-sf)">check_circle</span>{{ toastMsg }}</div></sc-if>
+
+  <sc-if value="{{ rentree }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;background:rgba(19,26,44,.55);display:grid;place-items:center">
+    <div role="dialog" aria-modal="true" aria-labelledby="rt-t" style="width:560px;background:var(--sf);border-radius:18px;overflow:hidden;box-shadow:0 24px 48px -12px rgba(0,0,0,.4)">
+      <div style="background:var(--hero);color:var(--hero-ink);padding:28px 32px;display:flex;flex-direction:column;gap:8px"><span style="font:500 12px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-fill)">2026-27 academic year</span><span id="rt-t" style="font-family:'Newsreader',serif;font-size:32px;font-weight:500;line-height:1.1">Welcome back, Yassine</span><span style="font-size:15px;line-height:1.55;opacity:.9">Last year you were in ING-3, group A. Where are you this year?</span></div>
+      <div style="padding:24px 32px;display:flex;flex-direction:column;gap:18px">
+        <div role="radiogroup" aria-label="Status" style="display:flex;flex-direction:column;gap:8px"><sc-for list="{{ rtOpts }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.on }}" onClick="{{ o.pick }}" style="display:flex;align-items:center;gap:14px;min-height:60px;padding:10px 16px;border-radius:12px;border:{{ o.bw }} solid {{ o.bc }};background:{{ o.bg }};text-align:left;cursor:pointer"><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">{{ o.label }}</span><span style="font-size:13px;color:var(--ink3)">{{ o.sub }}</span></span><span style="width:20px;height:20px;border-radius:50%;border:2px solid {{ o.rc }};box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:{{ o.dot }}"></span></span></button></sc-for></div>
+        <sc-if value="{{ rtUp }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:600">Specialty</span><select style="height:46px;padding:0 12px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px"><option>CIM · Cloud Infrastructure</option><option>SDIA · AI & Data</option><option>GLOps · Software Engineering</option><option>SSIR · Security</option></select></label><label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:600">Group</span><select style="height:46px;padding:0 12px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px"><option>Group A</option><option>Group B</option><option>Group C</option></select></label></div></sc-if>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><button onClick="{{ closeRentree }}" style="height:46px;padding:0 4px;border:none;background:none;color:var(--ink2);font-size:14.5px;font-weight:600;cursor:pointer">Remind me tomorrow</button><button onClick="{{ confirmRentree }}" style="height:46px;padding:0 20px;border-radius:10px;border:none;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;cursor:pointer">Confirm</button></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · new academic year prompt (sheet)</div>
+<div data-screen-label="14b New academic year prompt mobile" style="width:390px;height:844px;background:rgba(19,26,44,.55);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div role="dialog" aria-label="2026-27 academic year" style="background:var(--sf);border-radius:20px 20px 0 0;overflow:hidden;display:flex;flex-direction:column">
+    <div style="background:var(--hero);color:var(--hero-ink);padding:14px 20px 22px;display:flex;flex-direction:column;gap:8px"><span style="width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,.35);align-self:center;margin-bottom:8px"></span><span style="font:500 11.5px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-fill)">2026-27 academic year</span><span style="font-family:'Newsreader',serif;font-size:26px;font-weight:500;line-height:1.15">Where are you this year?</span></div>
+    <div style="padding:18px 16px 30px;display:flex;flex-direction:column;gap:8px">
+      <span style="display:flex;align-items:center;gap:12px;min-height:60px;padding:10px 14px;border-radius:12px;border:2px solid var(--pri);background:var(--pri-sf)"><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">I'm moving up to ING-4</span><span style="font-size:12.5px;color:var(--ink3)">Choose your specialty and group</span></span><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--pri);box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--pri)"></span></span></span>
+      <span style="display:flex;align-items:center;gap:12px;min-height:56px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--ln2)"><span style="flex:1;font-size:15px;font-weight:600">I'm repeating ING-3</span><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--ln2);box-sizing:border-box"></span></span>
+      <span style="display:flex;align-items:center;gap:12px;min-height:56px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--ln2)"><span style="flex:1;font-size:15px;font-weight:600">I'm no longer at TEK-UP</span><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--ln2);box-sizing:border-box"></span></span>
+      <span style="height:48px;padding:0 14px;border-radius:10px;border:1.5px solid var(--ln2);font-size:15px;display:flex;align-items:center;justify-content:space-between;margin-top:6px">CIM · Cloud Infrastructure<span style="font-family:'Material Symbols Outlined';font-size:20px">expand_more</span></span>
+      <span style="height:52px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;margin-top:8px">Confirm</span>
+      <span style="height:44px;font-size:14.5px;font-weight:600;color:var(--ink2);display:flex;align-items:center;justify-content:center">Remind me tomorrow</span>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;clair&quot;,&quot;sombre&quot;],&quot;default&quot;:&quot;clair&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showRentree&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  static T = {
+    clair: {'--bg':'#F6F3EC','--sf':'#FFFDF8','--sf2':'#EEE9DE','--ln':'#E1DACB','--ln2':'#CBC2AF','--ink':'#131A2C','--ink2':'#474E63','--ink3':'#62677A','--pri':'#1C2F5E','--pri-ink':'#FFFFFF','--pri-sf':'#E4E8F2','--gold':'#86590C','--gold-fill':'#D4A23A','--gold-sf':'#F5EBD3','--ok':'#2C6A45','--ok-sf':'#E0EDE4','--warn':'#9C4F0C','--warn-sf':'#F7E6D6','--err':'#A3302A','--err-sf':'#F5DDDA','--hero':'#14244B','--hero-ink':'#F3EFE6','--focus':'#3B63C9'},
+    sombre: {'--bg':'#0D1220','--sf':'#141B2D','--sf2':'#1B2338','--ln':'#262F47','--ln2':'#38425F','--ink':'#ECEAE4','--ink2':'#B3B8C7','--ink3':'#9097AA','--pri':'#AFC2F4','--pri-ink':'#0D1220','--pri-sf':'#1F2B4C','--gold':'#E5BC62','--gold-fill':'#D9AE4E','--gold-sf':'#33291A','--ok':'#7CC79A','--ok-sf':'#15301F','--warn':'#EDA867','--warn-sf':'#36240F','--err':'#F0928A','--err-sf':'#3A1C1B','--hero':'#18213A','--hero-ink':'#ECEAE4','--focus':'#AFC2F4'}
+  };
+  root = React.createRef();
+  state = { theme: null, sec: 'scol', lv: '4', grp: 'A', spec: 'CIM', vis: 'ecole', sw: { rank: true, help: false, 'dem-app': true, 'dem-mail': true, 'cert-app': true, 'cert-mail': true, 'com-app': true, 'com-mail': false, 'rank-app': true, 'rank-mail': false, 'sess-app': true, 'sess-mail': true }, toast: null, rentree: this.props.showRentree ?? false, rt: 'up' };
+  th() { return this.state.theme ?? this.props.theme ?? 'clair'; }
+  componentDidMount() { this.apply(); } componentDidUpdate() { this.apply(); }
+  componentWillUnmount() { clearTimeout(this.tt); }
+  apply() { const el = this.root.current; if (!el) return; const t = Component.T[this.th()] || Component.T.clair; for (const k in t) el.style.setProperty(k, t[k]); }
+  say(m) { clearTimeout(this.tt); this.setState({ toast: m }); this.tt = setTimeout(() => this.setState({ toast: null }), 2400); }
+  renderVals() {
+    const s = this.state, col = h => `oklch(0.6 0.13 ${h})`;
+    const sel = on => ({ bw: on ? '2px' : '1.5px', bc: on ? 'var(--pri)' : 'var(--ln2)', bg: on ? 'var(--pri-sf)' : 'var(--sf)', rc: on ? 'var(--pri)' : 'var(--ln2)', dot: on ? 'var(--pri)' : 'transparent' });
+    const sw = (key, extra) => { const on = !!s.sw[key]; return { ...extra, on, track: on ? 'var(--pri)' : 'var(--ln2)', just: on ? 'flex-end' : 'flex-start', flip: () => this.setState(st => ({ sw: { ...st.sw, [key]: !st.sw[key] } })) }; };
+    const secs = [['compte', 'Account', 'person'], ['scol', 'Enrolment', 'school'], ['conf', 'Privacy', 'shield_person'], ['notif', 'Notifications', 'notifications'], ['app', 'Appearance', 'contrast']].map(([k, label, icon]) => { const on = s.sec === k; return { label, icon, cur: on ? 'page' : 'false', bg: on ? 'var(--pri-sf)' : 'transparent', ink: on ? 'var(--pri)' : 'var(--ink2)', fw: on ? 600 : 500, pick: () => this.setState({ sec: k }) }; });
+    const specs = [['CIM', 'Cloud Infrastructure Mgmt', 225], ['SDIA', 'AI & Data Science', 285], ['GLOps', 'Software Engineering & DevOps', 165], ['SSIR', 'Systems & Network Security', 15]].map(([code, name, h]) => ({ code, name, c: col(h), on: s.spec === code, ...sel(s.spec === code), pick: () => this.setState({ spec: code }) }));
+    const hasSpec = +s.lv >= 4;
+    const vis = [['ecole', 'Whole institute', 'school'], ['spec', 'My specialty only', 'groups'], ['moi', 'Private', 'lock']].map(([k, label, icon]) => ({ label, icon, on: s.vis === k, ...sel(s.vis === k), pick: () => this.setState({ vis: k }) }));
+    const privToggles = [sw('rank', { id: 'sw-rank', label: 'Appear on the leaderboard', sub: 'Otherwise you stay ranked, but shown as “Anonymous”' }), sw('help', { id: 'sw-help', label: 'Available to help', sub: 'Shows a badge and lets others contact you' })];
+    const notifRows = [['dem', 'Exam requests', 'Review, decision, voucher issued'], ['cert', 'Certifications', 'Verification and points'], ['com', 'Community', 'Replies, classmates getting started'], ['rank', 'Leaderboard', 'Position change'], ['sess', 'Exam sessions', 'On-site registration opening']].map(([k, label, sub]) => ({ label, sub, ch: [sw(k + '-app', { aria: label + ' in the app' }), sw(k + '-mail', { aria: label + ' by email' })] }));
+    const themes = [['clair', 'Light', '#F6F3EC', '#131A2C', '#1C2F5E'], ['sombre', 'Dark', '#0D1220', '#ECEAE4', '#AFC2F4']].map(([k, label, pv, pvInk, pvPri]) => { const on = this.th() === k; return { label, pv, pvInk, pvPri, on, bw: on ? '2px' : '1.5px', bc: on ? 'var(--pri)' : 'var(--ln2)', pick: () => { this.setState({ theme: k }); } }; });
+    themes.push({ label: 'System', pv: 'linear-gradient(90deg,#F6F3EC 50%,#0D1220 50%)', pvInk: '#7A7F90', pvPri: '#5E77B5', on: false, bw: '1.5px', bc: 'var(--ln2)', pick: () => this.say('Theme matches your device') });
+    const rtOpts = [['up', 'I’m moving up to ING-4', 'Choose your specialty and group'], ['re', 'I’m repeating ING-3', 'Your path and points are kept'], ['out', 'I’m no longer at TEK-UP', 'Your profile switches to alumni mode']].map(([k, label, sub]) => ({ label, sub, on: s.rt === k, ...sel(s.rt === k), pick: () => this.setState({ rt: k }) }));
+    return {
+      root: this.root, secs, isScol: s.sec === 'scol', isConf: s.sec === 'conf', isNotif: s.sec === 'notif', isApp: s.sec === 'app', isCompte: s.sec === 'compte',
+      lv: s.lv, setLv: e => this.setState({ lv: e.target.value }), grp: s.grp, setGrp: e => this.setState({ grp: e.target.value }), specs, hasSpec, noSpec: !hasSpec,
+      scolLine: `ING-${s.lv}${hasSpec ? ' ' + s.spec : ''} · group ${s.grp}`, save: () => this.say('Enrolment saved'),
+      vis, privToggles, notifRows, themes, toast: !!s.toast, toastMsg: s.toast,
+      rentree: s.rentree, openRentree: () => this.setState({ rentree: true }), closeRentree: () => this.setState({ rentree: false }),
+      confirmRentree: () => { this.setState({ rentree: false, lv: s.rt === 'up' ? '4' : '3' }); this.say('Academic year confirmed'); }, rtOpts, rtUp: s.rt === 'up'
+    };
+  }
+}
+</script>
+</body>
+</html>

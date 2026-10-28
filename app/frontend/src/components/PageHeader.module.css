@@ -1,0 +1,50 @@
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.titles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.overline {
+  color: var(--ink3);
+  font-size: 14px;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: var(--tracking-heading);
+  line-height: 1.15;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 767px) {
+  .header {
+    align-items: center;
+  }
+
+  .titles {
+    gap: 2px;
+  }
+
+  .overline {
+    font-size: 13px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+}

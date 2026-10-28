@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1C2F5E"/><text x="50" y="62" text-anchor="middle" font-family="Georgia,serif" font-size="32" fill="#F6F3EC">TK</text></svg></template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;color:#131A2C;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column">
+  <header style="position:sticky;top:0;z-index:50;background:#14244B;color:#F3EFE6;display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:10px 20px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;border-radius:50%;background:#F3EFE6;color:#14244B;display:grid;place-items:center;font-family:'Newsreader',serif;font-size:16px;font-weight:600;box-shadow:0 0 0 1.5px #14244B,0 0 0 3px #D4A23A">T</div>
+      <span style="font-family:'Newsreader',serif;font-size:19px;font-weight:600">TekCert</span>
+      <span style="font:500 11px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#E2BC66">Prototype</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button onClick="{{ back }}" disabled="{{ noBack }}" aria-label="Previous screen" title="Previous screen" style="width:40px;height:40px;border-radius:8px;border:1px solid rgba(243,239,230,.25);background:transparent;color:#F3EFE6;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(243,239,230,.1)"><span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_back</span></button>
+      <select ref="{{ selRef }}" onChange="{{ pick }}" aria-label="Screen" style="height:40px;min-width:220px;padding:0 12px;border-radius:8px;border:1px solid rgba(243,239,230,.25);background:#1C2F5E;color:#F3EFE6;font:500 14px 'Instrument Sans',sans-serif;cursor:pointer">
+        <sc-for list="{{ screens }}" as="s" hint-placeholder-count="15"><option value="{{ s.key }}">{{ s.label }}</option></sc-for>
+      </select>
+    </div>
+    <div role="group" aria-label="Device" style="display:flex;padding:3px;border-radius:9px;background:rgba(243,239,230,.1)">
+      <sc-for list="{{ devices }}" as="d" hint-placeholder-count="2">
+        <button onClick="{{ d.go }}" aria-pressed="{{ d.on }}" style="height:34px;padding:0 12px;border:none;border-radius:7px;background:{{ d.bg }};color:{{ d.ink }};font:600 13px 'Instrument Sans',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:18px">{{ d.icon }}</span>{{ d.label }}</button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ hasVariants }}">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">
+        <span style="font-size:12.5px;color:rgba(243,239,230,.75)">State</span>
+        <sc-for list="{{ variants }}" as="v">
+          <button onClick="{{ v.go }}" aria-pressed="{{ v.on }}" style="height:32px;padding:0 11px;border-radius:16px;border:1px solid {{ v.line }};background:{{ v.bg }};color:{{ v.ink }};font:500 12.5px 'Instrument Sans',sans-serif;cursor:pointer">{{ v.label }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <button onClick="{{ toggleTheme }}" aria-label="Change theme" title="Change theme" style="width:40px;height:40px;border-radius:8px;border:1px solid rgba(243,239,230,.25);background:transparent;color:#F3EFE6;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(243,239,230,.1)"><span style="font-family:'Material Symbols Outlined';font-size:20px">{{ themeIcon }}</span></button>
+      <button onClick="{{ restart }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid rgba(243,239,230,.25);background:transparent;color:#F3EFE6;font:600 13px 'Instrument Sans',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:rgba(243,239,230,.1)"><span style="font-family:'Material Symbols Outlined';font-size:18px">restart_alt</span>Restart</button>
+    </div>
+  </header>
+  <main ref="{{ stageRef }}" onClickCapture="{{ intercept }}" style="flex:1;padding:24px;display:flex;justify-content:center;align-items:flex-start;overflow-x:hidden">
+    <div style="zoom:{{ zoom }}">
+      <sc-if value="{{ show.landing }}"><dc-import name="Landing" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.connexion }}"><dc-import name="Connexion" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.onboarding }}"><dc-import name="Onboarding" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.dashboard }}"><dc-import name="Tableau-de-bord" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.catalogue }}"><dc-import name="Catalogue" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.parcours }}"><dc-import name="Parcours" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.fiche }}"><dc-import name="Fiche-certification" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.profil }}"><dc-import name="Profil" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.test }}"><dc-import name="Test-blanc" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.demandes }}"><dc-import name="Demande-passage" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.declarer }}"><dc-import name="Declarer-certification" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.communaute }}"><dc-import name="Communaute" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.classement }}"><dc-import name="Classement" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.notifications }}"><dc-import name="Notifications" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+      <sc-if value="{{ show.parametres }}"><dc-import name="Parametres" theme="{{ theme }}" hint-size="1440px,900px"></dc-import></sc-if>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;start&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;landing&quot;,&quot;connexion&quot;,&quot;onboarding&quot;,&quot;dashboard&quot;],&quot;default&quot;:&quot;landing&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static S = [
+    ['landing', 'Landing', '01 Landing'],
+    ['connexion', 'Sign in', '02 Sign in / Sign up'],
+    ['onboarding', 'Onboarding', '03 Onboarding'],
+    ['dashboard', 'Tableau-de-bord', '04 Dashboard'],
+    ['catalogue', 'Catalog', '05 Catalog'],
+    ['parcours', 'Paths', '06 Paths'],
+    ['fiche', 'Fiche-certification', '07 Certification page'],
+    ['profil', 'Profile', '08 Student profile'],
+    ['test', 'Test-blanc', '09 Practice test'],
+    ['demandes', 'Demande-passage', '10 Exam requests'],
+    ['declarer', 'Declarer-certification', '11 Declare a certification'],
+    ['communaute', 'Communaute', '12 Community'],
+    ['classement', 'Leaderboard', '13 Leaderboard'],
+    ['notifications', 'Notifications', '14a Notifications'],
+    ['parametres', 'Parametres', '14b Settings']
+  ];
+  constructor(p) {
+    super(p);
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('tekcert-prototype') || '{}'); } catch (e) {}
+    const start = this.props.start ?? 'landing';
+    this.state = { screen: saved.screen || start, device: saved.device || 'desktop', variant: saved.variant || 0, theme: saved.theme || 'clair', hist: [], labels: [], w: 1200 };
+    this.stageRef = { current: null };
+    this.setSel = el => { this.sel = el; if (el) requestAnimationFrame(() => this.syncSel()); };
+    this.setStage = el => { if (el === this.stageRef.current) return; this.stageRef.current = el; this.attach(); };
+  }
+  syncSel() { const el = this.sel; if (el && el.value !== this.state.screen) el.value = this.state.screen; }
+  componentDidMount() { this.attach(); this.poll = setInterval(() => { this.isolate(); this.syncSel(); }, 500); }
+  attach() {
+    const el = this.stageRef.current;
+    if (!el || this.attached === el) return;
+    this.mo && this.mo.disconnect(); this.ro && this.ro.disconnect();
+    this.attached = el;
+    this.mo = new MutationObserver(() => this.schedule());
+    this.mo.observe(el, { childList: true, subtree: true });
+    this.ro = new ResizeObserver(() => { const w = el.clientWidth; if (Math.abs(w - this.state.w) > 2) this.setState({ w }); });
+    this.ro.observe(el);
+    this.schedule();
+  }
+  componentWillUnmount() { this.mo && this.mo.disconnect(); this.ro && this.ro.disconnect(); cancelAnimationFrame(this.raf); clearInterval(this.poll); }
+  componentDidUpdate(pp, ps) {
+    const s = this.state;
+    if (ps.screen !== s.screen || ps.device !== s.device || ps.variant !== s.variant || ps.theme !== s.theme) {
+      try { localStorage.setItem('tekcert-prototype', JSON.stringify({ screen: s.screen, device: s.device, variant: s.variant, theme: s.theme })); } catch (e) {}
+      if (ps.screen !== s.screen && this.stageRef.current) window.scrollTo(0, 0);
+      requestAnimationFrame(() => this.syncSel());
+      this.schedule();
+    }
+  }
+  schedule() { cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(() => this.isolate()); }
+  hide(el) { if (el.dataset.pOrig === undefined) el.dataset.pOrig = el.style.display; if (el.style.display !== 'none') el.style.display = 'none'; }
+  show(el) { if (el.dataset.pOrig !== undefined && el.style.display !== el.dataset.pOrig) el.style.display = el.dataset.pOrig; }
+  isolate() {
+    const c = this.stageRef.current;
+    if (!c) return;
+    const arts = [...c.querySelectorAll('[data-screen-label]')];
+    if (!arts.length) return;
+    const word = this.state.device === 'mobile' ? 'mobile' : 'desktop';
+    let list = arts.filter(a => a.dataset.screenLabel.toLowerCase().includes(word));
+    if (!list.length) list = arts;
+    const chosen = list[Math.min(this.state.variant, list.length - 1)];
+    const col = chosen.parentElement;
+    arts.forEach(a => {
+      if (a === chosen) return;
+      if (a.parentElement === col) this.hide(a); else if (!a.parentElement.contains(chosen)) this.hide(a.parentElement);
+    });
+    this.show(col);
+    [...col.children].forEach(ch => { if (ch === chosen) this.show(ch); else if (!arts.includes(ch)) this.hide(ch); });
+    const root = col.parentElement;
+    if (root && root !== c) { root.style.padding = '0'; root.style.justifyContent = 'center'; root.style.gap = '0'; }
+    col.style.gap = '0';
+    chosen.style.boxShadow = '0 2px 24px rgba(19,26,44,.14)';
+    const labels = list.map(a => a.dataset.screenLabel);
+    if (labels.join('|') !== this.state.labels.join('|')) this.setState({ labels });
+  }
+  go(key) {
+    if (key === this.state.screen) return;
+    this.setState(s => ({ screen: key, variant: 0, labels: [], hist: [...s.hist, { screen: s.screen, variant: s.variant }].slice(-30) }));
+  }
+  renderVals() {
+    const S = Component.S, s = this.state;
+    const byFile = {};
+    S.forEach(([k, f]) => { byFile[f + '.dc.html'] = k; });
+    const show = {};
+    S.forEach(([k]) => { show[k] = s.screen === k; });
+    const strip = l => { const t = l.replace(/^\S+\s/, '').replace(/\b(desktop|mobile)\b/gi, '').replace(/\s+/g, ' ').trim(); const base = (S.find(x => x[0] === s.screen) || [])[2] || ''; const name = base.replace(/^\S+\s/, ''); const rest = t.toLowerCase().startsWith(name.toLowerCase()) ? t.slice(name.length).trim() : t; return rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : 'Default'; };
+    const variants = s.labels.map((l, i) => ({ label: strip(l), on: i === s.variant, bg: i === s.variant ? '#F3EFE6' : 'transparent', ink: i === s.variant ? '#14244B' : '#F3EFE6', line: i === s.variant ? '#F3EFE6' : 'rgba(243,239,230,.3)', go: () => this.setState({ variant: i }) }));
+    const dev = (k, label, icon) => ({ label, icon, on: s.device === k, bg: s.device === k ? '#F3EFE6' : 'transparent', ink: s.device === k ? '#14244B' : '#F3EFE6', go: () => this.setState({ device: k, variant: 0, labels: [] }) });
+    const avail = Math.max(320, s.w - 48);
+    const zoom = s.device === 'desktop' ? Math.min(1, avail / 1440) : 1;
+    return {
+      stageRef: this.setStage,
+      screens: S.map(([key, , label]) => ({ key, label, on: key === s.screen })),
+      selRef: this.setSel,
+      screen: s.screen,
+      show,
+      theme: s.theme,
+      themeIcon: s.theme === 'sombre' ? 'light_mode' : 'dark_mode',
+      zoom: String(zoom),
+      devices: [dev('desktop', 'Desktop', 'desktop_windows'), dev('mobile', 'Mobile', 'smartphone')],
+      variants,
+      hasVariants: variants.length > 1,
+      noBack: !s.hist.length,
+      pick: e => this.go(e.target.value),
+      back: () => this.setState(st => { const h = st.hist.slice(); const p = h.pop(); return p ? { hist: h, screen: p.screen, variant: p.variant, labels: [] } : null; }),
+      restart: () => this.setState({ screen: this.props.start ?? 'landing', variant: 0, labels: [], hist: [] }),
+      toggleTheme: () => this.setState(st => ({ theme: st.theme === 'sombre' ? 'clair' : 'sombre' })),
+      intercept: e => {
+        const a = e.target.closest && e.target.closest('a[href]');
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (href.startsWith('#')) { e.preventDefault(); return; }
+        const file = href.split('/').pop().split('#')[0].split('?')[0];
+        const key = byFile[file];
+        if (key) { e.preventDefault(); e.stopPropagation(); this.go(key); }
+        else if (/\.dc\.html$/.test(file)) e.preventDefault();
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

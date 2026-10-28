@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}</style>
+</helmet>
+<div ref="{{ root }}" style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;flex-direction:column;gap:72px;color:var(--ink)">
+
+<div style="display:flex;gap:56px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">09 · Practice test · taking — Desktop 1440 · focus mode (no navigation) · answer, flag, navigate, finish</div>
+<div data-screen-label="09 Practice test taking desktop" style="width:1440px;height:900px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08);position:relative">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--ln);background:var(--sf)">
+    <div style="display:flex;align-items:center;gap:16px"><a href="Fiche-certification.dc.html" style="height:44px;padding:0 12px 0 8px;border-radius:8px;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink2)"><span style="font-family:'Material Symbols Outlined';font-size:20px">close</span>Quit</a><span style="width:1px;height:28px;background:var(--ln)"></span><div style="display:flex;flex-direction:column;gap:2px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">SAA-C03 · AWS</span><span style="font-family:'Newsreader',serif;font-size:20px;font-weight:600">Practice test #2 · Resilience and cost</span></div></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span role="timer" aria-label="Time left" style="height:44px;padding:0 14px;border-radius:10px;background:{{ timerBg }};color:{{ timerInk }};display:flex;align-items:center;gap:8px;font:600 17px 'IBM Plex Mono',monospace"><span style="font-family:'Material Symbols Outlined';font-size:20px">timer</span>{{ timeFmt }}</span>
+      <span style="font-size:13px;color:var(--ink3);display:flex;align-items:center;gap:5px;margin-right:6px"><span style="font-family:'Material Symbols Outlined';font-size:16px">cloud_done</span>Saved</span>
+      <button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink2);display:grid;place-items:center;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ themeIcon }}</span></button>
+      <button onClick="{{ openConfirm }}" style="height:44px;padding:0 18px;border-radius:10px;border:none;background:var(--pri);color:var(--pri-ink);font-size:14.5px;font-weight:600;cursor:pointer">Finish test</button>
+    </div>
+  </header>
+  <div style="height:4px;background:var(--sf2)"><div style="height:100%;width:{{ answeredW }};background:var(--pri);transition:width .4s"></div></div>
+  <div style="flex:1;display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:0">
+    <main style="padding:40px 64px 28px;display:flex;flex-direction:column;gap:24px;overflow:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:baseline;gap:12px"><span style="font-family:'Newsreader',serif;font-size:34px;font-weight:500">Question {{ qNum }}</span><span style="font-size:15px;color:var(--ink3)">of 65</span></div><span style="height:28px;padding:0 12px;border-radius:14px;background:var(--sf2);font-size:13px;font-weight:600;color:var(--ink2);display:inline-flex;align-items:center">{{ q.domain }}</span></div>
+      <p style="margin:0;font-size:19px;line-height:1.6;max-width:820px;text-wrap:pretty">{{ q.text }}</p>
+      <sc-if value="{{ q.multi }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;font-weight:600;color:var(--pri);display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:18px">checklist</span><span>Choose 2 answers · {{ pickedCount }}/2 selected</span></span></sc-if>
+      <div role="{{ q.role }}" style="display:flex;flex-direction:column;gap:10px;max-width:820px">
+        <sc-for list="{{ opts }}" as="o" hint-placeholder-count="4">
+          <button onClick="{{ o.pick }}" role="{{ o.role }}" aria-checked="{{ o.on }}" style="display:flex;align-items:center;gap:16px;min-height:64px;padding:12px 18px;border-radius:12px;border:{{ o.bw }} solid {{ o.bc }};background:{{ o.bg }};text-align:left;cursor:pointer;transition:background .15s">
+            <span style="width:32px;height:32px;border-radius:{{ o.rad }};border:1.5px solid {{ o.lc }};background:{{ o.lbg }};color:{{ o.link }};display:grid;place-items:center;font-weight:700;font-size:14px;flex:none;box-sizing:border-box">{{ o.letter }}</span>
+            <span style="flex:1;font-size:16px;line-height:1.5">{{ o.text }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--ln);max-width:820px">
+        <button onClick="{{ prev }}" style="height:48px;padding:0 18px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_back</span>Previous</button>
+        <button onClick="{{ toggleFlag }}" aria-pressed="{{ flagged }}" style="height:48px;padding:0 16px;border-radius:10px;border:1.5px solid {{ flagBc }};background:{{ flagBg }};color:{{ flagInk }};font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px;font-variation-settings:'FILL' {{ flagFill }}">flag</span>{{ flagLabel }}</button>
+        <button onClick="{{ next }}" style="height:48px;padding:0 20px;border-radius:10px;border:none;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer">Next<span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_forward</span></button>
+      </div>
+    </main>
+    <aside aria-label="Question navigation" style="border-left:1px solid var(--ln);background:var(--sf);padding:28px 24px;display:flex;flex-direction:column;gap:18px;overflow:auto">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Newsreader',serif;font-size:20px;font-weight:600">Questions</span><span style="font-size:13.5px;color:var(--ink2)"><strong style="color:var(--ink)">{{ answeredCount }}</strong>/65 answered</span></div>
+      <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px">
+        <sc-for list="{{ cells }}" as="c" hint-placeholder-count="65">
+          <button onClick="{{ c.go }}" aria-label="{{ c.aria }}" aria-current="{{ c.cur }}" style="position:relative;height:32px;border-radius:7px;border:1.5px solid {{ c.bc }};background:{{ c.bg }};color:{{ c.ink }};font-size:12px;font-weight:600;cursor:pointer;padding:0;box-shadow:{{ c.ring }}">{{ c.n }}<sc-if value="{{ c.flag }}"><span style="position:absolute;top:-6px;right:-6px;width:16px;height:16px;border-radius:50%;background:var(--warn);color:var(--sf);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:11px;font-variation-settings:'FILL' 1">flag</span></span></sc-if></button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--ink2);padding-top:14px;border-top:1px solid var(--ln)">
+        <span style="display:flex;align-items:center;gap:10px"><span style="width:18px;height:18px;border-radius:5px;background:var(--pri)"></span>Answered</span>
+        <span style="display:flex;align-items:center;gap:10px"><span style="width:18px;height:18px;border-radius:5px;border:1.5px solid var(--ln2);box-sizing:border-box"></span>Unanswered</span>
+        <span style="display:flex;align-items:center;gap:10px"><span style="width:18px;height:18px;border-radius:50%;background:var(--warn);color:var(--sf);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:12px;font-variation-settings:'FILL' 1">flag</span></span><span>Flagged for review · {{ flagCount }}</span></span>
+        <span style="display:flex;align-items:center;gap:10px"><span style="width:18px;height:18px;border-radius:5px;box-shadow:0 0 0 2px var(--sf),0 0 0 4px var(--focus)"></span>Current question</span>
+      </div>
+      <button onClick="{{ jumpFlag }}" style="height:44px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-top:auto"><span style="font-family:'Material Symbols Outlined';font-size:19px">flag</span>Go to next flagged</button>
+    </aside>
+  </div>
+  <sc-if value="{{ confirm }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(19,26,44,.5);display:grid;place-items:center">
+      <div role="dialog" aria-modal="true" aria-labelledby="end-t" style="width:480px;background:var(--sf);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:0 24px 48px -12px rgba(0,0,0,.4)">
+        <span id="end-t" style="font-family:'Newsreader',serif;font-size:26px;font-weight:600">Finish the test?</span>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--ln);border-radius:12px">
+          <div style="padding:14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12.5px;color:var(--ink3)">Answered</span><span style="font-family:'Newsreader',serif;font-size:26px;font-weight:600">{{ answeredCount }}</span></div>
+          <div style="padding:14px;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--ln)"><span style="font-size:12.5px;color:var(--ink3)">Unanswered</span><span style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;color:var(--err)">{{ unanswered }}</span></div>
+          <div style="padding:14px;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--ln)"><span style="font-size:12.5px;color:var(--ink3)">Flagged</span><span style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;color:var(--warn)">{{ flagCount }}</span></div>
+        </div>
+        <span style="font-size:14.5px;color:var(--ink2);line-height:1.55">Unanswered questions count as wrong. You have {{ timeFmt }}.</span>
+        <div style="display:flex;justify-content:flex-end;gap:8px"><button onClick="{{ closeConfirm }}" style="height:46px;padding:0 16px;border:none;background:none;color:var(--pri);font-size:15px;font-weight:600;cursor:pointer">Continue test</button><a href="#resultats" onClick="{{ closeConfirm }}" style="height:46px;padding:0 20px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;text-decoration:none">Finish and see my results</a></div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · taking</div>
+<div data-screen-label="09 Practice test taking mobile" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <header style="padding:12px 12px 10px 4px;display:flex;align-items:center;justify-content:space-between;background:var(--sf);border-bottom:1px solid var(--ln)"><span style="width:44px;height:44px;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">close</span></span><span style="font-size:14px;font-weight:600">SAA-C03 · Test #2</span><span role="timer" style="height:36px;padding:0 10px;border-radius:8px;background:var(--sf2);display:flex;align-items:center;gap:6px;font:600 14px 'IBM Plex Mono',monospace"><span style="font-family:'Material Symbols Outlined';font-size:17px">timer</span>{{ timeFmt }}</span></header>
+  <div style="height:4px;background:var(--sf2)"><div style="height:100%;width:{{ answeredW }};background:var(--pri)"></div></div>
+  <div style="flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;overflow:hidden">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Newsreader',serif;font-size:26px;font-weight:500">Question {{ qNum }}<span style="font-family:'Instrument Sans',sans-serif;font-size:14px;color:var(--ink3)"> / 65</span></span><span style="font-size:12px;font-weight:600;color:var(--ink2)">{{ q.domainShort }}</span></div>
+    <p style="margin:0;font-size:16px;line-height:1.55">{{ q.text }}</p>
+    <sc-if value="{{ q.multi }}" hint-placeholder-val="{{ false }}"><span style="font-size:13.5px;font-weight:600;color:var(--pri)">Choose 2 answers</span></sc-if>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ opts }}" as="o" hint-placeholder-count="4">
+        <button onClick="{{ o.pick }}" role="{{ o.role }}" aria-checked="{{ o.on }}" style="display:flex;align-items:flex-start;gap:12px;min-height:56px;padding:12px 14px;border-radius:12px;border:{{ o.bw }} solid {{ o.bc }};background:{{ o.bg }};text-align:left;cursor:pointer">
+          <span style="width:28px;height:28px;border-radius:{{ o.rad }};border:1.5px solid {{ o.lc }};background:{{ o.lbg }};color:{{ o.link }};display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;box-sizing:border-box">{{ o.letter }}</span>
+          <span style="flex:1;font-size:14.5px;line-height:1.45">{{ o.text }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="padding:10px 12px 26px;border-top:1px solid var(--ln);background:var(--sf);display:grid;grid-template-columns:52px 1fr 52px 1fr;gap:8px">
+    <button onClick="{{ prev }}" aria-label="Previous question" style="height:52px;border-radius:10px;border:1.5px solid var(--ln2);background:var(--sf);display:grid;place-items:center;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></button>
+    <a href="#nav-mobile" style="height:52px;border-radius:10px;border:1.5px solid var(--ln2);display:flex;align-items:center;justify-content:center;gap:6px;font-size:14.5px;font-weight:600;text-decoration:none;color:var(--ink)"><span style="font-family:'Material Symbols Outlined';font-size:20px">grid_view</span><span>{{ answeredCount }}/65</span></a>
+    <button onClick="{{ toggleFlag }}" aria-label="{{ flagLabel }}" aria-pressed="{{ flagged }}" style="height:52px;border-radius:10px;border:1.5px solid {{ flagBc }};background:{{ flagBg }};color:{{ flagInk }};display:grid;place-items:center;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:22px;font-variation-settings:'FILL' {{ flagFill }}">flag</span></button>
+    <button onClick="{{ next }}" style="height:52px;border-radius:10px;border:none;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;cursor:pointer">Next</button>
+  </div>
+</div>
+</div>
+
+<div id="nav-mobile" style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · question navigator</div>
+<div data-screen-label="09 Practice test navigator mobile" style="width:390px;height:844px;background:rgba(19,26,44,.5);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div role="dialog" aria-label="Questions" style="background:var(--bg);border-radius:20px 20px 0 0;padding:10px 16px 26px;display:flex;flex-direction:column;gap:16px">
+    <span style="width:40px;height:4px;border-radius:2px;background:var(--ln2);align-self:center"></span>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 4px"><span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600">Questions</span><span style="font-size:13.5px;color:var(--ink2)">{{ answeredCount }}/65 · {{ flagCount }} flagged</span></div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">
+      <sc-for list="{{ cellsMobile }}" as="c" hint-placeholder-count="35">
+        <button onClick="{{ c.go }}" aria-label="{{ c.aria }}" style="position:relative;height:44px;border-radius:9px;border:1.5px solid {{ c.bc }};background:{{ c.bg }};color:{{ c.ink }};font-size:13px;font-weight:600;padding:0;box-shadow:{{ c.ring }};cursor:pointer">{{ c.n }}<sc-if value="{{ c.flag }}"><span style="position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;background:var(--warn);color:var(--sf);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:11px;font-variation-settings:'FILL' 1">flag</span></span></sc-if></button>
+      </sc-for>
+    </div>
+    <span style="font-size:12.5px;color:var(--ink3);text-align:center">Questions 1 to 35 · scroll for more</span>
+    <button onClick="{{ openConfirm }}" style="height:52px;border-radius:10px;border:none;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;cursor:pointer">Finish test</button>
+  </div>
+</div>
+</div>
+</div>
+
+<div id="resultats" style="display:flex;gap:56px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">09 · Practice test · results — Desktop 1440 · passed · filter and expand the answers</div>
+<div data-screen-label="09 Practice test results desktop" style="width:1440px;min-height:1180px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <dc-import name="Sidebar" active="catalogue" hint-size="256px,1180px" style="align-self:stretch;flex:none"></dc-import>
+  <main style="flex:1;min-width:0;padding:32px 40px 48px;display:flex;flex-direction:column;gap:24px">
+    <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink3)"><a href="Fiche-certification.dc.html" style="color:var(--ink2);text-decoration:none">SAA-C03</a><span style="font-family:'Material Symbols Outlined';font-size:16px">chevron_right</span><span>Practice tests</span><span style="font-family:'Material Symbols Outlined';font-size:16px">chevron_right</span><span style="color:var(--ink)">Practice test #2</span></nav>
+    <section style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:32px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:36px;align-items:center">
+      <div style="position:relative;width:148px;height:148px"><svg width="148" height="148" viewBox="0 0 148 148"><circle cx="74" cy="74" r="64" fill="none" style="stroke:var(--sf2)" stroke-width="12"></circle><circle cx="74" cy="74" r="64" fill="none" style="stroke:var(--gold-fill)" stroke-width="12" stroke-linecap="round" stroke-dasharray="402.1" stroke-dashoffset="88.5" transform="rotate(-90 74 74)"></circle><line x1="74" y1="4" x2="74" y2="22" style="stroke:var(--ink)" stroke-width="2" transform="rotate(259 74 74)"></line></svg><span style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-family:'Newsreader',serif;font-size:44px;font-weight:500;line-height:1">78<span style="font-size:22px"> %</span></span><span style="font-size:12px;color:var(--ink3);margin-top:4px">51/65 correct</span></span></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="height:30px;padding:0 12px 0 9px;border-radius:15px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:18px">check_circle</span>Passed</span><span style="font-size:14px;color:var(--ink2)">Pass mark: 72% · marked on the ring</span></div>
+        <h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.015em;line-height:1.1">Practice test #2 · Resilience and cost</h1>
+        <div style="display:flex;gap:24px;font-size:14px;color:var(--ink2)"><span style="display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:18px;color:var(--ink3)">timer</span>1 h 52 min of 2 h 10</span><span style="display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:18px;color:var(--ink3)">flag</span>2 flagged</span><span style="display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:18px;color:var(--ink3)">history</span>Attempt 1 · Oct 9, 2026</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:stretch;width:250px">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--gold-sf)"><span style="width:40px;height:40px;border-radius:50%;background:var(--gold-fill);color:#1A1406;display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:21px;font-variation-settings:'FILL' 1">workspace_premium</span></span><span style="display:flex;flex-direction:column"><strong style="font-family:'Newsreader',serif;font-size:22px;font-weight:600">+50 points</strong><span style="font-size:12.5px;color:var(--ink2)">Practice test passed</span></span></div>
+        <button style="height:46px;border-radius:10px;border:none;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:19px">replay</span>Retake test</button>
+        <a href="Fiche-certification.dc.html" style="height:46px;border-radius:10px;border:1.5px solid var(--ln2);color:var(--ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;text-decoration:none">Back to the page</a>
+      </div>
+    </section>
+    <section style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px">
+      <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:24px">Result by domain</h2>
+        <sc-for list="{{ domains }}" as="d" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:7px"><div style="display:flex;justify-content:space-between;font-size:14.5px"><span style="font-weight:600">{{ d.name }}</span><span style="color:var(--ink2)">{{ d.ratio }} · <strong style="color:var(--ink)">{{ d.pct }}%</strong></span></div><div style="position:relative;height:8px;border-radius:4px;background:var(--sf2)"><div style="width:{{ d.w }};height:100%;border-radius:4px;background:{{ d.c }}"></div><span style="position:absolute;left:72%;top:-3px;width:2px;height:14px;background:var(--ink)"></span></div></div>
+        </sc-for>
+      </div>
+      <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">
+        <h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:24px">Review before the exam</h2>
+        <div style="display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--warn-sf);color:var(--warn)"><span style="font-family:'Material Symbols Outlined';font-size:22px;flex:none">trending_down</span><span style="font-size:14.5px;line-height:1.5;color:var(--ink)"><strong style="color:var(--warn)">Cost optimisation · 58%</strong><br>Below the 72% threshold. 4 of 7 mistakes involve S3 storage classes.</span></div>
+        <a href="Fiche-certification.dc.html" style="display:flex;align-items:center;gap:12px;min-height:52px;padding:0 4px;border-bottom:1px solid var(--ln);text-decoration:none;color:var(--ink)"><span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">11</span><span style="flex:1;font-size:15px;font-weight:500">Cost optimisation</span><span style="font-size:13px;color:var(--ink3)">Chapter not finished</span><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ink3)">arrow_forward</span></a>
+        <a href="Fiche-certification.dc.html" style="display:flex;align-items:center;gap:12px;min-height:52px;padding:0 4px;border-bottom:1px solid var(--ln);text-decoration:none;color:var(--ink)"><span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">04</span><span style="flex:1;font-size:15px;font-weight:500">Storage: S3, EBS, EFS</span><span style="font-size:13px;color:var(--ok);display:flex;align-items:center;gap:4px"><span style="font-family:'Material Symbols Outlined';font-size:16px">check</span>Done · worth rereading</span><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ink3)">arrow_forward</span></a>
+      </div>
+    </section>
+    <section style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:24px">Answers</h2>
+        <div role="tablist" style="display:inline-flex;background:var(--sf2);border-radius:10px;padding:4px;gap:2px"><sc-for list="{{ revTabs }}" as="t" hint-placeholder-count="3"><button role="tab" aria-selected="{{ t.on }}" onClick="{{ t.pick }}" style="height:38px;padding:0 14px;border:none;border-radius:7px;background:{{ t.bg }};color:{{ t.ink }};box-shadow:{{ t.sh }};font-size:13.5px;font-weight:600;cursor:pointer">{{ t.label }}</button></sc-for></div>
+      </div>
+      <div style="display:flex;flex-direction:column;border-top:1px solid var(--ln)">
+        <sc-for list="{{ review }}" as="r" hint-placeholder-count="6">
+          <div style="border-bottom:1px solid var(--ln)">
+            <button onClick="{{ r.toggle }}" aria-expanded="{{ r.open }}" style="width:100%;display:grid;grid-template-columns:40px 140px minmax(0,1fr) 200px 28px;gap:16px;align-items:center;min-height:60px;border:none;background:none;text-align:left;cursor:pointer;padding:0">
+              <span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">{{ r.n }}</span>
+              <span style="height:26px;padding:0 10px 0 7px;border-radius:13px;background:{{ r.bg }};color:{{ r.ink }};display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;justify-self:start"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ r.icon }}</span>{{ r.status }}</span>
+              <span style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.text }}</span>
+              <span style="font-size:13px;color:var(--ink3);display:flex;align-items:center;gap:6px">{{ r.domainShort }}<sc-if value="{{ r.flag }}"><span style="font-family:'Material Symbols Outlined';font-size:16px;color:var(--warn);font-variation-settings:'FILL' 1" aria-label="Flagged">flag</span></sc-if></span>
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--ink3)">{{ r.chev }}</span>
+            </button>
+            <sc-if value="{{ r.open }}">
+              <div style="padding:4px 0 24px 56px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <p style="margin:0 0 6px;font-size:15.5px;line-height:1.6">{{ r.text }}</p>
+                  <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border:1.5px solid {{ o.bc }};background:{{ o.bg }}"><span style="font-weight:700;font-size:13.5px;width:18px">{{ o.letter }}</span><span style="flex:1;font-size:14.5px;line-height:1.45">{{ o.text }}</span><sc-if value="{{ o.hasTag }}"><span style="display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:{{ o.tagInk }};flex:none"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ o.tagIcon }}</span>{{ o.tag }}</span></sc-if></div></sc-for>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:12px;background:var(--bg);align-self:start"><span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Explanation</span><span style="font-size:14.5px;line-height:1.6">{{ r.why }}</span><a href="Fiche-certification.dc.html" style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;min-height:36px"><span style="font-family:'Material Symbols Outlined';font-size:18px">menu_book</span><span>Related chapter: {{ r.chapter }}</span></a></div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <span style="font-size:13.5px;color:var(--ink3)">{{ reviewNote }}</span>
+    </section>
+  </main>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · results · failed</div>
+<div data-screen-label="09 Practice test results mobile failed" style="width:390px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="padding:12px 8px 0"><span style="width:44px;height:44px;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></span></div>
+  <div style="padding:0 20px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px">
+    <span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">SAA-C03 · Practice test #1</span>
+    <div style="position:relative;width:128px;height:128px"><svg width="128" height="128" viewBox="0 0 128 128"><circle cx="64" cy="64" r="54" fill="none" style="stroke:var(--sf2)" stroke-width="11"></circle><circle cx="64" cy="64" r="54" fill="none" style="stroke:var(--pri)" stroke-width="11" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="122.1" transform="rotate(-90 64 64)"></circle></svg><span style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-family:'Newsreader',serif;font-size:36px;font-weight:500;line-height:1">64<span style="font-size:18px"> %</span></span><span style="font-size:11.5px;color:var(--ink3);margin-top:3px">42/65</span></span></div>
+    <span style="height:30px;padding:0 12px 0 9px;border-radius:15px;background:var(--err-sf);color:var(--err);display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:18px">cancel</span>72% threshold not reached</span>
+    <span style="font-size:14.5px;color:var(--ink2);line-height:1.55">You're 6 correct answers short. Your weak spots are below.</span>
+  </div>
+  <div style="padding:0 16px 24px;display:flex;flex-direction:column;gap:12px">
+    <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <span style="font-family:'Newsreader',serif;font-size:19px;font-weight:600">By domain</span>
+      <sc-for list="{{ domainsFail }}" as="d" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:13.5px"><span style="font-weight:600">{{ d.short }}</span><span><strong>{{ d.pct }}%</strong></span></div><div style="position:relative;height:7px;border-radius:4px;background:var(--sf2)"><div style="width:{{ d.w }};height:100%;border-radius:4px;background:{{ d.c }}"></div><span style="position:absolute;left:72%;top:-3px;width:2px;height:13px;background:var(--ink)"></span></div></div></sc-for>
+    </div>
+    <span style="height:52px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px"><span style="font-family:'Material Symbols Outlined';font-size:20px">fact_check</span>Review my 23 mistakes</span>
+    <span style="height:52px;border-radius:10px;border:1.5px solid var(--ln2);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px"><span style="font-family:'Material Symbols Outlined';font-size:20px">replay</span>Retake test</span>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;clair&quot;,&quot;sombre&quot;],&quot;default&quot;:&quot;clair&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static T = {
+    clair: {'--bg':'#F6F3EC','--sf':'#FFFDF8','--sf2':'#EEE9DE','--ln':'#E1DACB','--ln2':'#CBC2AF','--ink':'#131A2C','--ink2':'#474E63','--ink3':'#62677A','--pri':'#1C2F5E','--pri-ink':'#FFFFFF','--pri-sf':'#E4E8F2','--gold':'#86590C','--gold-fill':'#D4A23A','--gold-sf':'#F5EBD3','--ok':'#2C6A45','--ok-sf':'#E0EDE4','--warn':'#9C4F0C','--warn-sf':'#F7E6D6','--err':'#A3302A','--err-sf':'#F5DDDA','--hero':'#14244B','--hero-ink':'#F3EFE6','--focus':'#3B63C9'},
+    sombre: {'--bg':'#0D1220','--sf':'#141B2D','--sf2':'#1B2338','--ln':'#262F47','--ln2':'#38425F','--ink':'#ECEAE4','--ink2':'#B3B8C7','--ink3':'#9097AA','--pri':'#AFC2F4','--pri-ink':'#0D1220','--pri-sf':'#1F2B4C','--gold':'#E5BC62','--gold-fill':'#D9AE4E','--gold-sf':'#33291A','--ok':'#7CC79A','--ok-sf':'#15301F','--warn':'#EDA867','--warn-sf':'#36240F','--err':'#F0928A','--err-sf':'#3A1C1B','--hero':'#18213A','--hero-ink':'#ECEAE4','--focus':'#AFC2F4'}
+  };
+  static Q = [
+    { d: 'Domain 2 · Resilient architectures', ds: 'Resilience', t: 'A web application hosted on EC2 instances must stay available if an Availability Zone fails. Which architecture meets the need with the least operational effort?', o: ['A more powerful EC2 instance in a single Availability Zone', 'An Auto Scaling group spread across multiple zones, behind an Application Load Balancer', 'Two instances in the same zone with an Elastic IP address', 'One instance per Region with Route 53 simple routing'], c: [1], why: 'A Multi-AZ Auto Scaling group behind an ALB automatically replaces lost instances and spreads traffic across healthy zones.', ch: 'High availability and disaster recovery' },
+    { d: 'Domain 4 · Cost optimisation', ds: 'Cost', t: 'Logs are accessed often for 30 days, then almost never for a year. Which solution minimises storage costs?', o: ['Keep the logs in S3 Standard permanently', 'S3 Standard, then a lifecycle rule to S3 Glacier Flexible Retrieval after 30 days', 'An EBS gp3 volume attached to an instance', 'S3 One Zone-IA from day one'], c: [1], why: 'A lifecycle rule automatically moves objects to a cheaper archive class once they’re no longer accessed.', ch: 'Cost optimisation' },
+    { d: 'Domain 3 · High performance', ds: 'Performance', t: 'An RDS MySQL database is under heavy read load. Which actions reduce the load on the primary instance?', o: ['Add read replicas', 'Enable Multi-AZ deployment', 'Cache frequent queries with ElastiCache', 'Switch to magnetic storage'], c: [0, 2], multi: true, why: 'Read replicas and caching absorb the reads. Multi-AZ adds availability, not performance.', ch: 'Databases: RDS, Aurora, DynamoDB' },
+    { d: 'Domain 2 · Resilient architectures', ds: 'Resilience', t: 'Lambda functions must process orders without losing any when the downstream service is unavailable. What should go between the two?', o: ['An Amazon SQS queue', 'An S3 bucket', 'A NAT gateway', 'A DynamoDB global table'], c: [0], why: 'SQS keeps messages until they’re processed, which decouples the producer from the consumer.', ch: 'Decoupling: SQS, SNS, EventBridge' },
+    { d: 'Domain 1 · Secure architectures', ds: 'Security', t: 'How do you give an EC2 instance read access to an S3 bucket without storing access keys?', o: ['Put access keys in the application code', 'Attach an IAM role to the instance', 'Make the bucket public', 'Create an IAM user shared by the team'], c: [1], why: 'An IAM role provides temporary credentials that rotate automatically, with no stored secret.', ch: 'Identity and access: IAM, Organizations' },
+    { d: 'Domain 3 · High performance', ds: 'Performance', t: 'An application must serve static content to users worldwide with low latency. Which solution should you choose?', o: ['Amazon CloudFront in front of an S3 bucket', 'A more powerful EC2 instance', 'S3 Transfer Acceleration alone', 'Inter-Region VPC peering'], c: [0], why: 'CloudFront caches content at edge locations close to users.', ch: 'Caching and delivery: ElastiCache, CloudFront' }
+  ];
+  root = React.createRef();
+  constructor(p) { super(p); const ans = {}; for (let i = 0; i < 11; i++) if (i !== 6) { const q = Component.Q[i % 6]; ans[i] = q.multi ? [0, 1] : [i % 3 === 0 ? q.c[0] : (q.c[0] + (i % 4 === 1 ? 1 : 0)) % 4]; } this.state = { theme: null, cur: 11, ans, flags: [3, 8], left: 6432, confirm: false, revTab: 'all', open: 2 }; }
+  th() { return this.state.theme ?? this.props.theme ?? 'clair'; }
+  componentDidMount() { this.apply(); this.iv = setInterval(() => this.setState(s => ({ left: Math.max(0, s.left - 1) })), 1000); }
+  componentDidUpdate() { this.apply(); }
+  componentWillUnmount() { clearInterval(this.iv); }
+  apply() { const el = this.root.current; if (!el) return; const t = Component.T[this.th()] || Component.T.clair; for (const k in t) el.style.setProperty(k, t[k]); }
+  renderVals() {
+    const s = this.state, Q = Component.Q, q = Q[s.cur % 6], picked = s.ans[s.cur] || [];
+    const L = s.left, timeFmt = Math.floor(L / 3600) + ':' + String(Math.floor(L % 3600 / 60)).padStart(2, '0') + ':' + String(L % 60).padStart(2, '0');
+    const opts = q.o.map((text, i) => { const on = picked.includes(i); return { text, letter: 'ABCD'[i], on, role: q.multi ? 'checkbox' : 'radio', rad: q.multi ? '7px' : '50%', bw: on ? '2px' : '1.5px', bc: on ? 'var(--pri)' : 'var(--ln2)', bg: on ? 'var(--pri-sf)' : 'var(--sf)', lc: on ? 'var(--pri)' : 'var(--ln2)', lbg: on ? 'var(--pri)' : 'transparent', link: on ? 'var(--pri-ink)' : 'var(--ink2)',
+      pick: () => { let a = picked.slice(); if (q.multi) { a = on ? a.filter(x => x !== i) : (a.length < 2 ? [...a, i] : [a[1], i]); } else a = [i]; this.setState({ ans: { ...s.ans, [s.cur]: a } }); } }; });
+    const answered = Object.keys(s.ans).filter(k => (s.ans[k] || []).length).length;
+    const flagged = s.flags.includes(s.cur);
+    const cell = i => { const a = (s.ans[i] || []).length > 0, cur = i === s.cur, fl = s.flags.includes(i); return { n: i + 1, flag: fl, cur: cur ? 'step' : 'false', aria: 'Question ' + (i + 1) + (a ? ', answered' : ', unanswered') + (fl ? ', flagged' : ''), bc: a ? 'var(--pri)' : 'var(--ln2)', bg: a ? 'var(--pri)' : 'var(--sf)', ink: a ? 'var(--pri-ink)' : 'var(--ink2)', ring: cur ? '0 0 0 2px var(--sf), 0 0 0 4px var(--focus)' : 'none', go: () => this.setState({ cur: i }) }; };
+    const cells = Array.from({ length: 65 }, (_, i) => cell(i));
+    const dom = (name, short, ok, tot) => { const pct = Math.round(ok / tot * 100); return { name, short, ratio: ok + '/' + tot, pct, w: pct + '%', c: pct >= 72 ? 'var(--ok)' : 'var(--warn)' }; };
+    const domains = [dom('1. Secure architectures', 'Security', 17, 20), dom('2. Resilient architectures', 'Resilience', 14, 17), dom('3. High performance', 'Performance', 13, 16), dom('4. Cost optimisation', 'Cost', 7, 12)];
+    const domainsFail = [dom('', 'Security', 15, 20), dom('', 'Resilience', 10, 17), dom('', 'Performance', 11, 16), dom('', 'Cost', 6, 12)];
+    const marks = [true, true, false, true, true, true, false, true, true, false, true, true];
+    const rev = marks.map((ok, i) => { const qq = Q[i % 6], fl = i === 3 || i === 8, yours = ok ? qq.c : [(qq.c[0] + 1) % 4];
+      return { n: String(i + 1).padStart(2, '0'), idx: i, ok, flag: fl, text: qq.t, domainShort: qq.ds, why: qq.why, chapter: qq.ch, status: ok ? 'Correct' : 'Incorrect', icon: ok ? 'check_circle' : 'cancel', bg: ok ? 'var(--ok-sf)' : 'var(--err-sf)', ink: ok ? 'var(--ok)' : 'var(--err)', open: s.open === i, chev: s.open === i ? 'expand_less' : 'expand_more', toggle: () => this.setState({ open: s.open === i ? -1 : i }),
+        opts: qq.o.map((text, k) => { const corr = qq.c.includes(k), mine = yours.includes(k); const tag = corr && mine ? ['Your answer · correct', 'check_circle', 'var(--ok)'] : corr ? ['Correct answer', 'check_circle', 'var(--ok)'] : mine ? ['Your answer', 'cancel', 'var(--err)'] : null; return { text, letter: 'ABCD'[k], hasTag: !!tag, tag: tag ? tag[0] : '', tagIcon: tag ? tag[1] : '', tagInk: tag ? tag[2] : '', bc: corr ? 'var(--ok)' : mine ? 'var(--err)' : 'var(--ln)', bg: corr ? 'var(--ok-sf)' : mine ? 'var(--err-sf)' : 'var(--sf)' }; }) }; });
+    const review = rev.filter(r => s.revTab === 'all' || (s.revTab === 'ko' && !r.ok) || (s.revTab === 'fl' && r.flag));
+    const revTabs = [['all', 'All · 65'], ['ko', 'Incorrect · 14'], ['fl', 'Flagged · 2']].map(([k, label]) => { const on = s.revTab === k; return { label, on, bg: on ? 'var(--sf)' : 'transparent', ink: on ? 'var(--ink)' : 'var(--ink2)', sh: on ? '0 1px 2px rgba(19,26,44,.12)' : 'none', pick: () => this.setState({ revTab: k }) }; });
+    return {
+      root: this.root, themeIcon: this.th() === 'clair' ? 'dark_mode' : 'light_mode', toggleTheme: () => this.setState({ theme: this.th() === 'clair' ? 'sombre' : 'clair' }),
+      q: { ...q, domain: q.d, domainShort: q.ds, text: q.t, multi: !!q.multi, role: q.multi ? 'group' : 'radiogroup' }, qNum: s.cur + 1, opts, pickedCount: picked.length,
+      timeFmt, timerBg: L < 600 ? 'var(--err-sf)' : 'var(--sf2)', timerInk: L < 600 ? 'var(--err)' : 'var(--ink)',
+      answeredCount: answered, unanswered: 65 - answered, answeredW: (answered / 65 * 100).toFixed(1) + '%', flagCount: s.flags.length,
+      flagged, flagLabel: flagged ? 'Flagged for review' : 'Flag for review', flagBc: flagged ? 'var(--warn)' : 'var(--ln2)', flagBg: flagged ? 'var(--warn-sf)' : 'var(--sf)', flagInk: flagged ? 'var(--warn)' : 'var(--ink)', flagFill: flagged ? 1 : 0,
+      toggleFlag: () => this.setState({ flags: flagged ? s.flags.filter(x => x !== s.cur) : [...s.flags, s.cur] }),
+      prev: () => this.setState({ cur: Math.max(0, s.cur - 1) }), next: () => this.setState({ cur: Math.min(64, s.cur + 1) }),
+      jumpFlag: () => { const f = s.flags.slice().sort((a, b) => a - b); const n = f.find(x => x > s.cur) ?? f[0]; if (n != null) this.setState({ cur: n }); },
+      cells, cellsMobile: cells.slice(0, 35), confirm: s.confirm, openConfirm: () => this.setState({ confirm: true }), closeConfirm: () => this.setState({ confirm: false }),
+      domains, domainsFail, review, revTabs, reviewNote: 'Preview of the first 12 questions · the full answer key lists all 65.'
+    };
+  }
+}
+</script>
+</body>
+</html>

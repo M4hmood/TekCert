@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}</style>
+</helmet>
+<div ref="{{ root }}" style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;gap:56px;align-items:flex-start;color:var(--ink)">
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">03 · Onboarding — Desktop 1440 · interactive: pick ING-1 to ING-3 to see the “target specialty” branch</div>
+<div data-screen-label="03 Onboarding desktop" style="width:1440px;height:920px;background:var(--bg);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid var(--ln)">
+    <div style="display:flex;align-items:center;gap:11px;width:240px"><div style="width:32px;height:32px;border-radius:50%;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:18px;font-weight:600;box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--gold-fill)">T</div><span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600">TekCert</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+      <span style="font-size:13px;font-weight:600;color:var(--ink2)">{{ stepLabel }}</span>
+      <div style="display:flex;gap:6px"><sc-for list="{{ segs }}" as="s" hint-placeholder-count="4"><span style="width:72px;height:5px;border-radius:3px;background:{{ s.bg }};transition:background .3s"></span></sc-for></div>
+    </div>
+    <div style="width:240px;display:flex;justify-content:flex-end"><button onClick="{{ toggleTheme }}" aria-label="Change theme" style="width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--ink2);display:grid;place-items:center;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:21px">{{ themeIcon }}</span></button></div>
+  </header>
+
+  <main style="flex:1;overflow:auto;display:flex;justify-content:center;padding:48px 48px 24px">
+    <div style="width:920px;display:flex;flex-direction:column;gap:32px">
+
+      <sc-if value="{{ s1 }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)">Welcome, Yassine</span><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:48px;letter-spacing:-0.02em">Which year are you in?</h1><span style="font-size:16.5px;color:var(--ink2)">You'll confirm your year at the start of each academic year.</span></div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+          <sc-for list="{{ levels }}" as="l" hint-placeholder-count="5">
+            <button onClick="{{ l.pick }}" aria-pressed="{{ l.on }}" style="padding:20px 18px;border-radius:14px;border:{{ l.bw }} solid {{ l.bc }};background:{{ l.bg }};display:flex;flex-direction:column;gap:10px;cursor:pointer;text-align:left;min-height:150px;box-sizing:border-box">
+              <span style="display:flex;justify-content:space-between;width:100%"><span style="font-family:'Newsreader',serif;font-size:32px;font-weight:500;color:var(--ink)">{{ l.code }}</span><span style="font-family:'Material Symbols Outlined';font-size:22px;color:{{ l.ck }};font-variation-settings:'FILL' 1">{{ l.check }}</span></span>
+              <span style="font-size:14px;font-weight:600;color:var(--ink)">{{ l.title }}</span>
+              <span style="font-size:13px;color:var(--ink2);line-height:1.4">{{ l.desc }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;padding:14px 16px;border-radius:12px;background:var(--pri-sf);color:var(--pri);font-size:14.5px"><span style="font-family:'Material Symbols Outlined';font-size:20px">info</span>Coming from a 3-year bachelor's? Pick ING-3: you join the common core.</div>
+      </sc-if>
+
+      <sc-if value="{{ s2spec }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:10px"><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:48px;letter-spacing:-0.02em">What's your specialty?</h1><span style="font-size:16.5px;color:var(--ink2)">You'll follow its path by default. You can follow others too.</span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+          <sc-for list="{{ specs }}" as="o" hint-placeholder-count="6">
+            <button onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" style="padding:20px;border-radius:14px;border:{{ o.bw }} solid {{ o.bc }};background:{{ o.bg }};display:flex;flex-direction:column;gap:10px;cursor:pointer;text-align:left;min-height:140px;box-sizing:border-box">
+              <span style="display:flex;justify-content:space-between;width:100%;align-items:center"><span style="display:flex;align-items:center;gap:10px"><span style="width:14px;height:14px;border-radius:50%;background:{{ o.c }}"></span><span style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;color:var(--ink)">{{ o.code }}</span></span><span style="font-family:'Material Symbols Outlined';font-size:22px;color:{{ o.ck }};font-variation-settings:'FILL' 1">{{ o.check }}</span></span>
+              <span style="font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.35">{{ o.name }}</span>
+              <span style="font-size:13px;color:var(--ink2)">{{ o.meta }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:16px 18px;border:1px solid var(--ln);border-radius:12px;background:var(--sf)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--ink3)">groups</span><span style="font-size:15px">Your class: <strong>{{ classLabel }}</strong></span><span style="font-size:13.5px;color:var(--ink3);margin-left:auto">{{ classMates }}</span></div>
+      </sc-if>
+
+      <sc-if value="{{ s2target }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:10px"><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:48px;letter-spacing:-0.02em">Which specialty are you aiming for?</h1><span style="font-size:16.5px;color:var(--ink2)">You'll choose it officially when you enter ING-4. Until then, we'll suggest its path.</span></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+          <sc-for list="{{ targets }}" as="o" hint-placeholder-count="7">
+            <button onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" style="padding:16px;border-radius:14px;border:{{ o.bw }} {{ o.bs }} {{ o.bc }};background:{{ o.bg }};display:flex;flex-direction:column;gap:8px;cursor:pointer;text-align:left;min-height:118px;box-sizing:border-box">
+              <span style="display:flex;justify-content:space-between;width:100%;align-items:center"><span style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:50%;background:{{ o.c }}"></span><span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;color:var(--ink)">{{ o.code }}</span></span><span style="font-family:'Material Symbols Outlined';font-size:20px;color:{{ o.ck }};font-variation-settings:'FILL' 1">{{ o.check }}</span></span>
+              <span style="font-size:13.5px;font-weight:500;color:var(--ink2);line-height:1.35">{{ o.name }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px"><span style="font-size:14px;font-weight:600">Your group in {{ levelCode }}</span>
+          <div style="display:flex;gap:10px"><sc-for list="{{ groups }}" as="g" hint-placeholder-count="4"><button onClick="{{ g.pick }}" aria-pressed="{{ g.on }}" style="height:44px;padding:0 18px;border-radius:22px;border:1.5px solid {{ g.bc }};background:{{ g.bg }};color:{{ g.ink }};font-size:14.5px;font-weight:600;cursor:pointer">{{ g.label }}</button></sc-for></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ s3 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)">Optional</span><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:48px;letter-spacing:-0.02em">Do you already have certifications?</h1><span style="font-size:16.5px;color:var(--ink2)">They'll show as “Unverified” until you upload proof.</span></div>
+        <div style="display:flex;flex-direction:column;border:1px solid var(--ln);border-radius:14px;background:var(--sf);overflow:hidden">
+          <div style="display:flex;align-items:center;gap:10px;padding:0 18px;height:56px;border-bottom:1px solid var(--ln);color:var(--ink3)"><span style="font-family:'Material Symbols Outlined';font-size:21px">search</span><span style="font-size:15.5px">Search for a certification</span></div>
+          <sc-for list="{{ certs }}" as="c" hint-placeholder-count="7">
+            <button onClick="{{ c.pick }}" aria-pressed="{{ c.on }}" style="display:flex;align-items:center;gap:14px;padding:0 18px;min-height:58px;border:none;border-bottom:1px solid var(--ln);background:{{ c.bg }};cursor:pointer;text-align:left">
+              <span style="width:22px;height:22px;border-radius:6px;border:1.5px solid {{ c.boxBorder }};background:{{ c.boxBg }};color:var(--pri-ink);display:grid;place-items:center;box-sizing:border-box;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:17px">{{ c.tick }}</span></span>
+              <span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 9px;border:1px solid var(--ln2);border-radius:6px;font-size:12px;font-weight:600;color:var(--ink2);width:110px;box-sizing:border-box;flex:none"><span style="width:8px;height:8px;border-radius:2px;background:{{ c.dot }}"></span>{{ c.prov }}</span>
+              <span style="flex:1;font-size:15px;font-weight:600;color:var(--ink)">{{ c.name }}</span>
+              <span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">{{ c.code }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ s4 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:10px"><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:48px;letter-spacing:-0.02em">Add a profile photo</h1><span style="font-size:16.5px;color:var(--ink2)">Classmates will recognise you more easily when they look for help.</span></div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:center">
+          <div style="width:220px;height:220px;border-radius:50%;border:2px dashed var(--ln2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--sf);box-sizing:border-box"><span style="font-family:'Newsreader',serif;font-size:64px;font-weight:500;color:var(--pri);line-height:1">YB</span><span style="font-size:13px;color:var(--ink3)">Drag an image here</span></div>
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;gap:10px"><button style="height:48px;padding:0 20px;border-radius:10px;border:none;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">upload</span>Upload a photo</button><button onClick="{{ next }}" style="height:48px;padding:0 16px;border:none;background:none;color:var(--pri);font-size:15px;font-weight:600;cursor:pointer">Later</button></div>
+            <span style="font-size:13.5px;color:var(--ink3)">JPG or PNG, 5 MB max. Square crop.</span>
+            <div style="display:flex;flex-direction:column;border-top:1px solid var(--ln);margin-top:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:1px solid var(--ln)"><span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:15px;font-weight:600">Profile visible to students</span><span style="font-size:13.5px;color:var(--ink2)">Name, class, certifications and institute email.</span></span><button onClick="{{ togglePublic }}" role="switch" aria-checked="{{ isPublic }}" aria-label="Visible profile" style="width:52px;height:44px;border:none;background:none;padding:0;cursor:pointer;display:grid;place-items:center"><span style="width:44px;height:26px;border-radius:13px;background:{{ pubTrack }};position:relative;display:block;transition:background .2s"><span style="position:absolute;top:3px;left:{{ pubKnob }};width:20px;height:20px;border-radius:50%;background:var(--sf);transition:left .2s"></span></span></button></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:1px solid var(--ln)"><span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:15px;font-weight:600">Appear on leaderboards</span><span style="font-size:13.5px;color:var(--ink2)">Class, specialty, year and institute.</span></span><button onClick="{{ toggleRank }}" role="switch" aria-checked="{{ inRank }}" aria-label="Leaderboards" style="width:52px;height:44px;border:none;background:none;padding:0;cursor:pointer;display:grid;place-items:center"><span style="width:44px;height:26px;border-radius:13px;background:{{ rankTrack }};position:relative;display:block;transition:background .2s"><span style="position:absolute;top:3px;left:{{ rankKnob }};width:20px;height:20px;border-radius:50%;background:var(--sf);transition:left .2s"></span></span></button></div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ s5 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)">You're all set</span><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:52px;letter-spacing:-0.02em">Here's your recommended path</h1><span style="font-size:16.5px;color:var(--ink2);display:flex;align-items:center;gap:10px"><span style="width:12px;height:12px;border-radius:50%;background:{{ res.c }}"></span><strong style="color:var(--ink)">{{ res.title }}</strong> · {{ res.why }}</span></div>
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:28px">
+          <div style="display:grid;grid-template-columns:1fr 32px 1fr 32px 1fr;align-items:center">
+            <sc-for list="{{ res.nodes }}" as="n" hint-placeholder-count="3">
+              <div style="border:{{ n.bw }} {{ n.bs }} {{ n.bc }};border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px;background:{{ n.bg }};box-shadow:{{ n.sh }}"><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:{{ n.codeInk }}">{{ n.code }} · {{ n.lvl }}</span><span style="font-size:15px;font-weight:600">{{ n.name }}</span><span style="font-size:12.5px;font-weight:600;color:{{ n.noteInk }};display:flex;align-items:center;gap:4px"><span style="font-family:'Material Symbols Outlined';font-size:16px">{{ n.icon }}</span>{{ n.note }}</span></div>
+              <sc-if value="{{ n.arrow }}"><span style="height:1.5px;background:var(--ln2)"></span></sc-if>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:22px;border-top:1px solid var(--ln)">
+            <div style="display:flex;align-items:center;gap:12px"><div style="display:flex"><span style="width:34px;height:34px;border-radius:50%;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;font-size:12px;font-weight:600;box-shadow:0 0 0 2.5px var(--sf)">OB</span><span style="width:34px;height:34px;border-radius:50%;background:var(--gold-sf);color:var(--gold);display:grid;place-items:center;font-size:12px;font-weight:600;box-shadow:0 0 0 2.5px var(--sf);margin-left:-8px">SB</span><span style="width:34px;height:34px;border-radius:50%;background:var(--ok-sf);color:var(--ok);display:grid;place-items:center;font-size:12px;font-weight:600;box-shadow:0 0 0 2.5px var(--sf);margin-left:-8px">NK</span></div><span style="font-size:14.5px;color:var(--ink2)"><strong style="color:var(--ink)">{{ res.peers }}</strong> also follow this path</span></div>
+            <span style="font-size:14px;color:var(--ink3)">{{ res.count }} certifications in this path</span>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </main>
+
+  <footer style="display:flex;justify-content:space-between;align-items:center;padding:18px 48px;border-top:1px solid var(--ln);background:var(--sf)">
+    <sc-if value="{{ canBack }}" hint-placeholder-val="{{ false }}"><button onClick="{{ back }}" style="height:48px;padding:0 16px;border:none;background:none;color:var(--ink);font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_back</span>Back</button></sc-if>
+    <sc-if value="{{ noBack }}" hint-placeholder-val="{{ true }}"><span></span></sc-if>
+    <div style="display:flex;gap:12px;align-items:center">
+      <sc-if value="{{ s3 }}" hint-placeholder-val="{{ false }}"><button onClick="{{ next }}" style="height:48px;padding:0 16px;border:none;background:none;color:var(--pri);font-size:15px;font-weight:600;cursor:pointer">Skip this step</button></sc-if>
+      <sc-if value="{{ notLast }}" hint-placeholder-val="{{ true }}"><button onClick="{{ next }}" style="height:48px;padding:0 24px;border:none;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;cursor:pointer">Continue<span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_forward</span></button></sc-if>
+      <sc-if value="{{ s5 }}" hint-placeholder-val="{{ false }}"><a href="Tableau-de-bord.dc.html" style="height:48px;padding:0 24px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;text-decoration:none">Go to my dashboard<span style="font-family:'Material Symbols Outlined';font-size:20px">arrow_forward</span></a></sc-if>
+    </div>
+  </footer>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · step 2, ING-3 · target specialty</div>
+<div data-screen-label="03 Onboarding mobile target" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="padding:14px 12px 12px;display:flex;align-items:center;gap:8px"><span style="width:44px;height:44px;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:22px">arrow_back</span></span><div style="flex:1;display:flex;gap:5px"><span style="flex:1;height:5px;border-radius:3px;background:var(--pri)"></span><span style="flex:1;height:5px;border-radius:3px;background:var(--pri)"></span><span style="flex:1;height:5px;border-radius:3px;background:var(--ln)"></span><span style="flex:1;height:5px;border-radius:3px;background:var(--ln)"></span></div><span style="font-size:13px;font-weight:600;color:var(--ink2);padding:0 8px">2/4</span></div>
+  <div style="flex:1;overflow:hidden;padding:8px 20px;display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:6px"><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:30px;line-height:1.1">Which specialty are you aiming for?</h1><span style="font-size:14.5px;color:var(--ink2)">You'll confirm it when you enter ING-4.</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ mTargets }}" as="o" hint-placeholder-count="7">
+        <div style="display:flex;align-items:center;gap:12px;min-height:48px;padding:0 14px;border-radius:12px;border:{{ o.bw }} {{ o.bs }} {{ o.bc }};background:{{ o.bg }};box-sizing:border-box"><span style="width:12px;height:12px;border-radius:50%;background:{{ o.c }};flex:none"></span><span style="font-family:'Newsreader',serif;font-size:18px;font-weight:600;width:64px;flex:none">{{ o.code }}</span><span style="flex:1;font-size:13px;color:var(--ink2);line-height:1.3">{{ o.short }}</span><span style="font-family:'Material Symbols Outlined';font-size:20px;color:{{ o.ck }};font-variation-settings:'FILL' 1">{{ o.check }}</span></div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">Your group in ING-3</span><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"><span style="height:44px;border-radius:22px;border:1.5px solid var(--ln2);display:grid;place-items:center;font-size:14px;font-weight:600;box-sizing:border-box">G1</span><span style="height:44px;border-radius:22px;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center;font-size:14px;font-weight:600">G2</span><span style="height:44px;border-radius:22px;border:1.5px solid var(--ln2);display:grid;place-items:center;font-size:14px;font-weight:600;box-sizing:border-box">G3</span><span style="height:44px;border-radius:22px;border:1.5px solid var(--ln2);display:grid;place-items:center;font-size:14px;font-weight:600;box-sizing:border-box">G4</span></div></div>
+  </div>
+  <div style="padding:14px 20px 28px;border-top:1px solid var(--ln);background:var(--sf)"><span style="height:52px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px">Continue · ING-3 Group 2</span></div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px 'IBM Plex Mono',monospace;color:#4F4A3E">Mobile 390 · recommended path (ING-4 CIM)</div>
+<div data-screen-label="03 Onboarding mobile result" style="width:390px;height:844px;background:var(--bg);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+  <div style="flex:1;padding:44px 20px 12px;display:flex;flex-direction:column;gap:22px;overflow:hidden">
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)">You're all set</span><h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:34px;line-height:1.08">Here's your recommended path</h1><span style="font-size:15px;color:var(--ink2);display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.6 0.13 225)"></span>CIM · your specialty's path</span></div>
+    <div style="display:flex;flex-direction:column;position:relative;padding-left:44px;gap:14px">
+      <span style="position:absolute;left:16px;top:18px;bottom:18px;width:2px;background:var(--ln2)"></span>
+      <div style="position:relative;border:1.5px dashed var(--gold-fill);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:5px"><span style="position:absolute;left:-40px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--bg);border:1.5px dashed var(--gold-fill);display:grid;place-items:center;box-sizing:border-box;color:var(--gold)"><span style="font-family:'Material Symbols Outlined';font-size:17px">workspace_premium</span></span><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--gold)">CLF-C02 · Unverified</span><span style="font-size:15px;font-weight:600">AWS Cloud Practitioner</span></div>
+      <div style="position:relative;border:2px solid var(--pri);border-radius:12px;padding:13.5px;display:flex;flex-direction:column;gap:5px;background:var(--sf);box-shadow:0 0 0 4px var(--pri-sf)"><span style="position:absolute;left:-40px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:17px">arrow_forward</span></span><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--pri)">SAA-C03 · Your next step</span><span style="font-size:15px;font-weight:600">AWS Solutions Architect – Associate</span><span style="font-size:13px;color:var(--ink2)">23 CIM students are preparing it</span></div>
+      <div style="position:relative;border:1.5px solid var(--ln2);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:5px;background:var(--sf)"><span style="position:absolute;left:-40px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--sf);border:1.5px solid var(--ln2);display:grid;place-items:center;box-sizing:border-box;color:var(--ink2)"><span style="font-family:'Material Symbols Outlined';font-size:17px">radio_button_unchecked</span></span><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--ink3)">AZ-104 · Available</span><span style="font-size:15px;font-weight:600">Microsoft Azure Administrator</span></div>
+      <div style="position:relative;border:1.5px dashed var(--ln2);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:5px;background:var(--sf2)"><span style="position:absolute;left:-40px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--sf2);display:grid;place-items:center;color:var(--ink3)"><span style="font-family:'Material Symbols Outlined';font-size:17px">lock</span></span><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--ink3)">SAP-C02 · Locked</span><span style="font-size:15px;font-weight:600;color:var(--ink2)">AWS Solutions Architect – Professional</span></div>
+    </div>
+  </div>
+  <div style="padding:14px 20px 28px;border-top:1px solid var(--ln);background:var(--sf)"><a href="Tableau-de-bord.dc.html" style="height:52px;border-radius:10px;background:var(--pri);color:var(--pri-ink);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;text-decoration:none">Go to my dashboard</a></div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;clair&quot;,&quot;sombre&quot;],&quot;default&quot;:&quot;clair&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static T = {
+    clair: {'--bg':'#F6F3EC','--sf':'#FFFDF8','--sf2':'#EEE9DE','--ln':'#E1DACB','--ln2':'#CBC2AF','--ink':'#131A2C','--ink2':'#474E63','--ink3':'#62677A','--pri':'#1C2F5E','--pri-ink':'#FFFFFF','--pri-sf':'#E4E8F2','--gold':'#86590C','--gold-fill':'#D4A23A','--gold-sf':'#F5EBD3','--ok':'#2C6A45','--ok-sf':'#E0EDE4','--warn':'#9C4F0C','--warn-sf':'#F7E6D6','--err':'#A3302A','--err-sf':'#F5DDDA','--hero':'#14244B','--hero-ink':'#F3EFE6','--focus':'#3B63C9'},
+    sombre: {'--bg':'#0D1220','--sf':'#141B2D','--sf2':'#1B2338','--ln':'#262F47','--ln2':'#38425F','--ink':'#ECEAE4','--ink2':'#B3B8C7','--ink3':'#9097AA','--pri':'#AFC2F4','--pri-ink':'#0D1220','--pri-sf':'#1F2B4C','--gold':'#E5BC62','--gold-fill':'#D9AE4E','--gold-sf':'#33291A','--ok':'#7CC79A','--ok-sf':'#15301F','--warn':'#EDA867','--warn-sf':'#36240F','--err':'#F0928A','--err-sf':'#3A1C1B','--hero':'#18213A','--hero-ink':'#ECEAE4','--focus':'#AFC2F4'}
+  };
+  static SP = [['SDIA', 'AI & Data Science', 285, 'AI-900 → AI-102 → PMLE', 41], ['CIM', 'Cloud Infrastructure Management', 225, 'CLF-C02 → SAA-C03 → SAP-C02', 64], ['GLOps', 'Software Engineering & DevOps', 165, 'RHCSA → AZ-204 → AZ-400', 58], ['SSIR', 'Systems Security & Network Infrastructure', 15, 'SY0-701 → AZ-500 → SCS-C02', 52], ['AIOT', 'AI & IoT', 130, 'AI-900 → AZ-204 → AI-102', 27], ['DMWM', 'Mobile, Web & Multimedia Development', 340, 'AZ-204 → DVA-C02 → PCD', 35]];
+  static PREV = {
+    CIM: [['CLF-C02', 'AWS Cloud Practitioner', 'Foundational'], ['SAA-C03', 'AWS Solutions Architect – Associate', 'Associate'], ['SAP-C02', 'AWS Solutions Architect – Professional', 'Professional']],
+    SDIA: [['AI-900', 'Azure AI Fundamentals', 'Foundational'], ['AI-102', 'Azure AI Engineer Associate', 'Associate'], ['PMLE', 'Google Professional ML Engineer', 'Professional']],
+    GLOps: [['RHCSA', 'Red Hat System Administrator', 'Associate'], ['AZ-204', 'Azure Developer Associate', 'Associate'], ['AZ-400', 'Azure DevOps Engineer Expert', 'Expert']],
+    SSIR: [['SY0-701', 'CompTIA Security+', 'Associate'], ['AZ-500', 'Azure Security Engineer', 'Associate'], ['SCS-C02', 'AWS Security – Specialty', 'Professional']],
+    AIOT: [['AI-900', 'Azure AI Fundamentals', 'Foundational'], ['AZ-204', 'Azure Developer Associate', 'Associate'], ['AI-102', 'Azure AI Engineer Associate', 'Associate']],
+    DMWM: [['AZ-204', 'Azure Developer Associate', 'Associate'], ['DVA-C02', 'AWS Developer – Associate', 'Associate'], ['PCD', 'Google Professional Cloud Developer', 'Professional']],
+    FOND: [['CLF-C02', 'AWS Cloud Practitioner', 'Foundational'], ['AZ-900', 'Microsoft Azure Fundamentals', 'Foundational'], ['CDL', 'Google Cloud Digital Leader', 'Foundational']]
+  };
+  root = React.createRef();
+  state = { theme: null, step: 1, level: 4, spec: 'CIM', target: 'CIM', group: 'Group 2', certs: ['CLF-C02'], pub: true, rank: true };
+  th() { return this.state.theme ?? this.props.theme ?? 'clair'; }
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() { const el = this.root.current; if (!el) return; const t = Component.T[this.th()] || Component.T.clair; for (const k in t) el.style.setProperty(k, t[k]); }
+  renderVals() {
+    const s = this.state, step = s.step, upper = s.level >= 4;
+    const col = h => `oklch(0.6 0.13 ${h})`;
+    const sel = (on, c) => ({ on, bw: on ? '2px' : '1px', bc: on ? (c || 'var(--pri)') : 'var(--ln2)', bg: on ? (c ? `color-mix(in oklch, ${c} 12%, var(--sf))` : 'var(--pri-sf)') : 'var(--sf)', check: on ? 'check_circle' : 'radio_button_unchecked', ck: on ? 'var(--pri)' : 'var(--ln2)' });
+    const levels = [[1, 'Preparatory cycle', 'Integrated cycle, year 1'], [2, 'Preparatory cycle', 'Integrated cycle, year 2'], [3, 'Common core', 'Direct entry after a bachelor’s'], [4, 'Specialty', 'First specialty year'], [5, 'Specialty', 'Final year, capstone project']].map(([n, title, desc]) => ({ code: 'ING-' + n, title, desc, ...sel(s.level === n), pick: () => this.setState({ level: n }) }));
+    const specs = Component.SP.map(([code, name, h, chain, peers]) => { const c = col(h); return { code, name, c, meta: 'Path: ' + chain, ...sel(s.spec === code, c), pick: () => this.setState({ spec: code }) }; });
+    const tg = [...Component.SP.map(([code, name, h]) => [code, name, col(h)]), ['?', 'Not decided yet · Fundamentals path', 'var(--ln2)']];
+    const targets = tg.map(([code, name, c]) => { const on = s.target === code, und = code === '?'; return { code: und ? 'Undecided' : code, name, c: und ? 'transparent' : c, bs: und ? 'dashed' : 'solid', ...sel(on, und ? null : c), pick: () => this.setState({ target: code }) }; });
+    const mTargets = tg.map(([code, name, c]) => { const on = code === 'SSIR', und = code === '?'; return { code: und ? 'Undecided' : code, short: und ? 'Not decided yet' : name.replace('Systems Security & Network Infrastructure', 'Systems & Network Security').replace('Mobile, Web & Multimedia Development', 'Mobile, Web & Multimedia'), c: und ? 'transparent' : c, bs: und ? 'dashed' : 'solid', ...sel(on, und ? null : c) }; });
+    const groups = ['Group 1', 'Group 2', 'Group 3', 'Group 4'].map(label => { const on = s.group === label; return { label, on, bc: on ? 'var(--pri)' : 'var(--ln2)', bg: on ? 'var(--pri)' : 'var(--sf)', ink: on ? 'var(--pri-ink)' : 'var(--ink)', pick: () => this.setState({ group: label }) }; });
+    const tog = (arr, v) => arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v];
+    const certs = [['AWS', 'oklch(0.66 0.14 55)', 'AWS Certified Cloud Practitioner', 'CLF-C02'], ['AWS', 'oklch(0.66 0.14 55)', 'AWS Solutions Architect – Associate', 'SAA-C03'], ['Microsoft', 'oklch(0.66 0.14 245)', 'Microsoft Azure Fundamentals', 'AZ-900'], ['Microsoft', 'oklch(0.66 0.14 245)', 'Microsoft Azure Administrator', 'AZ-104'], ['Red Hat', 'oklch(0.66 0.14 25)', 'Red Hat Certified System Administrator', 'RHCSA'], ['Google', 'oklch(0.66 0.14 150)', 'Google Cloud Digital Leader', 'CDL'], ['CompTIA', 'oklch(0.66 0.14 310)', 'CompTIA Security+', 'SY0-701']].map(([prov, dot, name, code]) => { const on = s.certs.includes(code); return { prov, dot, name, code, on, bg: on ? 'var(--pri-sf)' : 'var(--sf)', boxBorder: on ? 'var(--pri)' : 'var(--ln2)', boxBg: on ? 'var(--pri)' : 'transparent', tick: on ? 'check' : '', pick: () => this.setState({ certs: tog(s.certs, code) }) }; });
+    const pk = upper ? s.spec : (s.target === '?' ? 'FOND' : s.target);
+    const spRow = Component.SP.find(r => r[0] === pk);
+    const held = s.certs;
+    const nodes = Component.PREV[pk].map(([code, name, lvl], i, arr) => {
+      const has = held.includes(code), nextIdx = arr.findIndex(a => !held.includes(a[0])), isNext = i === nextIdx, locked = !has && i > nextIdx && nextIdx >= 0 && lvl !== 'Foundational';
+      const v = has ? { bw: '1.5px', bs: 'dashed', bc: 'var(--gold-fill)', bg: 'var(--bg)', sh: 'none', codeInk: 'var(--gold)', noteInk: 'var(--ink2)', icon: 'pending', note: 'Unverified' }
+        : isNext ? { bw: '2px', bs: 'solid', bc: 'var(--pri)', bg: 'var(--sf)', sh: '0 0 0 4px var(--pri-sf)', codeInk: 'var(--pri)', noteInk: 'var(--pri)', icon: 'arrow_forward', note: 'Your next step' }
+        : locked ? { bw: '1.5px', bs: 'dashed', bc: 'var(--ln2)', bg: 'var(--sf2)', sh: 'none', codeInk: 'var(--ink3)', noteInk: 'var(--ink3)', icon: 'lock', note: 'Locked' }
+        : { bw: '1.5px', bs: 'solid', bc: 'var(--ln2)', bg: 'var(--sf)', sh: 'none', codeInk: 'var(--ink3)', noteInk: 'var(--ink2)', icon: 'radio_button_unchecked', note: 'Available' };
+      return { code, name, lvl, ...v, arrow: i < arr.length - 1 };
+    });
+    const res = { nodes, c: spRow ? col(spRow[2]) : 'var(--ink3)', title: pk === 'FOND' ? 'Fundamentals' : pk + ' · ' + spRow[1], why: upper ? 'your specialty’s path' : (pk === 'FOND' ? 'until you choose your specialty' : 'your target specialty'), peers: (spRow ? spRow[4] : 112) + ' students', count: pk === 'FOND' ? 7 : 9 };
+    const labels = ['Step 1 of 4 · Year', upper ? 'Step 2 of 4 · Specialty' : 'Step 2 of 4 · Target specialty and group', 'Step 3 of 4 · Certifications earned', 'Step 4 of 4 · Profile photo', 'Recommended path'];
+    return {
+      root: this.root, themeIcon: this.th() === 'clair' ? 'dark_mode' : 'light_mode', toggleTheme: () => this.setState({ theme: this.th() === 'clair' ? 'sombre' : 'clair' }),
+      s1: step === 1, s2spec: step === 2 && upper, s2target: step === 2 && !upper, s3: step === 3, s4: step === 4, s5: step === 5, notLast: step < 5, canBack: step > 1, noBack: step === 1,
+      stepLabel: labels[step - 1], segs: [1, 2, 3, 4].map(i => ({ bg: i <= step ? (step === 5 ? 'var(--gold-fill)' : 'var(--pri)') : 'var(--ln)' })),
+      levels, specs, targets, mTargets, groups, certs, res, levelCode: 'ING-' + s.level,
+      classLabel: 'ING-' + s.level + ' ' + s.spec, classMates: (s.spec === 'CIM' ? 31 : 24) + ' students on TekCert',
+      next: () => this.setState({ step: Math.min(5, step + 1) }), back: () => this.setState({ step: Math.max(1, step - 1) }),
+      isPublic: s.pub, inRank: s.rank, pubTrack: s.pub ? 'var(--pri)' : 'var(--ln2)', pubKnob: s.pub ? '21px' : '3px', rankTrack: s.rank ? 'var(--pri)' : 'var(--ln2)', rankKnob: s.rank ? '21px' : '3px',
+      togglePublic: () => this.setState({ pub: !s.pub }), toggleRank: () => this.setState({ rank: !s.rank })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#DAD5CB;font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#1C2F5E}a:hover{color:#0E1B3D}button,input,select,textarea{font:inherit;color:inherit}*:focus-visible{outline:2px solid #3B63C9;outline-offset:2px}@keyframes spin{to{transform:rotate(360deg)}}@keyframes shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}</style>
+</helmet>
+<div style="--bg:#F6F3EC;--sf:#FFFDF8;--sf2:#EEE9DE;--ln:#E1DACB;--ln2:#CBC2AF;--ink:#131A2C;--ink2:#474E63;--ink3:#62677A;--pri:#1C2F5E;--pri-ink:#FFFFFF;--pri-sf:#E4E8F2;--gold:#86590C;--gold-fill:#D4A23A;--gold-sf:#F5EBD3;--ok:#2C6A45;--ok-sf:#E0EDE4;--warn:#9C4F0C;--warn-sf:#F7E6D6;--err:#A3302A;--err-sf:#F5DDDA;--hero:#14244B;--hero-ink:#F3EFE6;--focus:#3B63C9;padding:56px;display:flex;flex-direction:column;gap:40px;color:var(--ink)">
+
+<div style="width:1440px;box-sizing:border-box;background:var(--hero);color:var(--hero-ink);border-radius:16px;padding:64px 72px;display:grid;grid-template-columns:1.3fr 1fr;gap:64px">
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="font:500 12px 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;opacity:.75">TekCert · Système de design · v1.0</div>
+    <h1 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:76px;line-height:1;letter-spacing:-0.02em">La rigueur d'un diplôme,<br><span style="font-style:italic;color:#E2BC66">la clarté d'un produit.</span></h1>
+    <p style="margin:0;font-size:18px;line-height:1.6;max-width:600px;opacity:.85">Les fondations visuelles de TekCert : un serif éditorial pour les titres et les chiffres, un sans-serif lisible pour l'interface, un bleu académique pour la structure et l'or réservé aux accomplissements.</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px;justify-content:flex-end">
+    <div style="display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid rgba(243,239,230,.2)"><span style="font:500 13px 'IBM Plex Mono',monospace;color:#E2BC66">01</span><div><div style="font-weight:600;font-size:16px">L'or se mérite</div><div style="font-size:14px;opacity:.75;margin-top:4px;line-height:1.5">Réservé aux certifications obtenues, niveaux et badges. Jamais décoratif.</div></div></div>
+    <div style="display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid rgba(243,239,230,.2)"><span style="font:500 13px 'IBM Plex Mono',monospace;color:#E2BC66">02</span><div><div style="font-weight:600;font-size:16px">Le statut ne repose jamais sur la couleur seule</div><div style="font-size:14px;opacity:.75;margin-top:4px;line-height:1.5">Toujours une icône et un libellé. Contrastes AA, cibles tactiles de 44 px minimum.</div></div></div>
+    <div style="display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid rgba(243,239,230,.2)"><span style="font:500 13px 'IBM Plex Mono',monospace;color:#E2BC66">03</span><div><div style="font-weight:600;font-size:16px">Le mouvement a un sens</div><div style="font-size:14px;opacity:.75;margin-top:4px;line-height:1.5">Animation uniquement pour une progression qui avance ou un badge obtenu.</div></div></div>
+  </div>
+</div>
+
+<div style="width:1440px;box-sizing:border-box;background:var(--bg);border-radius:16px;padding:56px 72px;display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">A</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Couleurs</h2><span style="font-size:15px;color:var(--ink2)">Jetons sémantiques, valeurs claires et sombres</span></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+    <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="12">
+      <div style="border:1px solid var(--ln);border-radius:12px;overflow:hidden;background:var(--sf)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;height:72px">
+          <div style="background:{{ t.l }};display:flex;align-items:flex-end;padding:8px;font:500 11px 'IBM Plex Mono',monospace;color:{{ t.lt }}">{{ t.l }}</div>
+          <div style="background:{{ t.d }};display:flex;align-items:flex-end;padding:8px;font:500 11px 'IBM Plex Mono',monospace;color:{{ t.dt }}">{{ t.d }}</div>
+        </div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:3px"><span style="font:500 13px 'IBM Plex Mono',monospace">{{ t.name }}</span><span style="font-size:13px;color:var(--ink2)">{{ t.use }}</span></div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Fournisseurs · pastille neutre, jamais de logo</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 10px;border:1px solid var(--ln2);border-radius:6px;font-size:12.5px;font-weight:600;color:var(--ink2);background:var(--sf)"><span style="width:8px;height:8px;border-radius:2px;background:oklch(0.66 0.14 55)"></span>AWS</span>
+      <span style="display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 10px;border:1px solid var(--ln2);border-radius:6px;font-size:12.5px;font-weight:600;color:var(--ink2);background:var(--sf)"><span style="width:8px;height:8px;border-radius:2px;background:oklch(0.66 0.14 245)"></span>Microsoft Azure</span>
+      <span style="display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 10px;border:1px solid var(--ln2);border-radius:6px;font-size:12.5px;font-weight:600;color:var(--ink2);background:var(--sf)"><span style="width:8px;height:8px;border-radius:2px;background:oklch(0.66 0.14 25)"></span>Red Hat</span>
+      <span style="display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 10px;border:1px solid var(--ln2);border-radius:6px;font-size:12.5px;font-weight:600;color:var(--ink2);background:var(--sf)"><span style="width:8px;height:8px;border-radius:2px;background:oklch(0.66 0.14 150)"></span>Google Cloud</span>
+      <span style="display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 10px;border:1px solid var(--ln2);border-radius:6px;font-size:12.5px;font-weight:600;color:var(--ink2);background:var(--sf)"><span style="width:8px;height:8px;border-radius:2px;background:oklch(0.66 0.14 310)"></span>CompTIA</span>
+      <span style="font:400 12.5px 'IBM Plex Mono',monospace;color:var(--ink3);align-self:center">oklch(0.66 0.14 h) · h = 55 / 245 / 25 / 150 / 310</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Spécialités · couleur d'identification (tags, avatars, parcours) · identique en clair et en sombre</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px">
+      <sc-for list="{{ specs }}" as="s" hint-placeholder-count="7">
+        <div style="border:1px solid var(--ln);border-radius:12px;overflow:hidden;background:var(--sf);display:flex;flex-direction:column">
+          <div style="height:56px;background:{{ s.c }}"></div>
+          <div style="padding:12px;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Newsreader',serif;font-size:20px;font-weight:600">{{ s.code }}</span><span style="font-size:12.5px;color:var(--ink2);line-height:1.35;min-height:34px">{{ s.name }}</span><span style="font:400 11px 'IBM Plex Mono',monospace;color:var(--ink3)">{{ s.val }}</span></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:center">
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ specs6 }}" as="s" hint-placeholder-count="6"><span style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:{{ s.bg }};font-size:12px;font-weight:700;color:var(--ink)"><span style="width:8px;height:8px;border-radius:50%;background:{{ s.c }}"></span>{{ s.code }}</span></sc-for></div>
+      <span style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px 0 7px;border-radius:12px;border:1.5px dashed oklch(0.6 0.13 15);font-size:12px;font-weight:600;color:var(--ink);box-sizing:border-box"><span style="width:8px;height:8px;border-radius:50%;border:1.5px solid oklch(0.6 0.13 15);box-sizing:border-box"></span>Visée : SSIR</span>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:40px;height:40px;border-radius:50%;background:color-mix(in oklch, oklch(0.6 0.13 225) 22%, var(--sf));box-shadow:inset 0 0 0 1.5px oklch(0.6 0.13 225);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:15px;font-weight:600">YB</span><span style="width:40px;height:40px;border-radius:50%;background:color-mix(in oklch, oklch(0.6 0.13 165) 22%, var(--sf));box-shadow:inset 0 0 0 1.5px oklch(0.6 0.13 165);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:15px;font-weight:600">AT</span><span style="width:40px;height:40px;border-radius:50%;background:var(--sf2);border:1.5px dashed var(--ln2);box-sizing:border-box;display:grid;place-items:center;font-family:'Newsreader',serif;font-size:15px;font-weight:600;color:var(--ink2)">MH</span><span style="font-size:13px;color:var(--ink3);max-width:260px;line-height:1.4">Avatar teinté par la spécialité. ING-1 à ING-3 sans spécialité : fond neutre.</span></div>
+    </div>
+    <span style="font-size:13px;color:var(--ink3);line-height:1.5">Fournisseur = carré + cadre rectangulaire. Spécialité = rond + pastille teintée. Spécialité visée = pastille en tirets. Le texte reste toujours à l'encre principale pour garder le contraste AA.</span>
+  </div>
+</div>
+
+<div style="width:1440px;box-sizing:border-box;background:var(--bg);border-radius:16px;padding:56px 72px;display:grid;grid-template-columns:1.4fr 1fr;gap:64px">
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">B</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Typographie</h2></div>
+    <div style="display:flex;flex-direction:column">
+      <div style="display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:24px;padding:16px 0;border-top:1px solid var(--ln)"><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">Display · 64/68<br>Newsreader 500</span><span style="font-family:'Newsreader',serif;font-size:64px;line-height:1.06;font-weight:500;letter-spacing:-0.02em">Ton parcours</span></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:24px;padding:16px 0;border-top:1px solid var(--ln)"><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">H1 · 44/52<br>Newsreader 500</span><span style="font-family:'Newsreader',serif;font-size:44px;line-height:1.18;font-weight:500;letter-spacing:-0.015em">Fiche certification</span></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:24px;padding:16px 0;border-top:1px solid var(--ln)"><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">H2 · 30/38<br>Newsreader 500</span><span style="font-family:'Newsreader',serif;font-size:30px;line-height:1.25;font-weight:500">Prochaine certification</span></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:24px;padding:16px 0;border-top:1px solid var(--ln)"><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">H3 · 22/28<br>Newsreader 600</span><span style="font-family:'Newsreader',serif;font-size:22px;line-height:1.3;font-weight:600">AWS Solutions Architect – Associate</span></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:24px;padding:16px 0;border-top:1px solid var(--ln)"><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">Titre · 17/24<br>Instrument 600</span><span style="font-size:17px;font-weight:600">Programme de l'examen</span></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:24px;padding:16px 0;border-top:1px solid var(--ln)"><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">Corps · 16/26<br>Instrument 400</span><span style="font-size:16px;line-height:1.6;color:var(--ink2);max-width:560px">Coche chaque chapitre au fil de tes révisions. Les cours restent sur les plateformes officielles ; TekCert te guide et mesure ta progression.</span></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:24px;padding:16px 0;border-top:1px solid var(--ln)"><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">Petit · 14/20<br>Instrument 500</span><span style="font-size:14px;font-weight:500;color:var(--ink2)">ING-4 CIM · Cloud Computing</span></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:24px;padding:16px 0;border-top:1px solid var(--ln)"><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">Surtitre · 12/16<br>Instrument 600 +10%</span><span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Certification en cours</span></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;align-items:baseline;gap:24px;padding:16px 0;border-top:1px solid var(--ln);border-bottom:1px solid var(--ln)"><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">Code · 13/18<br>Plex Mono 500</span><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink2)">SAA-C03 · ID 7Q2K-XP91-LM4C</span></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">C</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Espacement &amp; formes</h2></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:16px"><span style="width:56px;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">4</span><span style="width:4px;height:16px;background:var(--pri)"></span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span style="width:56px;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">8</span><span style="width:8px;height:16px;background:var(--pri)"></span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span style="width:56px;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">12</span><span style="width:12px;height:16px;background:var(--pri)"></span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span style="width:56px;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">16</span><span style="width:16px;height:16px;background:var(--pri)"></span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span style="width:56px;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">24</span><span style="width:24px;height:16px;background:var(--pri)"></span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span style="width:56px;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">32</span><span style="width:32px;height:16px;background:var(--pri)"></span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span style="width:56px;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">48</span><span style="width:48px;height:16px;background:var(--pri)"></span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span style="width:56px;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">72</span><span style="width:72px;height:16px;background:var(--pri)"></span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border:1.5px solid var(--ln2);border-radius:4px;background:var(--sf)"></div><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">r 4 · tags</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf)"></div><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">r 8 · champs</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border:1.5px solid var(--ln2);border-radius:14px;background:var(--sf)"></div><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">r 14 · cartes</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="height:64px;border:1.5px solid var(--ln2);border-radius:999px;background:var(--sf)"></div><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">r ∞ · statuts</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="height:80px;border-radius:14px;background:var(--sf);border:1px solid var(--ln);display:grid;place-items:center;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">Plat · bordure</div>
+      <div style="height:80px;border-radius:14px;background:var(--sf);box-shadow:0 1px 2px rgba(19,26,44,.06),0 12px 32px -8px rgba(19,26,44,.18);display:grid;place-items:center;font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">Élevé · modales, toasts</div>
+    </div>
+  </div>
+</div>
+
+<div style="width:1440px;box-sizing:border-box;background:var(--bg);border-radius:16px;padding:56px 72px;display:flex;flex-direction:column;gap:48px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">D</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Commandes</h2></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Boutons · hauteur 44 / 36</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <button style="height:44px;padding:0 18px;border-radius:8px;border:none;background:var(--pri);color:var(--pri-ink);font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:8px;cursor:pointer" style-hover="filter:brightness(1.18)"><span style="font-family:'Material Symbols Outlined';font-size:20px">event_available</span>Demander un passage</button>
+        <button style="height:44px;padding:0 18px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink);font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:8px;cursor:pointer" style-hover="border-color:var(--ink3)"><span style="font-family:'Material Symbols Outlined';font-size:20px">play_arrow</span>Commencer</button>
+        <button style="height:44px;padding:0 18px;border-radius:8px;border:none;background:var(--gold-fill);color:#1A1406;font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:8px;cursor:pointer" style-hover="filter:brightness(1.06)"><span style="font-family:'Material Symbols Outlined';font-size:20px">workspace_premium</span>Déclarer comme obtenue</button>
+        <button style="height:44px;padding:0 14px;border-radius:8px;border:none;background:transparent;color:var(--pri);font-weight:600;font-size:14.5px;cursor:pointer" style-hover="background:var(--pri-sf)">Annuler</button>
+        <button style="height:44px;padding:0 18px;border-radius:8px;border:1.5px solid var(--err);background:transparent;color:var(--err);font-weight:600;font-size:14.5px;cursor:pointer">Refuser</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <button style="height:44px;padding:0 18px;border-radius:8px;border:none;background:var(--pri);color:var(--pri-ink);font-weight:600;font-size:14.5px;box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--focus)">Focus visible</button>
+        <button disabled="" style="height:44px;padding:0 18px;border-radius:8px;border:none;background:var(--sf2);color:var(--ink3);font-weight:600;font-size:14.5px;cursor:not-allowed">Désactivé</button>
+        <button style="height:44px;padding:0 18px;border-radius:8px;border:none;background:var(--pri);color:var(--pri-ink);font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:10px;opacity:.85"><span style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:var(--pri-ink);animation:spin .8s linear infinite;box-sizing:border-box"></span>Envoi…</button>
+        <button style="height:36px;padding:0 14px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink);font-weight:600;font-size:13.5px">Petit</button>
+        <button aria-label="Thème sombre" style="width:44px;height:44px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink2);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:21px">dark_mode</span></button>
+      </div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:12px">Sélection</div>
+      <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:center">
+        <label style="display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px"><span style="width:22px;height:22px;border-radius:6px;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:18px;font-weight:600">check</span></span>Chapitre terminé</label>
+        <label style="display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px"><span style="width:22px;height:22px;border-radius:6px;border:1.5px solid var(--ln2);background:var(--sf);box-sizing:border-box"></span>À réviser</label>
+        <label style="display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px"><span style="width:22px;height:22px;border-radius:50%;border:6.5px solid var(--pri);box-sizing:border-box"></span>Session de juin</label>
+        <label style="display:flex;align-items:center;gap:12px;min-height:44px;font-size:15px"><span style="width:44px;height:26px;border-radius:13px;background:var(--pri);position:relative;display:block"><span style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:var(--pri-ink)"></span></span>Profil public</label>
+        <label style="display:flex;align-items:center;gap:12px;min-height:44px;font-size:15px"><span style="width:44px;height:26px;border-radius:13px;background:var(--ln2);position:relative;display:block"><span style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--sf)"></span></span>Apparaître au classement</label>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="height:36px;padding:0 14px;border-radius:18px;background:var(--pri);color:var(--pri-ink);display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">check</span>AWS</span>
+        <span style="height:36px;padding:0 14px;border-radius:18px;border:1.5px solid var(--ln2);background:var(--sf);display:inline-flex;align-items:center;font-size:13.5px;font-weight:500;color:var(--ink2)">Microsoft Azure</span>
+        <span style="height:36px;padding:0 14px;border-radius:18px;border:1.5px solid var(--ln2);background:var(--sf);display:inline-flex;align-items:center;font-size:13.5px;font-weight:500;color:var(--ink2)">Associé</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Champs</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Email de l'école</span><span style="height:46px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);display:flex;align-items:center;padding:0 14px;font-size:15px">yassine.benamor@tek-up.de</span></label>
+        <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Mot de passe</span><span style="height:46px;border:1.5px solid var(--pri);border-radius:8px;background:var(--sf);display:flex;align-items:center;padding:0 14px;font-size:15px;box-shadow:0 0 0 3px var(--pri-sf);justify-content:space-between">••••••••••<span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ink3)">visibility</span></span><span style="font-size:12.5px;color:var(--ink3)">État focus</span></label>
+        <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Email de l'école</span><span style="height:46px;border:1.5px solid var(--err);border-radius:8px;background:var(--sf);display:flex;align-items:center;padding:0 14px;font-size:15px">yassine@gmail.com</span><span style="font-size:13px;color:var(--err);display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:17px">error</span>Utilise ton adresse @tek-up.de</span></label>
+        <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600;color:var(--ink3)">Classe</span><span style="height:46px;border:1.5px solid var(--ln);border-radius:8px;background:var(--sf2);display:flex;align-items:center;padding:0 14px;font-size:15px;color:var(--ink3)">ING-4 CIM</span><span style="font-size:12.5px;color:var(--ink3)">Désactivé · géré par l'école</span></label>
+        <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Recherche</span><span style="height:46px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);display:flex;align-items:center;gap:10px;padding:0 14px;font-size:15px;color:var(--ink3)"><span style="font-family:'Material Symbols Outlined';font-size:20px">search</span>Rechercher une certification</span></label>
+        <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:14px;font-weight:600">Fournisseur</span><span style="height:46px;border:1.5px solid var(--ln2);border-radius:8px;background:var(--sf);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:15px">Tous les fournisseurs<span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ink3)">expand_more</span></span></label>
+      </div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:12px">Sélecteur de périmètre</div>
+      <div role="tablist" aria-label="Périmètre de comparaison" style="display:inline-flex;background:var(--sf2);border-radius:10px;padding:4px;gap:2px;align-self:flex-start">
+        <button role="tab" aria-selected="false" style="height:38px;padding:0 14px;border:none;border-radius:7px;background:transparent;color:var(--ink2);font-size:13.5px;font-weight:600">Ma classe</button>
+        <button role="tab" aria-selected="true" style="height:38px;padding:0 14px;border:none;border-radius:7px;background:var(--sf);color:var(--ink);font-size:13.5px;font-weight:600;box-shadow:0 1px 2px rgba(19,26,44,.12)">Ma spécialité</button>
+        <button role="tab" aria-selected="false" style="height:38px;padding:0 14px;border:none;border-radius:7px;background:transparent;color:var(--ink2);font-size:13.5px;font-weight:600">Mon niveau</button>
+        <button role="tab" aria-selected="false" style="height:38px;padding:0 14px;border:none;border-radius:7px;background:transparent;color:var(--ink2);font-size:13.5px;font-weight:600">Toute l'école</button>
+      </div>
+      <span style="font-size:13px;color:var(--ink3);line-height:1.5">Partout où l'on se compare : classements, activité, « qui la prépare ». Ma classe = ING-4 CIM · Ma spécialité = CIM toutes années · Mon niveau = tous les ING-4. Sur mobile : rangée de pastilles défilante.</span>
+    </div>
+  </div>
+</div>
+
+<div style="width:1440px;box-sizing:border-box;background:var(--bg);border-radius:16px;padding:56px 72px;display:flex;flex-direction:column;gap:48px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">E</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Indicateurs &amp; statuts</h2></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:48px">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Niveau de certification</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:500"><span style="display:inline-flex;align-items:flex-end;gap:2px;height:14px"><span style="width:4px;height:5px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:8px;background:var(--ln2);border-radius:1px"></span><span style="width:4px;height:11px;background:var(--ln2);border-radius:1px"></span><span style="width:4px;height:14px;background:var(--ln2);border-radius:1px"></span></span>Fondamental</span>
+        <span style="display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:500"><span style="display:inline-flex;align-items:flex-end;gap:2px;height:14px"><span style="width:4px;height:5px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:8px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:11px;background:var(--ln2);border-radius:1px"></span><span style="width:4px;height:14px;background:var(--ln2);border-radius:1px"></span></span>Associé</span>
+        <span style="display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:500"><span style="display:inline-flex;align-items:flex-end;gap:2px;height:14px"><span style="width:4px;height:5px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:8px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:11px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:14px;background:var(--ln2);border-radius:1px"></span></span>Professionnel</span>
+        <span style="display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:500"><span style="display:inline-flex;align-items:flex-end;gap:2px;height:14px"><span style="width:4px;height:5px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:8px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:11px;background:var(--pri);border-radius:1px"></span><span style="width:4px;height:14px;background:var(--pri);border-radius:1px"></span></span>Expert</span>
+      </div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:12px">Difficulté 1–5</div>
+      <span aria-label="Difficulté 3 sur 5" style="display:inline-flex;align-items:center;gap:10px;font-size:14px;color:var(--ink2)"><span style="display:inline-flex;gap:3px"><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ln2);box-sizing:border-box"></span><span style="width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ln2);box-sizing:border-box"></span></span>Difficulté 3/5</span>
+      <span aria-label="Difficulté 5 sur 5" style="display:inline-flex;align-items:center;gap:10px;font-size:14px;color:var(--ink2)"><span style="display:inline-flex;gap:3px"><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--ink)"></span></span>Difficulté 5/5</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Vérification</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px;font-variation-settings:'FILL' 1">verified</span>Vérifiée</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;border:1.5px dashed var(--ln2);color:var(--ink2);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:17px">pending</span>Non vérifiée</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--pri-sf);color:var(--pri);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">hourglass_top</span>En vérification</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--err-sf);color:var(--err);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">cancel</span>Preuve refusée</span>
+      </div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:12px">Demande de passage</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--warn-sf);color:var(--warn);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">schedule</span>En attente</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">check_circle</span>Approuvée</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--err-sf);color:var(--err);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">block</span>Refusée</span>
+      </div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:12px">État dans un parcours</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--sf2);color:var(--ink3);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">lock</span>Verrouillée</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;border:1.5px solid var(--ln2);color:var(--ink);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:17px">radio_button_unchecked</span>Disponible</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--pri-sf);color:var(--pri);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">clock_loader_40</span>En cours</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--gold-sf);color:var(--gold);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px;font-variation-settings:'FILL' 1">workspace_premium</span>Obtenue</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Progression</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600">Programme · 5/11 chapitres</span><span style="font-family:'Newsreader',serif;font-size:17px;font-weight:600">45 %</span></div>
+        <div role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="height:8px;border-radius:4px;background:var(--sf2);overflow:hidden"><div style="width:45%;height:100%;background:var(--pri);border-radius:4px"></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Outlined';font-size:17px;color:var(--gold);font-variation-settings:'FILL' 1">workspace_premium</span>Programme terminé</span><span style="font-family:'Newsreader',serif;font-size:17px;font-weight:600">100 %</span></div>
+        <div style="height:8px;border-radius:4px;background:var(--sf2);overflow:hidden"><div style="width:100%;height:100%;background:var(--gold-fill);border-radius:4px"></div></div>
+      </div>
+      <div style="display:flex;gap:28px;align-items:center;margin-top:8px">
+        <div style="position:relative;width:64px;height:64px"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" style="stroke:var(--sf2)" stroke-width="6"></circle><circle cx="32" cy="32" r="27" fill="none" style="stroke:var(--pri)" stroke-width="6" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="93.3" transform="rotate(-90 32 32)"></circle></svg><span style="position:absolute;inset:0;display:grid;place-items:center;font-family:'Newsreader',serif;font-size:17px;font-weight:600">45</span></div>
+        <div style="position:relative;width:112px;height:112px"><svg width="112" height="112" viewBox="0 0 112 112"><circle cx="56" cy="56" r="49" fill="none" style="stroke:var(--sf2)" stroke-width="8"></circle><circle cx="56" cy="56" r="49" fill="none" style="stroke:var(--gold-fill)" stroke-width="8" stroke-linecap="round" stroke-dasharray="307.9" stroke-dashoffset="92.4" transform="rotate(-90 56 56)"></circle></svg><span style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-family:'Newsreader',serif;font-size:28px;font-weight:600;line-height:1">1 480</span><span style="font-size:11px;color:var(--ink3);margin-top:3px">/ 2 500 pts</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="width:1440px;box-sizing:border-box;background:var(--bg);border-radius:16px;padding:56px 72px;display:flex;flex-direction:column;gap:48px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">F</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Certifications &amp; parcours</h2></div>
+  <div style="display:grid;grid-template-columns:340px 1fr;gap:48px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Carte catalogue</div>
+      <a href="Fiche-certification.dc.html" style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;text-decoration:none;color:var(--ink)" style-hover="border-color:var(--ln2);box-shadow:0 8px 24px -12px rgba(19,26,44,.25)">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 9px;border:1px solid var(--ln2);border-radius:6px;font-size:12px;font-weight:600;color:var(--ink2)"><span style="width:8px;height:8px;border-radius:2px;background:oklch(0.66 0.14 55)"></span>AWS</span><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">SAA-C03</span></div>
+        <div style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;line-height:1.2">AWS Solutions Architect – Associate</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink2)"><span style="display:inline-flex;align-items:center;gap:7px"><span style="display:inline-flex;align-items:flex-end;gap:2px;height:12px"><span style="width:3px;height:4px;background:var(--pri)"></span><span style="width:3px;height:7px;background:var(--pri)"></span><span style="width:3px;height:10px;background:var(--ln2)"></span><span style="width:3px;height:12px;background:var(--ln2)"></span></span>Associé</span><span>Cloud Computing</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="display:inline-flex;gap:2px"><span style="width:7px;height:7px;border-radius:50%;background:var(--ink)"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--ink)"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--ink)"></span><span style="width:7px;height:7px;border-radius:50%;border:1.5px solid var(--ln2);box-sizing:border-box"></span><span style="width:7px;height:7px;border-radius:50%;border:1.5px solid var(--ln2);box-sizing:border-box"></span></span>3/5</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--ln)"><span style="font-size:13px;color:var(--ink2)"><strong style="font-family:'Newsreader',serif;font-size:17px;color:var(--ink)">14</strong> étudiants TEK-UP l'ont obtenue</span><span style="height:26px;padding:0 9px 0 6px;border-radius:13px;background:var(--pri-sf);color:var(--pri);display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:16px">clock_loader_40</span>45 %</span></div>
+      </a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Credential · collection du profil</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div style="background:var(--sf);border:1px solid var(--gold-fill);border-radius:14px;padding:6px">
+          <div style="border:1px solid var(--gold-sf);border-radius:10px;padding:22px;display:flex;gap:18px;align-items:center">
+            <div style="width:72px;height:72px;border-radius:50%;background:var(--gold-fill);display:grid;place-items:center;flex:none;box-shadow:inset 0 0 0 5px var(--gold-fill),inset 0 0 0 6.5px #1A140633"><span style="font-family:'Material Symbols Outlined';font-size:34px;color:#1A1406;font-variation-settings:'FILL' 1">workspace_premium</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--gold)">AZ-900</span><span style="height:24px;padding:0 9px 0 6px;border-radius:12px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:15px;font-variation-settings:'FILL' 1">verified</span>Vérifiée</span></div>
+              <div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;line-height:1.2">Microsoft Azure Fundamentals</div>
+              <div style="font-size:13px;color:var(--ink2)">Obtenue le 12 mars 2026 · <span style="font-family:'IBM Plex Mono',monospace;font-size:12px">ID 7Q2K-XP91</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--bg);border:1.5px dashed var(--ln2);border-radius:14px;padding:6px">
+          <div style="border-radius:10px;padding:22px;display:flex;gap:18px;align-items:center">
+            <div style="width:72px;height:72px;border-radius:50%;border:2px dashed var(--ln2);display:grid;place-items:center;flex:none;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:32px;color:var(--ink3)">workspace_premium</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">CLF-C02</span><span style="height:24px;padding:0 9px 0 6px;border-radius:12px;border:1.5px dashed var(--ln2);color:var(--ink2);display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:15px">pending</span>Non vérifiée</span></div>
+              <div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;line-height:1.2;color:var(--ink2)">AWS Certified Cloud Practitioner</div>
+              <a href="#" style="font-size:13px;font-weight:600;color:var(--pri);display:inline-flex;align-items:center;gap:5px;min-height:28px"><span style="font-family:'Material Symbols Outlined';font-size:17px">upload_file</span>Ajouter une preuve</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);line-height:1.5">Vérifiée : bordure or, sceau plein, compte dans les points et les classements. Non vérifiée : tirets, sceau vide, ne compte pas encore.</div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Nœud de parcours · 4 états</div>
+    <div style="display:grid;grid-template-columns:repeat(4,240px);gap:20px">
+      <div style="background:var(--sf);border:1.5px solid var(--gold-fill);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start"><span style="width:34px;height:34px;border-radius:50%;background:var(--gold-fill);color:#1A1406;display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:20px;font-variation-settings:'FILL' 1">workspace_premium</span></span><div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--gold)">CLF-C02 · Obtenue</span><span style="font-size:14.5px;font-weight:600;line-height:1.3">AWS Cloud Practitioner</span></div></div>
+      <div style="background:var(--sf);border:2px solid var(--pri);border-radius:12px;padding:13.5px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 0 0 4px var(--pri-sf)"><span style="width:34px;height:34px;border-radius:50%;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:20px">clock_loader_40</span></span><div style="display:flex;flex-direction:column;gap:5px;min-width:0;flex:1"><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--pri)">SAA-C03 · En cours</span><span style="font-size:14.5px;font-weight:600;line-height:1.3">AWS Solutions Architect – Associate</span><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:5px;border-radius:3px;background:var(--sf2)"><div style="width:45%;height:100%;border-radius:3px;background:var(--pri)"></div></div><span style="font-size:12px;font-weight:600">45 %</span></div></div></div>
+      <div style="background:var(--sf);border:1.5px solid var(--ln2);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start"><span style="width:34px;height:34px;border-radius:50%;border:1.5px solid var(--ln2);color:var(--ink2);display:grid;place-items:center;flex:none;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:20px">radio_button_unchecked</span></span><div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--ink3)">AZ-104 · Disponible</span><span style="font-size:14.5px;font-weight:600;line-height:1.3">Microsoft Azure Administrator</span></div></div>
+      <div style="background:var(--sf2);border:1.5px dashed var(--ln2);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start"><span style="width:34px;height:34px;border-radius:50%;background:var(--bg);color:var(--ink3);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:19px">lock</span></span><div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--ink3)">SAP-C02 · Verrouillée</span><span style="font-size:14.5px;font-weight:600;line-height:1.3;color:var(--ink2)">AWS Solutions Architect – Professional</span><span style="font-size:12px;color:var(--ink3)">Prérequis : SAA-C03</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div style="width:1440px;box-sizing:border-box;background:var(--bg);border-radius:16px;padding:56px 72px;display:flex;flex-direction:column;gap:48px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">G</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Reconnaissance</h2><span style="font-size:15px;color:var(--ink2)">Niveaux de reconnaissance, distincts des années ING-1 à ING-5 · seules les certifications vérifiées comptent</span></div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--ln);border-radius:14px;overflow:hidden;background:var(--sf)">
+    <div style="padding:24px;display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--ln)"><span style="width:44px;height:44px;border-radius:50%;border:1.5px solid var(--ln2);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:18px;font-weight:600;color:var(--ink2);box-sizing:border-box">I</span><span style="font-family:'Newsreader',serif;font-size:24px;font-weight:600">Novice</span><span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">0 pt</span></div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--ln)"><span style="width:44px;height:44px;border-radius:50%;border:1.5px solid var(--gold-fill);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:18px;font-weight:600;color:var(--gold);box-sizing:border-box">II</span><span style="font-family:'Newsreader',serif;font-size:24px;font-weight:600">Bachelier</span><span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">250 pts</span></div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--ln);background:var(--gold-sf)"><span style="width:44px;height:44px;border-radius:50%;background:var(--gold-fill);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:18px;font-weight:600;color:#1A1406">III</span><span style="font-family:'Newsreader',serif;font-size:24px;font-weight:600">Licencié</span><span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--gold)">1 000 pts · niveau actuel</span></div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--ln)"><span style="width:44px;height:44px;border-radius:50%;border:1.5px dashed var(--ln2);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:18px;font-weight:600;color:var(--ink3);box-sizing:border-box">IV</span><span style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;color:var(--ink2)">Maître</span><span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">2 500 pts</span></div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:10px"><span style="width:44px;height:44px;border-radius:50%;border:1.5px dashed var(--ln2);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:18px;font-weight:600;color:var(--ink3);box-sizing:border-box">V</span><span style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;color:var(--ink2)">Émérite</span><span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">5 000 pts</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:48px">
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding-bottom:10px">Barème</div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--ln);font-size:15px"><span>Chapitre terminé</span><span style="font:500 14px 'IBM Plex Mono',monospace">+10</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--ln);font-size:15px"><span>Test blanc réussi</span><span style="font:500 14px 'IBM Plex Mono',monospace">+50</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--ln);font-size:15px"><span>Certification vérifiée · Fondamental</span><span style="font:500 14px 'IBM Plex Mono',monospace">+300</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--ln);font-size:15px"><span>Certification vérifiée · Associé</span><span style="font:500 14px 'IBM Plex Mono',monospace">+500</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--ln);border-bottom:1px solid var(--ln);font-size:15px"><span>Certification vérifiée · Pro / Expert</span><span style="font:500 14px 'IBM Plex Mono',monospace">+800 / +1 200</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Badges</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px"><span style="width:60px;height:60px;border-radius:50%;background:var(--gold-sf);border:2px solid var(--gold-fill);display:grid;place-items:center;color:var(--gold)"><span style="font-family:'Material Symbols Outlined';font-size:28px">footprint</span></span><span style="font-size:14px;font-weight:600">Premier pas</span><span style="font-size:12px;color:var(--ink3);line-height:1.4">Premier chapitre terminé</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px"><span style="width:60px;height:60px;border-radius:50%;background:var(--gold-sf);border:2px solid var(--gold-fill);display:grid;place-items:center;color:var(--gold)"><span style="font-family:'Material Symbols Outlined';font-size:28px">flag</span></span><span style="font-size:14px;font-weight:600">Pionnier</span><span style="font-size:12px;color:var(--ink3);line-height:1.4">Première certification vérifiée</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px"><span style="width:60px;height:60px;border-radius:50%;background:var(--gold-sf);border:2px solid var(--gold-fill);display:grid;place-items:center;color:var(--gold)"><span style="font-family:'Material Symbols Outlined';font-size:28px">target</span></span><span style="font-size:14px;font-weight:600">Sans faute</span><span style="font-size:12px;color:var(--ink3);line-height:1.4">100 % à un test blanc</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px"><span style="width:60px;height:60px;border-radius:50%;border:2px dashed var(--ln2);display:grid;place-items:center;color:var(--ink3);box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:28px">cloud</span></span><span style="font-size:14px;font-weight:600;color:var(--ink2)">Multi-cloud</span><span style="font-size:12px;color:var(--ink3);line-height:1.4">Certifié chez 3 fournisseurs</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px"><span style="width:60px;height:60px;border-radius:50%;border:2px dashed var(--ln2);display:grid;place-items:center;color:var(--ink3);box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:28px">local_library</span></span><span style="font-size:14px;font-weight:600;color:var(--ink2)">Assidu</span><span style="font-size:12px;color:var(--ink3);line-height:1.4">30 chapitres terminés</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="width:1440px;box-sizing:border-box;background:var(--bg);border-radius:16px;padding:56px 72px;display:flex;flex-direction:column;gap:48px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">H</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Personnes &amp; données</h2></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Rangée d'avatars</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex">
+          <span style="width:36px;height:36px;border-radius:50%;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;font-size:13px;font-weight:600;box-shadow:0 0 0 2.5px var(--bg)">OB</span>
+          <span style="width:36px;height:36px;border-radius:50%;background:var(--gold-sf);color:var(--gold);display:grid;place-items:center;font-size:13px;font-weight:600;box-shadow:0 0 0 2.5px var(--bg);margin-left:-8px">AT</span>
+          <span style="width:36px;height:36px;border-radius:50%;background:var(--ok-sf);color:var(--ok);display:grid;place-items:center;font-size:13px;font-weight:600;box-shadow:0 0 0 2.5px var(--bg);margin-left:-8px">YG</span>
+          <span style="width:36px;height:36px;border-radius:50%;background:var(--warn-sf);color:var(--warn);display:grid;place-items:center;font-size:13px;font-weight:600;box-shadow:0 0 0 2.5px var(--bg);margin-left:-8px">RM</span>
+          <span style="width:36px;height:36px;border-radius:50%;background:var(--sf2);color:var(--ink2);display:grid;place-items:center;font-size:12px;font-weight:600;box-shadow:0 0 0 2.5px var(--bg);margin-left:-8px">+9</span>
+        </div>
+        <span style="font-size:14px;color:var(--ink2)">13 préparent SAA-C03</span>
+      </div>
+      <a href="Profil.dc.html" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:1px solid var(--ln);background:var(--sf);text-decoration:none;color:var(--ink);min-height:44px" style-hover="border-color:var(--ln2)"><span style="width:40px;height:40px;border-radius:50%;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:16px;font-weight:600;flex:none">OB</span><span style="display:flex;flex-direction:column;gap:2px;flex:1"><span style="font-size:14.5px;font-weight:600">Ons Ben Salah</span><span style="font-size:12.5px;color:var(--ink3)">ING-4 CIM · Cloud Computing</span></span><span style="height:24px;padding:0 9px 0 6px;border-radius:12px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:15px;font-variation-settings:'FILL' 1">verified</span>Vérifiée</span></a>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:12px">Carte statistique</div>
+      <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;font-weight:500;color:var(--ink2)">Certifications vérifiées ce semestre</span>
+        <span style="font-family:'Newsreader',serif;font-size:44px;font-weight:500;line-height:1.05;letter-spacing:-0.02em">142</span>
+        <span style="font-size:13px;color:var(--ok);display:inline-flex;align-items:center;gap:4px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">trending_up</span>+18 ce mois-ci</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">État vide</div>
+      <div style="background:var(--sf);border:1px dashed var(--ln2);border-radius:14px;padding:36px 28px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px">
+        <span style="width:64px;height:64px;border-radius:50%;border:1.5px dashed var(--ln2);display:grid;place-items:center;color:var(--ink3);box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:30px">workspace_premium</span></span>
+        <span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600">Ta collection est vide</span>
+        <span style="font-size:14px;color:var(--ink2);line-height:1.55;max-width:260px">Tes certifications obtenues apparaîtront ici, comme sur un diplôme.</span>
+        <a href="Catalogue.dc.html" style="height:44px;padding:0 18px;border-radius:8px;background:var(--pri);color:var(--pri-ink);font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;text-decoration:none;margin-top:6px">Explorer le catalogue</a>
+      </div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:12px">Chargement</div>
+      <div aria-busy="true" aria-label="Chargement" style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;animation:shimmer 1.6s ease-in-out infinite">
+        <div style="display:flex;justify-content:space-between"><span style="width:64px;height:22px;border-radius:6px;background:var(--sf2)"></span><span style="width:56px;height:14px;border-radius:4px;background:var(--sf2)"></span></div>
+        <span style="width:85%;height:22px;border-radius:5px;background:var(--sf2)"></span>
+        <span style="width:55%;height:22px;border-radius:5px;background:var(--sf2)"></span>
+        <span style="width:70%;height:12px;border-radius:4px;background:var(--sf2);margin-top:6px"></span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Toasts</div>
+      <div role="status" style="background:var(--ink);color:var(--bg);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 32px -8px rgba(19,26,44,.35)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--gold-fill);font-variation-settings:'FILL' 1">check_circle</span><span style="flex:1;font-size:14.5px"><strong>Chapitre terminé</strong> · +10 points</span><button style="height:36px;border:none;background:transparent;color:inherit;font-weight:600;font-size:13.5px;text-decoration:underline">Annuler</button></div>
+      <div role="alert" style="background:var(--sf);border:1px solid var(--err);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 32px -8px rgba(19,26,44,.2)"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:var(--err)">error</span><span style="flex:1;font-size:14.5px">Envoi de la preuve impossible. Réessaie.</span></div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:12px">Modale</div>
+      <div style="background:rgba(19,26,44,.45);border-radius:14px;padding:28px 20px">
+        <div role="dialog" aria-modal="true" style="background:var(--sf);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 48px -12px rgba(0,0,0,.35)">
+          <span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;line-height:1.25">Déclarer AZ-104 comme obtenue ?</span>
+          <span style="font-size:14px;color:var(--ink2);line-height:1.55">Elle apparaîtra sur ton profil comme « Non vérifiée » jusqu'à la validation de ta preuve par un administrateur.</span>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button style="height:44px;padding:0 14px;border-radius:8px;border:none;background:transparent;color:var(--pri);font-weight:600">Annuler</button><button style="height:44px;padding:0 18px;border-radius:8px;border:none;background:var(--gold-fill);color:#1A1406;font-weight:600">Déclarer</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Tableau</div>
+    <table style="width:100%;border-collapse:collapse;background:var(--sf);border:1px solid var(--ln);border-radius:14px;overflow:hidden;font-size:14.5px">
+      <thead><tr style="background:var(--sf2);text-align:left"><th style="padding:12px 20px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)">Certification</th><th style="padding:12px 20px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)">Session souhaitée</th><th style="padding:12px 20px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)">Envoyée le</th><th style="padding:12px 20px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)">Statut</th></tr></thead>
+      <tbody>
+        <tr style="border-top:1px solid var(--ln)"><td style="padding:14px 20px;font-weight:600">AWS Solutions Architect – Associate</td><td style="padding:14px 20px;color:var(--ink2)">Novembre 2026</td><td style="padding:14px 20px;color:var(--ink2)">2 oct. 2026</td><td style="padding:14px 20px"><span style="height:26px;padding:0 10px 0 7px;border-radius:13px;background:var(--warn-sf);color:var(--warn);display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:16px">schedule</span>En attente</span></td></tr>
+        <tr style="border-top:1px solid var(--ln)"><td style="padding:14px 20px;font-weight:600">Microsoft AZ-900</td><td style="padding:14px 20px;color:var(--ink2)">Mars 2026</td><td style="padding:14px 20px;color:var(--ink2)">14 fév. 2026</td><td style="padding:14px 20px"><span style="height:26px;padding:0 10px 0 7px;border-radius:13px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:16px">check_circle</span>Approuvée</span></td></tr>
+        <tr style="border-top:1px solid var(--ln)"><td style="padding:14px 20px;font-weight:600">Red Hat RHCSA</td><td style="padding:14px 20px;color:var(--ink2)">Octobre 2026</td><td style="padding:14px 20px;color:var(--ink2)">20 sept. 2026</td><td style="padding:14px 20px"><div style="display:flex;flex-direction:column;gap:4px"><span style="height:26px;padding:0 10px 0 7px;border-radius:13px;background:var(--err-sf);color:var(--err);display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;align-self:flex-start"><span style="font-family:'Material Symbols Outlined';font-size:16px">block</span>Refusée</span><span style="font-size:12.5px;color:var(--ink3)">Session complète, reporte à décembre.</span></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="width:1440px;box-sizing:border-box;background:var(--bg);border-radius:16px;padding:56px 72px;display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">I</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Navigation</h2><span style="font-size:15px;color:var(--ink2)">Barre latérale repliable dès la tablette · barre inférieure sur mobile (5 entrées)</span></div>
+  <div style="display:flex;gap:40px;align-items:flex-start">
+    <div style="height:760px;display:flex;border:1px solid var(--ln);border-radius:14px;overflow:hidden"><dc-import name="Sidebar" active="catalogue" hint-size="256px,760px" style="height:100%"></dc-import></div>
+    <div style="height:760px;display:flex;border:1px solid var(--ln);border-radius:14px;overflow:hidden"><dc-import name="Sidebar" active="catalogue" collapsed="{{ true }}" hint-size="76px,760px" style="height:100%"></dc-import></div>
+    <div style="display:flex;flex-direction:column;gap:12px"><div style="width:390px;border:1px solid var(--ln);border-radius:14px;overflow:hidden"><dc-import name="BottomNav" active="catalogue" hint-size="390px,82px"></dc-import></div><span style="font-size:13px;color:var(--ink3);max-width:390px;line-height:1.5">Cible tactile ≥ 56 px de haut. L'onglet actif combine pastille, icône pleine, graisse et couleur.</span></div>
+  </div>
+</div>
+
+<div style="--bg:#0D1220;--sf:#141B2D;--sf2:#1B2338;--ln:#262F47;--ln2:#38425F;--ink:#ECEAE4;--ink2:#B3B8C7;--ink3:#9097AA;--pri:#AFC2F4;--pri-ink:#0D1220;--pri-sf:#1F2B4C;--gold:#E5BC62;--gold-fill:#D9AE4E;--gold-sf:#33291A;--ok:#7CC79A;--ok-sf:#15301F;--warn:#EDA867;--warn-sf:#36240F;--err:#F0928A;--err-sf:#3A1C1B;--focus:#AFC2F4;width:1440px;box-sizing:border-box;background:var(--bg);color:var(--ink);border-radius:16px;padding:56px 72px;display:flex;flex-direction:column;gap:40px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">J</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Thème sombre</h2><span style="font-size:15px;color:var(--ink2)">Mêmes jetons, valeurs inversées · le bleu s'éclaircit, l'or reste chaud</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;flex-wrap:wrap;gap:12px">
+        <button style="height:44px;padding:0 18px;border-radius:8px;border:none;background:var(--pri);color:var(--pri-ink);font-weight:600;font-size:14.5px">Demander un passage</button>
+        <button style="height:44px;padding:0 18px;border-radius:8px;border:1.5px solid var(--ln2);background:var(--sf);color:var(--ink);font-weight:600;font-size:14.5px">Commencer</button>
+        <button style="height:44px;padding:0 18px;border-radius:8px;border:none;background:var(--gold-fill);color:#1A1406;font-weight:600;font-size:14.5px">Déclarer comme obtenue</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px;font-variation-settings:'FILL' 1">verified</span>Vérifiée</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;border:1.5px dashed var(--ln2);color:var(--ink2);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:17px">pending</span>Non vérifiée</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--warn-sf);color:var(--warn);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">schedule</span>En attente</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--err-sf);color:var(--err);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px">block</span>Refusée</span>
+        <span style="height:28px;padding:0 11px 0 8px;border-radius:14px;background:var(--gold-sf);color:var(--gold);display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:17px;font-variation-settings:'FILL' 1">workspace_premium</span>Obtenue</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600">Programme · 5/11 chapitres</span><span style="font-family:'Newsreader',serif;font-size:17px;font-weight:600">45 %</span></div>
+        <div style="height:8px;border-radius:4px;background:var(--sf2);overflow:hidden"><div style="width:45%;height:100%;background:var(--pri);border-radius:4px"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="background:var(--sf);border:2px solid var(--pri);border-radius:12px;padding:13.5px;display:flex;gap:12px;align-items:flex-start"><span style="width:34px;height:34px;border-radius:50%;background:var(--pri);color:var(--pri-ink);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:20px">clock_loader_40</span></span><div style="display:flex;flex-direction:column;gap:3px"><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--pri)">SAA-C03 · En cours</span><span style="font-size:14.5px;font-weight:600;line-height:1.3">AWS Solutions Architect – Associate</span></div></div>
+        <div style="background:var(--sf2);border:1.5px dashed var(--ln2);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start"><span style="width:34px;height:34px;border-radius:50%;background:var(--bg);color:var(--ink3);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:19px">lock</span></span><div style="display:flex;flex-direction:column;gap:3px"><span style="font:500 11.5px 'IBM Plex Mono',monospace;color:var(--ink3)">SAP-C02 · Verrouillée</span><span style="font-size:14.5px;font-weight:600;line-height:1.3;color:var(--ink2)">AWS Solutions Architect – Professional</span></div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="background:var(--sf);border:1px solid var(--gold-fill);border-radius:14px;padding:6px">
+        <div style="border:1px solid var(--gold-sf);border-radius:10px;padding:22px;display:flex;gap:18px;align-items:center">
+          <div style="width:72px;height:72px;border-radius:50%;background:var(--gold-fill);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Outlined';font-size:34px;color:#1A1406;font-variation-settings:'FILL' 1">workspace_premium</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:8px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--gold)">AZ-900</span><span style="height:24px;padding:0 9px 0 6px;border-radius:12px;background:var(--ok-sf);color:var(--ok);display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:15px;font-variation-settings:'FILL' 1">verified</span>Vérifiée</span></div><div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600">Microsoft Azure Fundamentals</div><div style="font-size:13px;color:var(--ink2)">Obtenue le 12 mars 2026</div></div>
+        </div>
+      </div>
+      <div style="background:var(--bg);border:1.5px dashed var(--ln2);border-radius:14px;padding:28px;display:flex;gap:18px;align-items:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:2px dashed var(--ln2);display:grid;place-items:center;flex:none;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:32px;color:var(--ink3)">workspace_premium</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:8px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">CLF-C02</span><span style="height:24px;padding:0 9px 0 6px;border-radius:12px;border:1.5px dashed var(--ln2);color:var(--ink2);display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:15px">pending</span>Non vérifiée</span></div><div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:var(--ink2)">AWS Certified Cloud Practitioner</div><a href="#" style="font-size:13px;font-weight:600;color:var(--pri)">Ajouter une preuve</a></div>
+      </div>
+      <div role="status" style="background:var(--ink);color:var(--bg);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px"><span style="font-family:'Material Symbols Outlined';font-size:22px;color:#B07A12;font-variation-settings:'FILL' 1">check_circle</span><span style="flex:1;font-size:14.5px"><strong>Chapitre terminé</strong> · +10 points</span></div>
+    </div>
+  </div>
+</div>
+
+
+<div style="width:1440px;box-sizing:border-box;background:var(--bg);border-radius:16px;padding:56px 72px;display:flex;flex-direction:column;gap:48px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap"><span style="font:500 13px 'IBM Plex Mono',monospace;color:var(--ink3)">K</span><h2 style="margin:0;font-family:'Newsreader',serif;font-weight:500;font-size:40px;letter-spacing:-0.01em">Langues</h2><span style="font-size:15px;color:var(--ink2)">Français (par défaut), English, العربية · l’arabe s’affiche de droite à gauche</span></div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:48px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px"><span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Démonstration · le sélecteur pilote la direction</span>
+        <div role="radiogroup" aria-label="Langue de la démonstration" style="display:inline-flex;background:var(--sf2);border-radius:10px;padding:4px;gap:2px"><sc-for list="{{ langOpts }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.on }}" onClick="{{ o.pick }}" lang="{{ o.lc }}" style="height:38px;padding:0 14px;border:none;border-radius:7px;background:{{ o.tabBg }};color:{{ o.tabInk }};box-shadow:{{ o.tabSh }};font-family:{{ o.ff }};font-size:13.5px;font-weight:600;cursor:pointer">{{ o.name }}</button></sc-for></div>
+      </div>
+      <div dir="{{ dir }}" lang="{{ lc }}" style="height:420px;border:1px solid var(--ln);border-radius:14px;overflow:hidden;display:flex;background:var(--bg);font-family:{{ ff }}">
+        <nav style="width:210px;flex:none;background:var(--sf);border-inline-end:1px solid var(--ln);padding:20px 12px;display:flex;flex-direction:column;gap:4px">
+          <span style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;padding:0 10px 14px">TekCert</span>
+          <sc-for list="{{ demoNav }}" as="n" hint-placeholder-count="4"><span style="height:42px;padding-inline:10px;border-radius:8px;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:{{ n.fw }};background:{{ n.bg }};color:{{ n.ink }}"><span style="font-family:'Material Symbols Outlined';font-size:20px">{{ n.icon }}</span><span>{{ n.label }}</span></span></sc-for>
+          <span style="margin-top:auto;height:42px;padding-inline:10px;border-radius:8px;display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:var(--ink2);border:1.5px solid var(--ln2)"><span style="font-family:'Material Symbols Outlined';font-size:19px">language</span><span style="flex:1">{{ curName }}</span><span style="font-family:'Material Symbols Outlined';font-size:18px">unfold_more</span></span>
+        </nav>
+        <main style="flex:1;min-width:0;padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+          <span style="display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink3)"><span>{{ t.crumb }}</span><span style="font-family:'Material Symbols Outlined';font-size:16px;transform:{{ flip }}">chevron_right</span><bdi style="font-family:'IBM Plex Mono',monospace;font-size:12.5px">SAA-C03</bdi></span>
+          <span style="font-family:{{ hf }};font-size:32px;font-weight:{{ hw }};line-height:1.25">{{ t.hello }}</span>
+          <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="height:26px;padding-inline:10px;border-radius:13px;background:var(--pri-sf);color:var(--pri);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center">{{ t.eyebrow }}</span><bdi style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--ink3)">SAA-C03</bdi></div>
+            <bdi dir="ltr" lang="en" style="font-family:'Newsreader',serif;font-size:21px;font-weight:600;text-align:start">AWS Solutions Architect – Associate</bdi>
+            <div style="display:flex;flex-direction:column;gap:7px"><div style="display:flex;justify-content:space-between;font-size:13.5px"><span>{{ t.prog }}</span><strong>{{ t.pct }}</strong></div><div style="height:8px;border-radius:4px;background:var(--sf2)"><div style="width:45%;height:100%;border-radius:4px;background:var(--pri)"></div></div></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><span style="height:42px;padding-inline:16px 14px;border-radius:9px;background:var(--pri);color:var(--pri-ink);font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px"><span>{{ t.cta }}</span><span style="font-family:'Material Symbols Outlined';font-size:18px;transform:{{ flip }}">arrow_forward</span></span><span style="height:42px;padding-inline:14px;border-radius:9px;border:1.5px solid var(--ln2);font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Outlined';font-size:18px">timer</span><span>{{ t.sec }}</span></span></div>
+          </div>
+        </main>
+      </div>
+      <span style="font-size:13px;color:var(--ink3);line-height:1.5">Un seul attribut <code style="font:500 12.5px 'IBM Plex Mono',monospace;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ink)">dir</code> sur la racine. Flex, grille et propriétés logiques font le reste : barre latérale à droite, barre de progression qui part de la droite, flèches retournées. Le code et le nom de la certification restent en LTR.</span>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Règles RTL</span>
+      <div style="height:12px"></div>
+      <div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:16px 0;border-top:1px solid var(--ln)"><span style="width:36px;height:36px;border-radius:9px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:20px">flip</span></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15.5px;font-weight:600">Miroir par la direction, pas par le CSS</span><span style="font-size:14px;line-height:1.6;color:var(--ink2);text-wrap:pretty"><code style="font:500 12.5px 'IBM Plex Mono',monospace;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ink)">dir="rtl"</code> sur <code style="font:500 12.5px 'IBM Plex Mono',monospace;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ink)">&lt;html&gt;</code>. Toujours <code style="font:500 12.5px 'IBM Plex Mono',monospace;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ink)">margin-inline-start</code>, <code style="font:500 12.5px 'IBM Plex Mono',monospace;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ink)">padding-inline</code>, <code style="font:500 12.5px 'IBM Plex Mono',monospace;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ink)">inset-inline</code>, <code style="font:500 12.5px 'IBM Plex Mono',monospace;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ink)">text-align:start</code> ; jamais left / right.</span></span></div>
+      <div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:16px 0;border-top:1px solid var(--ln)"><span style="width:36px;height:36px;border-radius:9px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:20px">swap_horiz</span></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15.5px;font-weight:600">Icônes directionnelles retournées</span><span style="font-size:14px;line-height:1.6;color:var(--ink2);text-wrap:pretty">Flèches, chevrons, retour, envoyer, fil d’Ariane : <code style="font:500 12.5px 'IBM Plex Mono',monospace;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ink)">scaleX(-1)</code>. Les coches, l’horloge, le minuteur et les logos ne bougent pas.</span></span></div>
+      <div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:16px 0;border-top:1px solid var(--ln)"><span style="width:36px;height:36px;border-radius:9px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:20px">code</span></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15.5px;font-weight:600">Isoler ce qui reste en LTR</span><span style="font-size:14px;line-height:1.6;color:var(--ink2);text-wrap:pretty">Codes (SAA-C03), identifiants de validation, e-mails, URL et noms de certification dans <code style="font:500 12.5px 'IBM Plex Mono',monospace;background:var(--sf2);padding:1px 5px;border-radius:4px;color:var(--ink)">&lt;bdi&gt;</code> pour garder la ponctuation en ordre.</span></span></div>
+      <div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:16px 0;border-top:1px solid var(--ln)"><span style="width:36px;height:36px;border-radius:9px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:20px">pin</span></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15.5px;font-weight:600">Chiffres occidentaux partout</span><span style="font-size:14px;line-height:1.6;color:var(--ink2);text-wrap:pretty">Les chiffres 0–9 sont utilisés dans les trois langues. 45 % en français (espace insécable), 45% en anglais et en arabe.</span></span></div>
+      <div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:16px 0;border-top:1px solid var(--ln)"><span style="width:36px;height:36px;border-radius:9px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:20px">workspace_premium</span></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15.5px;font-weight:600">Noms de certification en anglais</span><span style="font-size:14px;line-height:1.6;color:var(--ink2);text-wrap:pretty">Toujours tels que publiés par l’éditeur, quelle que soit la langue de l’interface.</span></span></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Sélecteur de langue · 4 emplacements, un seul état</span>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:268px;justify-content:flex-end;box-sizing:border-box">
+          <div role="listbox" aria-label="Langue" style="background:var(--sf);border:1px solid var(--ln2);border-radius:12px;padding:6px;box-shadow:0 12px 28px -10px rgba(19,26,44,.28);display:flex;flex-direction:column;gap:2px"><sc-for list="{{ langOpts }}" as="o" hint-placeholder-count="3"><button role="option" aria-selected="{{ o.on }}" onClick="{{ o.pick }}" lang="{{ o.lc }}" dir="{{ o.dir }}" style="height:44px;padding-inline:10px;border:none;border-radius:8px;background:{{ o.rowBg }};display:flex;align-items:center;gap:10px;cursor:pointer;text-align:start"><span style="flex:1;font-family:{{ o.ff }};font-size:14.5px;font-weight:{{ o.fw }}">{{ o.name }}</span><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--pri);opacity:{{ o.chk }}">check</span></button></sc-for></div>
+          <div style="display:flex;gap:6px"><span style="flex:1;height:44px;padding:0 10px;border-radius:8px;border:1.5px solid var(--pri);display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;box-shadow:0 0 0 3px var(--pri-sf)"><span style="font-family:'Material Symbols Outlined';font-size:19px;color:var(--ink2)">language</span><span style="flex:1;font-family:{{ ff }}">{{ curName }}</span><span style="font-family:'Material Symbols Outlined';font-size:18px;color:var(--ink3)">unfold_more</span></span><span style="width:44px;height:44px;border-radius:8px;border:1.5px solid var(--ln2);display:grid;place-items:center;color:var(--ink2);box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:20px">dark_mode</span></span></div>
+        </div>
+        <span style="font-size:14px;font-weight:600">Pied de la barre latérale</span><span style="font-size:13px;color:var(--ink3);line-height:1.5">À côté du thème. Menu vers le haut. Repliée : icône seule + infobulle.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;min-height:268px;box-sizing:border-box">
+          <span style="font-size:15px;font-weight:600">Langue de l'interface</span>
+          <div role="radiogroup" style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ langOpts }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.on }}" onClick="{{ o.pick }}" style="display:flex;align-items:center;gap:12px;min-height:52px;padding:8px 12px;border-radius:10px;border:{{ o.bw }} solid {{ o.bc }};background:{{ o.bg }};cursor:pointer;text-align:start"><span lang="{{ o.lc }}" dir="{{ o.dir }}" style="flex:1;display:flex;flex-direction:column;gap:1px"><span style="font-family:{{ o.ff }};font-size:14.5px;font-weight:600">{{ o.name }}</span><span style="font-family:{{ o.ff }};font-size:12px;color:var(--ink3)">{{ o.sub }}</span></span><span style="width:20px;height:20px;border-radius:50%;border:2px solid {{ o.bc }};box-sizing:border-box;display:grid;place-items:center;flex:none"><span style="width:10px;height:10px;border-radius:50%;background:{{ o.dot }}"></span></span></button></sc-for></div>
+        </div>
+        <span style="font-size:14px;font-weight:600">Paramètres › Langue</span><span style="font-size:13px;color:var(--ink3);line-height:1.5">Nouvelle section entre Notifications et Apparence. S'applique sans recharger.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;min-height:268px;display:flex;flex-direction:column;overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--ln)"><span style="font-family:'Newsreader',serif;font-size:19px;font-weight:600">TekCert</span><span style="display:flex;gap:6px"><span aria-label="Langue" style="height:40px;padding:0 8px 0 10px;border-radius:8px;border:1.5px solid var(--ln2);display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Outlined';font-size:18px">language</span><span>{{ curShort }}</span><span style="font-family:'Material Symbols Outlined';font-size:17px;color:var(--ink3)">expand_more</span></span><span style="height:40px;padding:0 12px;border-radius:8px;background:var(--pri);color:var(--pri-ink);display:flex;align-items:center;font-size:13px;font-weight:600;font-family:{{ ff }}">{{ t.login }}</span></span></div>
+          <div style="flex:1;padding:16px;display:flex;flex-direction:column;gap:6px;justify-content:center"><span style="height:10px;width:70%;border-radius:5px;background:var(--sf2)"></span><span style="height:10px;width:50%;border-radius:5px;background:var(--sf2)"></span></div>
+        </div>
+        <span style="font-size:14px;font-weight:600">En-tête Landing / Connexion</span><span style="font-size:13px;color:var(--ink3);line-height:1.5">Code court + globe, avant la connexion. Proposé d'après la langue du navigateur.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;min-height:268px;box-sizing:border-box">
+          <span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">01 / 04</span>
+          <span style="font-family:'Newsreader',serif;font-size:21px;font-weight:600;line-height:1.3">Choisis ta langue · Choose your language · <span lang="ar" style="font-family:'IBM Plex Sans Arabic',sans-serif">اختر لغتك</span></span>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"><sc-for list="{{ langOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" lang="{{ o.lc }}" style="min-height:76px;border-radius:10px;border:{{ o.bw }} solid {{ o.bc }};background:{{ o.bg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:6px"><span style="font:500 11px 'IBM Plex Mono',monospace;color:var(--ink3)">{{ o.short }}</span><span style="font-family:{{ o.ff }};font-size:14px;font-weight:600">{{ o.name }}</span></button></sc-for></div>
+        </div>
+        <span style="font-size:14px;font-weight:600">Onboarding · étape 1</span><span style="font-size:13px;color:var(--ink3);line-height:1.5">Titre dans les trois langues ; la suite de l'onboarding bascule aussitôt.</span>
+      </div>
+    </div>
+    <span style="font-size:13px;color:var(--ink3)">Chaque langue est écrite dans sa propre langue et sa propre écriture, sans drapeaux. Clique une option : les quatre sélecteurs et la démonstration partagent le même état.</span>
+  </div>
+  <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:56px;align-items:start">
+    <div style="display:flex;flex-direction:column">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Typographie arabe · IBM Plex Sans Arabic pour tout</span>
+      <div style="height:12px"></div>
+      <div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:baseline;padding:16px 0;border-top:1px solid var(--ln)"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600">Display</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">600 · 40/1.3</span></span><span lang="ar" dir="rtl" style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:40px;font-weight:600;line-height:1.3">شهاداتك، خطوة بخطوة</span></div>
+      <div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:baseline;padding:16px 0;border-top:1px solid var(--ln)"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600">Titre</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">600 · 26/1.4</span></span><span lang="ar" dir="rtl" style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:26px;font-weight:600;line-height:1.4">الشهادات المقترحة لتخصصك</span></div>
+      <div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:baseline;padding:16px 0;border-top:1px solid var(--ln)"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600">Corps</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">400 · 16/1.75</span></span><span lang="ar" dir="rtl" style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:16px;line-height:1.75">تابع تقدّمك في كل شهادة، واجتز اختبارات تجريبية، واطلب قسيمة الامتحان عندما تكون جاهزًا.</span></div>
+      <div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:baseline;padding:16px 0;border-top:1px solid var(--ln)"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600">Libellé</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">600 · 14/1.5</span></span><span lang="ar" dir="rtl" style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:14px;font-weight:600;line-height:1.5">طلب اجتياز الامتحان</span></div>
+      <div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:baseline;padding:16px 0;border-top:1px solid var(--ln)"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600">Méta</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:var(--ink3)">400 · 13/1.6</span></span><span lang="ar" dir="rtl" style="font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;line-height:1.6;color:var(--ink3)">آخر تحديث منذ ساعتين · <bdi style="font-family:IBM Plex Mono,monospace">SAA-C03</bdi></span></div>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Correspondances</span>
+      <div style="height:12px"></div>
+      <div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:16px 0;border-top:1px solid var(--ln)"><span style="width:36px;height:36px;border-radius:9px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:20px">title</span></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15.5px;font-weight:600">Newsreader → Plex Sans Arabic 600</span><span style="font-size:14px;line-height:1.6;color:var(--ink2);text-wrap:pretty">Ni Newsreader ni Instrument Sans n’ont de glyphes arabes. Le contraste serif / sans devient un contraste de graisse.</span></span></div>
+      <div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:16px 0;border-top:1px solid var(--ln)"><span style="width:36px;height:36px;border-radius:9px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:20px">format_letter_spacing</span></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15.5px;font-weight:600">Pas d’espacement, de capitales ni d’italique</span><span style="font-size:14px;line-height:1.6;color:var(--ink2);text-wrap:pretty">L’espacement casse les liaisons entre lettres. Les surtitres en capitales espacées passent en graisse 600, taille identique.</span></span></div>
+      <div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:16px 0;border-top:1px solid var(--ln)"><span style="width:36px;height:36px;border-radius:9px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:20px">format_line_spacing</span></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15.5px;font-weight:600">Interlignage +0,15, corps +1 px</span><span style="font-size:14px;line-height:1.6;color:var(--ink2);text-wrap:pretty">Les ascendantes et les points demandent plus d’air : 1.6 devient 1.75 sur le texte courant.</span></span></div>
+      <div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:16px 0;border-top:1px solid var(--ln)"><span style="width:36px;height:36px;border-radius:9px;background:var(--pri-sf);color:var(--pri);display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:20px">data_object</span></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15.5px;font-weight:600">Codes en IBM Plex Mono</span><span style="font-size:14px;line-height:1.6;color:var(--ink2);text-wrap:pretty">Codes d’examen, identifiants et minuteur gardent la police mono et la direction LTR.</span></span></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Longueur des libellés</span>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+      <div style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;align-items:flex-start"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">FR · référence</span><span style="height:44px;padding:0 18px;border-radius:8px;background:var(--pri);color:var(--pri-ink);font-weight:600;font-size:14.5px;display:inline-flex;align-items:center">Demander un passage</span><span style="height:44px;padding:0 18px;border-radius:8px;border:1.5px solid var(--ln2);font-weight:600;font-size:14.5px;display:inline-flex;align-items:center">Déclarer comme obtenue</span></div>
+      <div lang="en" style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;align-items:flex-start"><span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">EN · ~15 % plus court</span><span style="height:44px;padding:0 18px;border-radius:8px;background:var(--pri);color:var(--pri-ink);font-weight:600;font-size:14.5px;display:inline-flex;align-items:center">Request an exam</span><span style="height:44px;padding:0 18px;border-radius:8px;border:1.5px solid var(--ln2);font-weight:600;font-size:14.5px;display:inline-flex;align-items:center">Mark as earned</span></div>
+      <div lang="ar" dir="rtl" style="background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;font-family:'IBM Plex Sans Arabic',sans-serif"><span dir="ltr" style="font:500 12px 'IBM Plex Mono',monospace;color:var(--ink3)">AR · variable</span><span style="height:44px;padding:0 18px;border-radius:8px;background:var(--pri);color:var(--pri-ink);font-weight:600;font-size:15px;display:inline-flex;align-items:center">طلب اجتياز الامتحان</span><span style="height:44px;padding:0 18px;border-radius:8px;border:1.5px solid var(--ln2);font-weight:600;font-size:15px;display:inline-flex;align-items:center">تسجيلها كشهادة مُحصَّلة</span></div>
+    </div>
+    <span style="font-size:13px;color:var(--ink3)">Aucun libellé à largeur fixe : boutons et onglets s'adaptent au texte, les cartes acceptent un titre sur deux lignes. Prévoir +30 % par rapport à l'anglais.</span>
+  </div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'fr' };
+  lang() {
+    const L = {
+      fr: { name: 'Français', short: 'FR', sub: 'Interface en français', dir: 'ltr', nav: ['Tableau de bord', 'Catalogue', 'Mon parcours', 'Communauté'], crumb: 'Catalogue', hello: 'Bonjour, Yassine', eyebrow: 'En cours', prog: 'Chapitre 5 sur 11', pct: '45\u00a0%', cta: 'Reprendre', sec: 'Test blanc', login: 'Se connecter' },
+      en: { name: 'English', short: 'EN', sub: 'Interface in English', dir: 'ltr', nav: ['Dashboard', 'Catalog', 'My path', 'Community'], crumb: 'Catalog', hello: 'Hello, Yassine', eyebrow: 'In progress', prog: 'Chapter 5 of 11', pct: '45%', cta: 'Resume', sec: 'Mock exam', login: 'Sign in' },
+      ar: { name: 'العربية', short: 'AR', sub: 'الواجهة بالعربية', dir: 'rtl', nav: ['لوحة التحكم', 'الفهرس', 'مساري', 'المجتمع'], crumb: 'الفهرس', hello: 'مرحبًا، ياسين', eyebrow: 'قيد التحضير', prog: 'الفصل 5 من 11', pct: '45%', cta: 'استئناف', sec: 'اختبار تجريبي', login: 'تسجيل الدخول' }
+    };
+    const cur = this.state.lang, t = L[cur], AR = "'IBM Plex Sans Arabic',sans-serif", LAT = "'Instrument Sans',sans-serif";
+    const langOpts = Object.entries(L).map(([k, v]) => { const on = k === cur; return { lc: k, name: v.name, short: v.short, sub: v.sub, dir: v.dir, ff: k === 'ar' ? AR : LAT, on, fw: on ? 600 : 500, chk: on ? 1 : 0, rowBg: on ? 'var(--pri-sf)' : 'transparent', tabBg: on ? 'var(--sf)' : 'transparent', tabInk: on ? 'var(--ink)' : 'var(--ink2)', tabSh: on ? '0 1px 2px rgba(19,26,44,.12)' : 'none', bw: on ? '2px' : '1.5px', bc: on ? 'var(--pri)' : 'var(--ln2)', bg: on ? 'var(--pri-sf)' : 'var(--sf)', dot: on ? 'var(--pri)' : 'transparent', pick: () => this.setState({ lang: k }) }; });
+    const demoNav = t.nav.map((label, i) => ({ label, icon: ['space_dashboard', 'grid_view', 'route', 'groups'][i], fw: i === 1 ? 600 : 500, bg: i === 1 ? 'var(--pri-sf)' : 'transparent', ink: i === 1 ? 'var(--pri)' : 'var(--ink2)' }));
+    return { langOpts, demoNav, t, dir: t.dir, lc: cur, curName: t.name, curShort: t.short, ff: cur === 'ar' ? AR : LAT, hf: cur === 'ar' ? AR : "'Newsreader',serif", hw: cur === 'ar' ? 600 : 500, flip: t.dir === 'rtl' ? 'scaleX(-1)' : 'none' };
+  }
+  renderVals() {
+    const t = (name, l, d, use, lt, dt) => ({ name, l, d, use, lt: lt || '#131A2C', dt: dt || '#ECEAE4' });
+    const sp = [['SDIA', 'IA & Data Science', 285], ['CIM', 'Cloud Infrastructure Management', 225], ['GLOps', 'Génie Logiciel & DevOps', 165], ['SSIR', 'Sécurité des Systèmes & Infrastructures Réseaux', 15], ['AIOT', 'IA & IoT', 130], ['DMWM', 'Développement Mobile, Web & Multimédia', 340]].map(([code, name, h]) => { const c = `oklch(0.6 0.13 ${h})`; return { code, name, c, bg: `color-mix(in oklch, ${c} 16%, var(--sf))`, val: `oklch(.6 .13 ${h})` }; });
+    const specs = [{ code: 'Fondamentaux', name: 'Parcours commun, toutes années', c: 'var(--ink3)', val: 'var(--ink3)' }, ...sp];
+    return { ...this.lang(), specs, specs6: sp, tokens: [
+      t('--bg', '#F6F3EC', '#0D1220', 'Fond de page, papier chaud'),
+      t('--sf', '#FFFDF8', '#141B2D', 'Cartes, panneaux, champs'),
+      t('--sf2', '#EEE9DE', '#1B2338', 'Pistes, survols, squelettes'),
+      t('--ln / --ln2', '#E1DACB', '#38425F', 'Filets et bordures de champ'),
+      t('--ink', '#131A2C', '#ECEAE4', 'Texte principal', '#F6F3EC', '#0D1220'),
+      t('--ink2 / --ink3', '#474E63', '#9097AA', 'Texte secondaire, métadonnées', '#F6F3EC', '#0D1220'),
+      t('--pri', '#1C2F5E', '#AFC2F4', 'Bleu académique : actions, structure', '#F6F3EC', '#0D1220'),
+      t('--pri-sf', '#E4E8F2', '#1F2B4C', 'Sélection, état en cours'),
+      t('--gold-fill', '#D4A23A', '#D9AE4E', 'Réservé : obtenue, niveaux, badges', '#1A1406', '#1A1406'),
+      t('--ok', '#2C6A45', '#7CC79A', 'Vérifiée, approuvée', '#F6F3EC', '#0D1220'),
+      t('--warn', '#9C4F0C', '#EDA867', 'En attente', '#F6F3EC', '#0D1220'),
+      t('--err', '#A3302A', '#F0928A', 'Refusée, erreur', '#F6F3EC', '#0D1220')
+    ] };
+  }
+}
+</script>
+</body>
+</html>

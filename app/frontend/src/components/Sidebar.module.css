@@ -1,0 +1,238 @@
+/* design/Sidebar.dc.html: 256 px expanded, 76 px collapsed. */
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 28px;
+  width: var(--sidebar-width);
+  height: 100dvh;
+  padding: 20px 14px 16px;
+  overflow-y: auto;
+  border-right: 1px solid var(--ln);
+  background: var(--sf);
+  font-family: var(--font-sans);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 6px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--pri);
+  box-shadow:
+    0 0 0 2px var(--sf),
+    0 0 0 3.5px var(--gold-fill);
+  color: var(--pri-ink);
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.name {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.school {
+  color: var(--ink3);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.groupLabel {
+  padding: 0 12px 8px;
+  color: var(--ink3);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: var(--radius-field);
+  color: var(--ink2);
+  font-size: 14.5px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.link:hover {
+  background: var(--sf2);
+  color: var(--ink);
+}
+
+.link[aria-current='page'] {
+  background: var(--pri-sf);
+  color: var(--pri);
+  font-weight: 600;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: auto;
+  padding: 10px;
+  border: 1px solid var(--ln);
+  border-radius: 10px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.account:hover {
+  background: var(--sf2);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--sf2);
+  color: var(--ink2);
+}
+
+.accountText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.accountName {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.accountMeta {
+  overflow: hidden;
+  color: var(--ink3);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * Collapsed rail, chosen by the user (data-collapsed) or forced on tablets (media query below).
+ * Labels are visually hidden, not removed, so links keep their accessible names.
+ */
+.sidebar[data-collapsed='true'] {
+  align-items: center;
+  width: var(--sidebar-width-collapsed);
+  padding: 20px 0 16px;
+  gap: 24px;
+}
+
+.sidebar[data-collapsed='true'] .top {
+  flex-direction: column;
+  gap: 24px;
+  padding: 0;
+}
+
+.sidebar[data-collapsed='true'] :is(.wordmark, .groupLabel, .label, .accountText) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.sidebar[data-collapsed='true'] .link {
+  justify-content: center;
+  width: 48px;
+  padding: 0;
+}
+
+.sidebar[data-collapsed='true'] .account {
+  padding: 0;
+  border: none;
+}
+
+@media (max-width: 1279px) {
+  .sidebar {
+    align-items: center;
+    width: var(--sidebar-width-collapsed);
+    padding: 20px 0 16px;
+    gap: 24px;
+  }
+
+  .top {
+    flex-direction: column;
+    gap: 24px;
+    padding: 0;
+  }
+
+  :is(.wordmark, .groupLabel, .label, .accountText) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .link {
+    justify-content: center;
+    width: 48px;
+    padding: 0;
+  }
+
+  .account {
+    padding: 0;
+    border: none;
+  }
+
+  .collapseToggle {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    display: none;
+  }
+}
