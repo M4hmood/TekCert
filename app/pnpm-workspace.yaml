@@ -1,0 +1,17 @@
+packages:
+  - frontend
+  - backend
+  - packages/*
+  - e2e
+
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - '@nestjs/core'
+  - esbuild
+  - prisma
+  - sharp
+  - unrs-resolver
+
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@scarf/scarf'
