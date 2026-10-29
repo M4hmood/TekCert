@@ -54,7 +54,13 @@ describe('API (e2e)', () => {
       const experts = CertificationListSchema.parse(
         (await get('/certifications?level=expert').expect(200)).body,
       );
-      expect(experts.items.map((c) => c.code).sort()).toEqual(['AZ-400', 'CCIE-RS', 'CEPP', 'HCIE', 'RHCA']);
+      expect(experts.items.map((c) => c.code).sort()).toEqual([
+        'AZ-400',
+        'CCIE-RS',
+        'CEPP',
+        'HCIE',
+        'RHCA',
+      ]);
     });
 
     it('includes all-specialty certifications in a specialty filter', async () => {
