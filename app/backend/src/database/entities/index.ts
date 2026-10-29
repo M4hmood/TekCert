@@ -9,6 +9,7 @@ import { Provider } from './provider.entity';
 import { SchoolClass } from './school-class.entity';
 import { Session } from './session.entity';
 import { Specialty } from './specialty.entity';
+import { UserCertification } from './user-certification.entity';
 import { User } from './user.entity';
 
 export {
@@ -24,6 +25,7 @@ export {
   Session,
   Specialty,
   User,
+  UserCertification,
 };
 
 /** Every entity, registered explicitly (no globs) so the app and the CLI see the same set. */
@@ -40,4 +42,5 @@ export const ENTITIES = [
   Session,
   EmailToken,
   LoginAttempt,
+  UserCertification,
 ];

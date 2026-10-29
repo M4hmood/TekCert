@@ -32,6 +32,17 @@ describe('validateEnv', () => {
     ).toEqual(['https://a.test', 'https://b.test']);
   });
 
+  it('uses the instance role on AWS unless both S3 keys are set', () => {
+    expect(validateEnv(valid)).toMatchObject({
+      S3_BUCKET: 'tekcert-avatars',
+      S3_FORCE_PATH_STYLE: false,
+    });
+    expect(validateEnv(valid).S3_ACCESS_KEY_ID).toBeUndefined();
+    expect(() => validateEnv({ ...valid, S3_ACCESS_KEY_ID: 'minio' })).toThrow(
+      /S3_SECRET_ACCESS_KEY/,
+    );
+  });
+
   it('rejects a missing DATABASE_URL', () => {
     expect(() => validateEnv({ JWT_ACCESS_SECRET: valid.JWT_ACCESS_SECRET })).toThrow(
       /DATABASE_URL/,

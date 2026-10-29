@@ -26,6 +26,20 @@ export const EnvSchema = z
     MAIL_FROM: z.string().min(3).default('TekCert <no-reply@tek-up.de>'),
     /** Requests per minute per IP on /auth/* (brute-force brake on top of the per-account lockout). */
     AUTH_RATE_LIMIT: z.coerce.number().int().positive().default(20),
+    /**
+     * S3-compatible storage for profile photos. Locally MinIO (docker compose); on AWS leave the
+     * endpoint and keys unset so the SDK uses the regional endpoint and the instance role.
+     */
+    S3_ENDPOINT: z.url().optional(),
+    S3_REGION: z.string().min(1).default('eu-central-1'),
+    S3_BUCKET: z.string().min(3).default('tekcert-avatars'),
+    S3_FORCE_PATH_STYLE: BooleanString.default(false),
+    S3_ACCESS_KEY_ID: z.string().min(1).optional(),
+    S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  })
+  .refine((env) => Boolean(env.S3_ACCESS_KEY_ID) === Boolean(env.S3_SECRET_ACCESS_KEY), {
+    message: 'Set both S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY, or neither',
+    path: ['S3_SECRET_ACCESS_KEY'],
   })
   .transform((env) => ({
     ...env,

@@ -6,6 +6,7 @@ import {
   SignInSchema,
   SignUpSchema,
   TokenSchema,
+  VISIBILITY_REQUIRED_MESSAGE,
 } from './auth.js';
 
 describe('InstituteEmailSchema', () => {
@@ -51,14 +52,26 @@ describe('password rules', () => {
 });
 
 describe('SignUpSchema', () => {
-  it('keeps the profile private unless consent is given', () => {
-    const parsed = SignUpSchema.parse({
-      firstName: ' Yassine ',
-      lastName: 'Ben Amor',
-      email: 'yassine.benamor@tek-up.de',
-      password: 'correct-horse-9',
-    });
-    expect(parsed).toMatchObject({ firstName: 'Yassine', profileVisible: false });
+  const valid = {
+    firstName: ' Yassine ',
+    lastName: 'Ben Amor',
+    email: 'yassine.benamor@tek-up.de',
+    password: 'correct-horse-9',
+    acceptVisibility: true,
+  };
+
+  it('accepts a sign-up that accepts profile visibility', () => {
+    expect(SignUpSchema.parse(valid)).toMatchObject({ firstName: 'Yassine' });
+  });
+
+  it.each([false, undefined])('refuses a sign-up without visibility (%s)', (acceptVisibility) => {
+    const result = SignUpSchema.safeParse({ ...valid, acceptVisibility });
+    expect(result.error?.issues).toEqual([
+      expect.objectContaining({
+        path: ['acceptVisibility'],
+        message: VISIBILITY_REQUIRED_MESSAGE,
+      }),
+    ]);
   });
 });
 

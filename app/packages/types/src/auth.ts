@@ -51,13 +51,15 @@ export const NewPasswordSchema = z
 
 const NameSchema = z.string().trim().min(1, 'Required').max(80);
 
+export const VISIBILITY_REQUIRED_MESSAGE = 'You need to accept this to create an account';
+
 export const SignUpSchema = z.object({
   firstName: NameSchema,
   lastName: NameSchema,
   email: InstituteEmailSchema,
   password: NewPasswordSchema,
-  /** Optional consent: ticked makes the profile visible to other students. */
-  profileVisible: z.boolean().default(false),
+  /** Every profile is visible to signed-in students: accepting this is a condition of signing up. */
+  acceptVisibility: z.literal(true, { error: VISIBILITY_REQUIRED_MESSAGE }),
 });
 export type SignUpInput = z.input<typeof SignUpSchema>;
 
@@ -90,7 +92,11 @@ export const CurrentUserSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   role: RoleSchema,
-  profileVisible: z.boolean(),
+  /** Null until onboarding step 2 is saved, e.g. "ING-4-CIM-C". */
+  classCode: z.string().nullable(),
+  /** API path of the profile photo (versioned, so it changes when the photo does), or null. */
+  avatarPath: z.string().nullable(),
+  onboardingCompleted: z.boolean(),
 });
 export type CurrentUser = z.infer<typeof CurrentUserSchema>;
 

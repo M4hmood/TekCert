@@ -16,7 +16,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "bundle": "pnpm --filter backend deploy:bundle && pnpm --filter frontend deploy:bundle",
-    "db:up": "docker compose up -d --wait db mail",
+    "db:up": "docker compose up -d --wait db mail storage",
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter backend db:migrate",
     "db:seed": "pnpm --filter backend db:seed",

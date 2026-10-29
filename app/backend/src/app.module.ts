@@ -5,12 +5,15 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { LoggerModule } from 'nestjs-pino';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './auth/auth.module';
+import { AvatarsModule } from './avatars/avatars.module';
 import { CertificationsModule } from './certifications/certifications.module';
 import { ProblemDetailsFilter } from './common/problem-details.filter';
 import { type Env, validateEnv } from './config/env';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { MailModule } from './mail/mail.module';
+import { OnboardingModule } from './onboarding/onboarding.module';
+import { StorageModule } from './storage/storage.module';
 
 export const REQUEST_ID_HEADER = 'x-request-id';
 
@@ -40,9 +43,12 @@ export const REQUEST_ID_HEADER = 'x-request-id';
     }),
     DatabaseModule,
     MailModule,
+    StorageModule,
     AuthModule,
     HealthModule,
     CertificationsModule,
+    OnboardingModule,
+    AvatarsModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },

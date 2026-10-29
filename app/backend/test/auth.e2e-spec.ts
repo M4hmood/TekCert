@@ -1,8 +1,19 @@
-import { AUTH_PROBLEM, CurrentUserSchema, ProblemDetailsSchema } from '@tekcert/types';
+import {
+  AUTH_PROBLEM,
+  CurrentUserSchema,
+  ProblemDetailsSchema,
+  VISIBILITY_REQUIRED_MESSAGE,
+} from '@tekcert/types';
 import request from 'supertest';
-import { createTestApp, type TestApp, tokenFromMail, uniqueEmail } from './test-app';
-
-const PASSWORD = 'correct-horse-9';
+import {
+  createTestApp,
+  PASSWORD,
+  signUpAndVerify,
+  signUpRequest,
+  type TestApp,
+  tokenFromMail,
+  uniqueEmail,
+} from './test-app';
 
 describe('Authentication (e2e)', () => {
   let t: TestApp;
@@ -17,22 +28,9 @@ describe('Authentication (e2e)', () => {
 
   const server = () => t.app.getHttpServer();
 
-  function signUp(email: string, extra: Record<string, unknown> = {}) {
-    return request(server())
-      .post('/auth/sign-up')
-      .send({ firstName: 'Yassine', lastName: 'Ben Amor', email, password: PASSWORD, ...extra });
-  }
-
-  /** Signs up and verifies; returns an agent that holds the session cookies. */
-  async function verifiedAgent(email = uniqueEmail()) {
-    await signUp(email).expect(202);
-    const agent = request.agent(server());
-    await agent
-      .post('/auth/verify-email')
-      .send({ token: tokenFromMail(t.mail, email, '/verify-email') })
-      .expect(200);
-    return { agent, email };
-  }
+  const signUp = (email: string, extra: Record<string, unknown> = {}) =>
+    signUpRequest(server(), email, extra);
+  const verifiedAgent = (email = uniqueEmail()) => signUpAndVerify(t, email);
 
   function cookieNames(res: request.Response): string[] {
     const header = res.headers['set-cookie'] as unknown as string[] | undefined;
@@ -42,7 +40,7 @@ describe('Authentication (e2e)', () => {
   describe('sign-up and verification', () => {
     it('signs up, verifies the email and signs the student in', async () => {
       const email = uniqueEmail();
-      await signUp(email, { profileVisible: true }).expect(202, { status: 'accepted' });
+      await signUp(email).expect(202, { status: 'accepted' });
 
       const message = t.mail.lastTo(email);
       expect(message?.subject).toBe('Confirm your TekCert account');
@@ -54,17 +52,24 @@ describe('Authentication (e2e)', () => {
       expect(CurrentUserSchema.parse(verify.body)).toMatchObject({
         email,
         role: 'student',
-        profileVisible: true,
+        classCode: null,
+        avatarPath: null,
+        onboardingCompleted: false,
       });
       const setCookies = verify.headers['set-cookie'] as unknown as string[];
       expect(cookieNames(verify)).toEqual(['tc_access', 'tc_refresh']);
       expect(setCookies.every((c) => /HttpOnly/.test(c) && /SameSite=Lax/.test(c))).toBe(true);
     });
 
-    it('keeps the profile private without consent', async () => {
-      const { agent } = await verifiedAgent();
-      const me = await agent.get('/auth/me').expect(200);
-      expect(me.body.profileVisible).toBe(false);
+    it('refuses a sign-up that does not accept profile visibility', async () => {
+      for (const acceptVisibility of [false, undefined]) {
+        const email = uniqueEmail();
+        const res = await signUp(email, { acceptVisibility }).expect(400);
+        expect(ProblemDetailsSchema.parse(res.body).errors).toEqual([
+          { path: 'acceptVisibility', message: VISIBILITY_REQUIRED_MESSAGE },
+        ]);
+        expect(t.mail.lastTo(email)).toBeUndefined();
+      }
     });
 
     it('refuses addresses outside @tek-up.de with a field error', async () => {
