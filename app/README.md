@@ -16,7 +16,7 @@ cp frontend/.env.example frontend/.env.local
 pnpm install
 pnpm db:up          # start Postgres and Mailpit in Docker
 pnpm db:migrate     # apply TypeORM migrations
-pnpm db:seed        # load the 44 certifications, chapters, classes and paths
+pnpm db:seed        # load the 56 certifications, chapters, classes and paths
 pnpm dev            # db + API on :4000 + web on :3000
 ```
 

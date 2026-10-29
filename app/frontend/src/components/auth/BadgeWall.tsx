@@ -1,31 +1,31 @@
 import Image from 'next/image';
 import styles from './auth.module.css';
 
-/** The 18 badges of the Connexion design, in three columns (files in public/badges). */
+/** Badges in three columns (files in public/badges). Only files that exist there are listed. */
 const COLUMNS = [
   [
-    'aws-saa-c03.png',
-    'cisco-ccna.png',
-    'python-pcap.png',
+    'aws-saa-c03.webp',
+    'cisco-ccna.webp',
     'ine-ewpt.svg',
-    'azure-associate.png',
-    'lf-cka.png',
+    'azure-associate.webp',
+    'lf-cka.webp',
+    'pi-pcap.png',
   ],
   [
-    'azure-fundamentals.png',
-    'oracle-oca-java.png',
-    'aws-dop-c02.png',
-    'cisco-ccnp.png',
+    'azure-fundamentals.webp',
+    'aws-dva-c02.webp',
+    'cisco-ccnp.webp',
     'ine-ecppt.svg',
-    'google-aad.png',
+    'aws-sap-c02.webp',
+    'pi-pcep.png',
   ],
   [
-    'ine-icca.png',
-    'aws-clf-c02.png',
+    'ine-ejpt.svg',
+    'aws-clf-c02.webp',
     'lf-ckad.png',
-    'cisco-ccie.png',
-    'python-pcep.png',
-    'azure-expert.png',
+    'cisco-ccie.webp',
+    'azure-expert.webp',
+    'pi-pcpp.png',
   ],
 ];
 

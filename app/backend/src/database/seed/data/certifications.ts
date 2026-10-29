@@ -1,7 +1,7 @@
 import type { CertificationSeed } from '../schema';
 
 /**
- * The 44 certifications funded by the institute, as listed on the Landing screen.
+ * The certifications funded by the institute.
  *
  * SAA-C03 matches the Fiche-certification design exactly.
  * DRAFT: needs staff review. For every other certification, level, difficulty, specialties,
@@ -28,99 +28,182 @@ const d = (
 export const certifications: CertificationSeed[] = [
   // ── Cisco ────────────────────────────────────────────────────────────────
   {
-    code: 'CCNA',
-    slug: 'ccna',
-    name: 'Cisco Certified Network Associate',
-    examCode: '200-301',
+    code: 'CCENT',
+    slug: 'ccent',
+    name: 'Cisco Certified Entry Networking Technician',
+    examCode: '100-105 ICND1',
+    provider: 'CISCO',
+    level: 'foundational',
+    difficulty: 2,
+    specialties: ['SSIR', 'CIM'],
+    badgeAsset: null,
+    domains: [
+      d('Network fundamentals', 'Fundamentals', null, [
+        ['OSI and TCP/IP models, cabling and topologies', 150],
+        ['IPv4 and IPv6 addressing and subnetting', 240],
+      ]),
+      d('LAN switching', 'Switching', null, [
+        ['Switch operation, VLANs and trunking', 180],
+        ['Basic switch security and Spanning Tree', 120],
+      ]),
+      d('Routing', 'Routing', null, [['Static routing and basic OSPF', 180]]),
+      d('Infrastructure services and management', 'Services', null, [
+        ['DHCP, NAT and access control list basics', 150],
+        ['IOS command line, configuration files and device maintenance', 120],
+      ]),
+    ],
+  },
+  {
+    code: 'CCNA-RS',
+    slug: 'ccna-rs',
+    name: 'Cisco Certified Network Associate Routing & Switching',
+    examCode: '200-125',
     provider: 'CISCO',
     level: 'associate',
     difficulty: 3,
     specialties: ['SSIR', 'CIM', 'AIOT'],
-    badgeAsset: 'official/b-ccna.png',
+    badgeAsset: 'cisco-ccna.webp',
     domains: [
-      d('Network fundamentals', 'Fundamentals', 20, [
-        ['Network components, topologies and cabling', 180],
-        ['IPv4 and IPv6 addressing and subnetting', 240],
-      ]),
-      d('Network access', 'Access', 20, [
+      d('LAN switching technologies', 'Switching', null, [
         ['VLANs, trunking and EtherChannel', 180],
-        ['Spanning Tree and wireless LAN architectures', 180],
+        ['Spanning Tree and switch security', 180],
       ]),
-      d('IP connectivity', 'Connectivity', 25, [
-        ['Routing tables and static routing', 150],
-        ['OSPFv2 single-area', 180],
+      d('Routing technologies', 'Routing', null, [
+        ['Static routing, RIP and EIGRP', 180],
+        ['OSPFv2 and OSPFv3', 180],
         ['First hop redundancy protocols', 90],
       ]),
-      d('IP services', 'Services', 10, [['NAT, NTP, DHCP, DNS and SNMP', 150]]),
-      d('Security fundamentals', 'Security', 15, [
-        ['Access control lists', 150],
-        ['Device hardening, VPNs and Layer 2 security', 150],
+      d('WAN technologies', 'WAN', null, [['PPP, Frame Relay, eBGP and VPN basics', 150]]),
+      d('Infrastructure services', 'Services', null, [
+        ['DHCP, DNS, NAT, NTP and SNMP', 150],
+        ['Access control lists', 120],
       ]),
-      d('Automation and programmability', 'Automation', 10, [
-        ['Controller-based networking, REST APIs and JSON', 120],
+      d('Infrastructure maintenance', 'Maintenance', null, [
+        ['Device security, monitoring and troubleshooting', 150],
       ]),
     ],
   },
   {
-    code: 'CCNP',
-    slug: 'ccnp',
-    name: 'Cisco Certified Network Professional',
-    examCode: '350-401 ENCOR',
+    code: 'CCNA-SEC',
+    slug: 'ccna-sec',
+    name: 'Cisco Certified Network Associate Security',
+    examCode: '210-260 IINS',
+    provider: 'CISCO',
+    level: 'associate',
+    difficulty: 3,
+    specialties: ['SSIR'],
+    badgeAsset: null,
+    domains: [
+      d('Security concepts', 'Concepts', null, [
+        ['Threats, cryptography and security policy', 150],
+      ]),
+      d('Secure access', 'Access', null, [
+        ['AAA, 802.1X and device management security', 150],
+        ['Zone-based firewall and ACLs', 150],
+      ]),
+      d('VPN', 'VPN', null, [['IPsec and SSL VPN', 150]]),
+      d('Secure routing and switching', 'Infrastructure', null, [
+        ['Layer 2 and routing protocol security', 150],
+      ]),
+      d('Cisco firewall and intrusion prevention', 'Firewall', null, [
+        ['ASA firewall, IPS and endpoint security', 150],
+      ]),
+    ],
+  },
+  {
+    code: 'CCNP-SWITCH',
+    slug: 'ccnp-switch',
+    name: 'Cisco Certified Network Professional Switch',
+    examCode: '300-115 SWITCH',
     provider: 'CISCO',
     level: 'professional',
     difficulty: 4,
     specialties: ['SSIR'],
-    badgeAsset: 'official/b-ccnp.png',
+    badgeAsset: 'cisco-ccnp.webp',
     domains: [
-      d('Architecture', 'Architecture', 15, [
-        ['Enterprise network design and high availability', 180],
-        ['SD-WAN and SD-Access', 150],
+      d('Layer 2 infrastructure', 'Layer 2', null, [
+        ['Campus design, VLANs and trunking', 150],
+        ['Spanning Tree: PVST+, RSTP and MST', 180],
+        ['EtherChannel and link aggregation', 120],
       ]),
-      d('Virtualization', 'Virtualization', 10, [
-        ['Device virtualization, VRF and tunnelling', 150],
+      d('Layer 3 and high availability', 'High availability', null, [
+        ['Inter-VLAN routing and first hop redundancy', 150],
+        ['Stacking, StackWise and device redundancy', 90],
       ]),
-      d('Infrastructure', 'Infrastructure', 30, [
-        ['Layer 2: trunking, EtherChannel, RSTP and MST', 180],
-        ['Layer 3: EIGRP, OSPF and BGP', 300],
-        ['Wireless infrastructure', 150],
-        ['IP services and multicast', 120],
-      ]),
-      d('Network assurance', 'Assurance', 10, [['Monitoring, NetFlow, SPAN and IP SLA', 150]]),
-      d('Security', 'Security', 20, [
-        ['Device access control and infrastructure security', 180],
-        ['Wireless security and network access control', 150],
-      ]),
-      d('Automation', 'Automation', 15, [
-        ['Python, NETCONF/RESTCONF and Ansible for networks', 180],
+      d('Infrastructure security and services', 'Security', null, [
+        ['Switch security features and QoS basics', 150],
       ]),
     ],
   },
   {
-    code: 'CCIE',
-    slug: 'ccie',
-    name: 'Cisco Certified Internetwork Expert',
-    examCode: 'Enterprise Infrastructure lab',
+    code: 'CCNP-ROUTE',
+    slug: 'ccnp-route',
+    name: 'Cisco Certified Network Professional Route',
+    examCode: '300-101 ROUTE',
+    provider: 'CISCO',
+    level: 'professional',
+    difficulty: 4,
+    specialties: ['SSIR'],
+    badgeAsset: 'cisco-ccnp.webp',
+    domains: [
+      d('Network principles', 'Principles', null, [['Routing design and IPv6 addressing', 150]]),
+      d('Layer 3 technologies', 'Layer 3', null, [
+        ['EIGRP', 180],
+        ['OSPF multi-area', 210],
+        ['BGP', 240],
+        ['Route redistribution and path control', 180],
+      ]),
+      d('VPN technologies', 'VPN', null, [['GRE tunnels and basic VPN', 120]]),
+      d('Infrastructure security and services', 'Security', null, [
+        ['Router security and services', 150],
+      ]),
+    ],
+  },
+  {
+    code: 'CCNP-RS',
+    slug: 'ccnp-rs',
+    name: 'Cisco Certified Network Professional Routing & Switching',
+    examCode: 'ROUTE + SWITCH + TSHOOT',
+    provider: 'CISCO',
+    level: 'professional',
+    difficulty: 4,
+    specialties: ['SSIR'],
+    badgeAsset: 'cisco-ccnp.webp',
+    domains: [
+      d('Routing (ROUTE)', 'Routing', null, [
+        ['EIGRP, OSPF and BGP', 360],
+        ['Redistribution and path control', 180],
+      ]),
+      d('Switching (SWITCH)', 'Switching', null, [
+        ['Campus Layer 2 and Layer 3 design', 240],
+        ['High availability and switch security', 180],
+      ]),
+      d('Troubleshooting (TSHOOT)', 'Troubleshooting', null, [
+        ['Troubleshooting methodology and tools', 150],
+        ['Troubleshooting layer 2 and layer 3 faults', 240],
+      ]),
+    ],
+  },
+  {
+    code: 'CCIE-RS',
+    slug: 'ccie-rs',
+    name: 'Cisco Certified Internetwork Expert Routing & Switching',
+    examCode: 'Written + lab',
     provider: 'CISCO',
     level: 'expert',
     difficulty: 5,
     specialties: ['SSIR'],
-    badgeAsset: 'official/b-ccie.png',
+    badgeAsset: 'cisco-ccie.webp',
     domains: [
-      d('Network infrastructure', 'Infrastructure', 30, [
-        ['Switched campus at scale', 300],
-        ['Advanced IGP and BGP design', 360],
+      d('Layer 2 and switching', 'Layer 2', null, [
+        ['Advanced switching, STP and Layer 2 security', 300],
       ]),
-      d('Software-defined infrastructure', 'SDI', 25, [
-        ['SD-Access fabric', 300],
-        ['SD-WAN overlay and policy', 300],
+      d('Layer 3 and routing', 'Layer 3', null, [
+        ['Advanced OSPF, EIGRP and BGP design', 360],
+        ['MPLS and multicast', 300],
       ]),
-      d('Transport technologies and solutions', 'Transport', 15, [['MPLS and DMVPN', 300]]),
-      d('Infrastructure security and services', 'Security', 15, [
-        ['Device security, QoS and multicast services', 240],
-      ]),
-      d('Infrastructure automation and programmability', 'Automation', 15, [
-        ['Model-driven programmability and automation tooling', 240],
-      ]),
+      d('VPN and services', 'Services', null, [['DMVPN, QoS and infrastructure services', 240]]),
+      d('Troubleshooting', 'Troubleshooting', null, [['Troubleshooting end-to-end networks', 240]]),
     ],
   },
 
@@ -134,7 +217,7 @@ export const certifications: CertificationSeed[] = [
     level: 'foundational',
     difficulty: 1,
     specialties: 'ALL',
-    badgeAsset: 'official/b-aws-clf.png',
+    badgeAsset: 'aws-clf-c02.webp',
     domains: [
       d('Cloud concepts', 'Concepts', 24, [
         ['Benefits of the AWS Cloud', 90],
@@ -168,7 +251,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['CIM', 'GLOps', 'SSIR'],
-    badgeAsset: 'official/b-aws-saa.png',
+    badgeAsset: 'aws-saa-c03.webp',
     // Chapters, durations and domain grouping are taken verbatim from the Fiche-certification design.
     domains: [
       d('Secure architectures', 'Security', 30, [
@@ -201,7 +284,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['GLOps', 'DMWM', 'AIOT'],
-    badgeAsset: 'official/b-aws-dva.png',
+    badgeAsset: 'aws-dva-c02.webp',
     domains: [
       d('Development with AWS services', 'Development', 32, [
         ['Building on Lambda and API Gateway', 240],
@@ -231,7 +314,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['CIM', 'GLOps'],
-    badgeAsset: 'official/b-aws-soa.png',
+    badgeAsset: null,
     domains: [
       d('Monitoring, logging, analysis and performance', 'Monitoring', 22, [
         ['CloudWatch metrics, logs and alarms', 150],
@@ -263,7 +346,7 @@ export const certifications: CertificationSeed[] = [
     level: 'foundational',
     difficulty: 2,
     specialties: ['SDIA', 'AIOT'],
-    badgeAsset: 'official/b-aws-aif.png',
+    badgeAsset: 'aws-aif-c01.webp',
     domains: [
       d('Fundamentals of AI and ML', 'AI and ML', 20, [
         ['AI, ML and deep learning concepts', 90],
@@ -295,7 +378,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 5,
     specialties: ['GLOps', 'CIM'],
-    badgeAsset: 'official/b-aws-dop.png',
+    badgeAsset: null,
     domains: [
       d('SDLC automation', 'SDLC', 22, [
         ['Multi-account CI/CD pipelines', 240],
@@ -316,6 +399,40 @@ export const certifications: CertificationSeed[] = [
     ],
   },
 
+  {
+    code: 'SAP-C02',
+    slug: 'sap-c02',
+    name: 'AWS Certified Solutions Architect – Professional',
+    examCode: null,
+    provider: 'AWS',
+    level: 'professional',
+    difficulty: 5,
+    specialties: ['CIM', 'GLOps', 'SSIR'],
+    badgeAsset: 'aws-sap-c02.webp',
+    domains: [
+      d('Design solutions for organizational complexity', 'Organizations', 26, [
+        ['Multi-account strategy: Organizations and Control Tower', 180],
+        ['Hybrid connectivity: Direct Connect, VPN and Transit Gateway', 180],
+        ['Security controls and cost allocation at scale', 150],
+      ]),
+      d('Design for new solutions', 'New solutions', 29, [
+        ['Deployment strategies and infrastructure as code', 180],
+        ['Business continuity and disaster recovery', 180],
+        ['Security architecture and data protection', 150],
+        ['Reliability, resilience and performance design', 180],
+      ]),
+      d('Continuous improvement for existing solutions', 'Improvement', 25, [
+        ['Operational excellence and monitoring', 150],
+        ['Performance and reliability improvements', 150],
+        ['Cost optimisation of existing workloads', 120],
+      ]),
+      d('Accelerate workload migration and modernization', 'Migration', 20, [
+        ['Migration strategies: the 7 Rs and migration tools', 180],
+        ['Modernisation with containers and serverless', 180],
+      ]),
+    ],
+  },
+
   // ── Microsoft Azure ──────────────────────────────────────────────────────
   {
     code: 'AZ-900',
@@ -326,7 +443,7 @@ export const certifications: CertificationSeed[] = [
     level: 'foundational',
     difficulty: 1,
     specialties: 'ALL',
-    badgeAsset: 'official/b-ms-fundamentals.png',
+    badgeAsset: 'azure-fundamentals.webp',
     domains: [
       d('Cloud concepts', 'Concepts', 28, [
         ['Cloud computing and the shared responsibility model', 60],
@@ -356,7 +473,7 @@ export const certifications: CertificationSeed[] = [
     level: 'foundational',
     difficulty: 1,
     specialties: ['SDIA', 'AIOT'],
-    badgeAsset: 'official/b-ms-fundamentals.png',
+    badgeAsset: 'azure-fundamentals.webp',
     domains: [
       d('AI workloads and considerations', 'Workloads', 20, [
         ['AI workloads and responsible AI', 60],
@@ -382,7 +499,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['CIM', 'GLOps'],
-    badgeAsset: 'official/b-ms-associate.png',
+    badgeAsset: 'azure-associate.webp',
     domains: [
       d('Manage Azure identities and governance', 'Identity', 25, [
         ['Microsoft Entra users and groups', 120],
@@ -415,7 +532,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['GLOps', 'DMWM', 'AIOT'],
-    badgeAsset: 'official/b-ms-associate.png',
+    badgeAsset: 'azure-associate.webp',
     domains: [
       d('Develop Azure compute solutions', 'Compute', 30, [
         ['Containerised solutions', 150],
@@ -448,7 +565,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 4,
     specialties: ['SSIR'],
-    badgeAsset: 'official/b-ms-associate.png',
+    badgeAsset: 'azure-associate.webp',
     domains: [
       d('Secure identity and access', 'Identity', 20, [
         ['Entra ID, PIM and conditional access', 180],
@@ -475,7 +592,7 @@ export const certifications: CertificationSeed[] = [
     level: 'expert',
     difficulty: 4,
     specialties: ['GLOps'],
-    badgeAsset: 'official/b-ms-expert.png',
+    badgeAsset: 'azure-expert.webp',
     domains: [
       d('Configure processes and communications', 'Processes', 11, [
         ['Work tracking and collaboration', 90],
@@ -509,7 +626,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 2,
     specialties: ['GLOps', 'DMWM'],
-    badgeAsset: 'certs/b-oca-java.png',
+    badgeAsset: null,
     domains: [
       d('Java basics and data types', 'Basics', null, [
         ['Java basics: classes, main, packages', 90],
@@ -536,7 +653,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['GLOps', 'DMWM'],
-    badgeAsset: 'certs/b-ocp-java.png',
+    badgeAsset: null,
     domains: [
       d('Class design', 'Design', null, [
         ['Java class design', 120],
@@ -565,7 +682,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 2,
     specialties: ['SDIA', 'GLOps'],
-    badgeAsset: 'certs/b-oca-db.png',
+    badgeAsset: null,
     domains: [
       d('Querying data', 'Queries', null, [
         ['Relational concepts and SELECT', 90],
@@ -593,7 +710,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['SDIA', 'CIM'],
-    badgeAsset: 'certs/b-ocp-db.png',
+    badgeAsset: null,
     domains: [
       d('Database architecture', 'Architecture', null, [
         ['Instance and memory architecture', 150],
@@ -642,6 +759,31 @@ export const certifications: CertificationSeed[] = [
     ],
   },
   {
+    code: 'RHCSA-OS',
+    slug: 'rhcsa-openstack',
+    name: 'Red Hat Certified System Administrator in Red Hat OpenStack',
+    examCode: 'EX210',
+    provider: 'REDHAT',
+    level: 'associate',
+    difficulty: 4,
+    specialties: ['CIM'],
+    badgeAsset: null,
+    domains: [
+      d('OpenStack users and projects', 'Projects', null, [
+        ['Keystone: users, roles, projects and quotas', 120],
+      ]),
+      d('Compute and images', 'Compute', null, [
+        ['Nova instances, flavors and key pairs', 150],
+        ['Glance images', 90],
+      ]),
+      d('Networking and storage', 'Network and storage', null, [
+        ['Neutron networks, routers and security groups', 180],
+        ['Cinder volumes and Swift object storage', 150],
+      ]),
+      d('Orchestration', 'Orchestration', null, [['Heat templates and stacks', 120]]),
+    ],
+  },
+  {
     code: 'RHCE',
     slug: 'rhce',
     name: 'Red Hat Certified Engineer',
@@ -668,24 +810,98 @@ export const certifications: CertificationSeed[] = [
     ],
   },
   {
-    code: 'RHCS',
-    slug: 'rhcs',
-    name: 'Red Hat Certified Specialist in Containers',
-    examCode: 'EX180',
+    code: 'RHCE-OS',
+    slug: 'rhce-openstack',
+    name: 'Red Hat Certified Engineer in Red Hat OpenStack',
+    examCode: 'EX310',
+    provider: 'REDHAT',
+    level: 'professional',
+    difficulty: 5,
+    specialties: ['CIM'],
+    badgeAsset: null,
+    domains: [
+      d('Deploying OpenStack', 'Deployment', null, [
+        ['Overcloud deployment with director', 240],
+        ['Scaling and updating the overcloud', 150],
+      ]),
+      d('Operating OpenStack services', 'Operations', null, [
+        ['Managing compute, networking and storage services', 240],
+        ['High availability, Ceph and monitoring', 180],
+      ]),
+      d('Troubleshooting', 'Troubleshooting', null, [
+        ['Diagnosing OpenStack service failures', 150],
+      ]),
+    ],
+  },
+  {
+    code: 'RHCA',
+    slug: 'rhca',
+    name: 'Red Hat Certified Architect',
+    examCode: 'RHCE + 5 specialist exams',
+    provider: 'REDHAT',
+    level: 'expert',
+    difficulty: 5,
+    specialties: ['CIM', 'GLOps'],
+    badgeAsset: null,
+    domains: [
+      d('Prerequisite engineer track', 'Engineer', null, [
+        ['RHCE competencies: Linux administration and automation', 240],
+      ]),
+      d('Specialist exams', 'Specialists', null, [
+        ['Choosing the five specialist exams: OpenShift, Ansible, Satellite, Ceph, Identity', 150],
+        ['Preparing the specialist exams', 300],
+      ]),
+      d('Architecture practice', 'Architecture', null, [
+        ['Designing and integrating enterprise Red Hat platforms', 240],
+      ]),
+    ],
+  },
+  {
+    code: 'RHCJA',
+    slug: 'rhcja',
+    name: 'Red Hat Certified JBoss Administrator',
+    examCode: 'EX248',
     provider: 'REDHAT',
     level: 'associate',
-    difficulty: 3,
+    difficulty: 4,
+    specialties: ['GLOps'],
+    badgeAsset: null,
+    domains: [
+      d('Installing and configuring JBoss EAP', 'Installation', null, [
+        ['Installing and configuring JBoss EAP', 150],
+        ['Standalone and domain operating modes', 150],
+      ]),
+      d('Deploying and securing applications', 'Applications', null, [
+        ['Deploying applications and data sources', 150],
+        ['Securing the server and applications', 150],
+      ]),
+      d('Operating a cluster', 'Operations', null, [
+        ['Clustering and load balancing', 150],
+        ['Monitoring and troubleshooting', 120],
+      ]),
+    ],
+  },
+  {
+    code: 'RHCS-ANS',
+    slug: 'rhcs-ansible',
+    name: 'Red Hat Certified Specialist in Ansible Automation',
+    examCode: 'EX407',
+    provider: 'REDHAT',
+    level: 'associate',
+    difficulty: 4,
     specialties: ['GLOps', 'CIM'],
     badgeAsset: null,
     domains: [
-      d('Containers with Podman', 'Podman', null, [
-        ['Running and managing containers', 120],
-        ['Container images and registries', 120],
-        ['Building images with Containerfiles', 150],
+      d('Ansible basics', 'Basics', null, [
+        ['Installing Ansible, inventories and ad hoc commands', 150],
       ]),
-      d('Container platform basics', 'Platform', null, [
-        ['Container networking and persistent storage', 120],
-        ['Deploying applications to Kubernetes and OpenShift', 180],
+      d('Playbooks and modules', 'Playbooks', null, [
+        ['Writing playbooks and using core modules', 180],
+        ['Variables, facts, templates and handlers', 180],
+      ]),
+      d('Roles and operations', 'Roles', null, [
+        ['Roles, Galaxy and Ansible Vault', 150],
+        ['Troubleshooting playbooks and managing Tower', 120],
       ]),
     ],
   },
@@ -700,7 +916,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['CIM', 'GLOps', 'SSIR'],
-    badgeAsset: 'certs/b-lfcs.png',
+    badgeAsset: null,
     domains: [
       d('Operations deployment', 'Operations', 25, [
         ['Kernel, boot and services', 150],
@@ -724,7 +940,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['CIM', 'SSIR'],
-    badgeAsset: 'certs/b-lfce.png',
+    badgeAsset: null,
     domains: [
       d('Network administration', 'Network', null, [
         ['Advanced routing and network configuration', 180],
@@ -750,7 +966,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['CIM', 'GLOps'],
-    badgeAsset: 'certs/b-cka.png',
+    badgeAsset: 'lf-cka.webp',
     domains: [
       d('Storage', 'Storage', 10, [['Volumes, PersistentVolumes and StorageClasses', 120]]),
       d('Troubleshooting', 'Troubleshooting', 30, [
@@ -780,7 +996,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 4,
     specialties: ['GLOps', 'DMWM'],
-    badgeAsset: 'certs/b-ckad.png',
+    badgeAsset: 'lf-ckad.png',
     domains: [
       d('Application design and build', 'Design', 20, [
         ['Container images and multi-container pods', 150],
@@ -810,7 +1026,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['GLOps', 'DMWM'],
-    badgeAsset: 'certs/b-cfcd.png',
+    badgeAsset: null,
     domains: [
       d('Cloud Foundry basics', 'Basics', null, [
         ['Platform architecture, orgs and spaces', 90],
@@ -832,7 +1048,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 4,
     specialties: ['CIM'],
-    badgeAsset: 'certs/b-coa.png',
+    badgeAsset: null,
     domains: [
       d('Core services', 'Core', null, [
         ['Identity with Keystone', 120],
@@ -859,7 +1075,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['SSIR', 'GLOps'],
-    badgeAsset: 'certs/b-chsa.png',
+    badgeAsset: null,
     domains: [
       d('Sawtooth fundamentals', 'Fundamentals', null, [
         ['Blockchain and Sawtooth architecture', 120],
@@ -881,7 +1097,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['CIM'],
-    badgeAsset: 'certs/b-mcsa.png',
+    badgeAsset: null,
     domains: [
       d('Linux administration', 'Linux', null, [
         ['Linux system administration essentials', 180],
@@ -905,7 +1121,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['SSIR'],
-    badgeAsset: 'certs/b-ceh.png',
+    badgeAsset: null,
     domains: [
       d('Information security and ethical hacking overview', 'Overview', 6, [
         ['Ethical hacking concepts and laws', 60],
@@ -942,7 +1158,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['SSIR'],
-    badgeAsset: 'certs/b-chfi.png',
+    badgeAsset: null,
     domains: [
       d('Forensics fundamentals', 'Fundamentals', null, [
         ['The investigation process', 90],
@@ -969,7 +1185,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['SSIR'],
-    badgeAsset: 'certs/b-cnd.png',
+    badgeAsset: null,
     domains: [
       d('Protect', 'Protect', null, [
         ['Network attacks and defence strategies', 90],
@@ -995,7 +1211,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['SSIR', 'DMWM'],
-    badgeAsset: 'official/b-ewpt.svg',
+    badgeAsset: 'ine-ewpt.svg',
     domains: [
       d('Methodology and reconnaissance', 'Recon', null, [
         ['Web pentest methodology', 90],
@@ -1019,7 +1235,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['SSIR', 'DMWM'],
-    badgeAsset: 'official/b-emapt.svg',
+    badgeAsset: null,
     domains: [
       d('Mobile platforms', 'Platforms', null, [['Android and iOS architecture', 120]]),
       d('Analysis', 'Analysis', null, [
@@ -1034,6 +1250,28 @@ export const certifications: CertificationSeed[] = [
     ],
   },
   {
+    code: 'eJPT',
+    slug: 'ejpt',
+    name: 'eLearnSecurity Junior Penetration Tester',
+    examCode: null,
+    provider: 'INE',
+    level: 'foundational',
+    difficulty: 2,
+    specialties: ['SSIR'],
+    badgeAsset: 'ine-ejpt.svg',
+    domains: [
+      d('Assessment methodologies', 'Methodology', null, [
+        ['Information gathering and footprinting', 120],
+        ['Scanning and enumeration', 150],
+      ]),
+      d('Host and network auditing', 'Auditing', null, [
+        ['Exploitation basics and post-exploitation', 180],
+        ['Network attacks and pivoting', 150],
+      ]),
+      d('Web application basics', 'Web', null, [['Common web vulnerabilities', 150]]),
+    ],
+  },
+  {
     code: 'eCPPT',
     slug: 'ecppt',
     name: 'INE Security Certified Professional Penetration Tester',
@@ -1042,7 +1280,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['SSIR'],
-    badgeAsset: 'official/b-ecppt.svg',
+    badgeAsset: 'ine-ecppt.svg',
     domains: [
       d('Reconnaissance and exploitation', 'Exploitation', null, [
         ['Methodology and reconnaissance', 120],
@@ -1068,7 +1306,7 @@ export const certifications: CertificationSeed[] = [
     level: 'foundational',
     difficulty: 2,
     specialties: ['CIM', 'SSIR', 'GLOps'],
-    badgeAsset: 'official/b-icca.png',
+    badgeAsset: null,
     domains: [
       d('Cloud concepts', 'Concepts', null, [
         ['Cloud computing concepts', 90],
@@ -1090,7 +1328,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['SSIR'],
-    badgeAsset: 'official/b-ecir.svg',
+    badgeAsset: null,
     domains: [
       d('Incident handling', 'Handling', null, [['The incident handling process', 90]]),
       d('Detection and analysis', 'Analysis', null, [
@@ -1113,7 +1351,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['SSIR'],
-    badgeAsset: 'official/b-esoc.png',
+    badgeAsset: 'ine-esoc.svg',
     domains: [
       d('SOC foundations', 'Foundations', null, [
         ['SOC roles and operations', 90],
@@ -1138,7 +1376,7 @@ export const certifications: CertificationSeed[] = [
     level: 'foundational',
     difficulty: 1,
     specialties: 'ALL',
-    badgeAsset: 'certs/py-pcep.png',
+    badgeAsset: 'pi-pcep.png',
     domains: [
       d('Computer programming and Python fundamentals', 'Fundamentals', 18, [
         ['Python basics: literals, variables, operators', 90],
@@ -1167,7 +1405,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 2,
     specialties: ['SDIA', 'GLOps', 'AIOT', 'DMWM'],
-    badgeAsset: 'certs/py-pcap.png',
+    badgeAsset: 'pi-pcap.png',
     domains: [
       d('Modules and packages', 'Modules', 12, [['Modules, packages and pip', 90]]),
       d('Exceptions', 'Exceptions', 14, [['Exception hierarchy and custom exceptions', 90]]),
@@ -1191,7 +1429,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['SDIA', 'GLOps'],
-    badgeAsset: 'certs/py-pcpp.png',
+    badgeAsset: 'pi-pcpp.png',
     domains: [
       d('PCPP1: advanced Python', 'PCPP1', null, [
         ['Advanced OOP and metaclasses', 180],
@@ -1217,7 +1455,7 @@ export const certifications: CertificationSeed[] = [
     level: 'expert',
     difficulty: 5,
     specialties: ['SDIA', 'GLOps'],
-    badgeAsset: 'certs/py-cepp.png',
+    badgeAsset: null,
     domains: [
       d('Expert language features', 'Language', null, [
         ['Metaprogramming and descriptors', 180],
@@ -1231,24 +1469,73 @@ export const certifications: CertificationSeed[] = [
     ],
   },
 
-  // ── Google Developers ────────────────────────────────────────────────────
+  // ── Huawei ───────────────────────────────────────────────────────────────
   {
-    code: 'AAD',
-    slug: 'aad',
-    name: 'Associate Android Developer',
-    examCode: null,
-    provider: 'GOOGLE',
+    code: 'HCNA',
+    slug: 'hcna',
+    name: 'Huawei Certified Network Associate',
+    examCode: 'HCNA Routing & Switching',
+    provider: 'HUAWEI',
     level: 'associate',
     difficulty: 3,
-    specialties: ['DMWM'],
-    badgeAsset: 'certs/b-aad.png',
+    specialties: ['SSIR', 'CIM'],
+    badgeAsset: null,
     domains: [
-      d('Android core', 'Core', null, [['App components and lifecycle', 150]]),
-      d('User interface', 'UI', null, [['Layouts, Compose and navigation', 180]]),
-      d('Data management', 'Data', null, [['Room, DataStore and repositories', 150]]),
-      d('Debugging and testing', 'Testing', null, [
-        ['Debugging with Android Studio', 90],
-        ['Unit and instrumented tests', 120],
+      d('Network fundamentals', 'Fundamentals', null, [
+        ['TCP/IP, addressing and VRP basics', 180],
+        ['Ethernet, VLAN and Spanning Tree', 180],
+      ]),
+      d('Routing', 'Routing', null, [['Static routing, OSPF and RIP', 180]]),
+      d('Network services', 'Services', null, [
+        ['ACL, AAA, NAT and DHCP', 150],
+        ['WAN technologies and network management', 120],
+      ]),
+    ],
+  },
+  {
+    code: 'HCNP-WLAN',
+    slug: 'hcnp-wlan',
+    name: 'Huawei Certified Network Professional – WLAN',
+    examCode: 'HCNP WLAN',
+    provider: 'HUAWEI',
+    level: 'professional',
+    difficulty: 4,
+    specialties: ['SSIR'],
+    badgeAsset: null,
+    domains: [
+      d('WLAN principles', 'Principles', null, [
+        ['802.11 standards, radio and antenna basics', 180],
+        ['WLAN architecture: AC and AP', 150],
+      ]),
+      d('WLAN deployment', 'Deployment', null, [
+        ['AP provisioning and roaming', 180],
+        ['WLAN planning and site survey', 150],
+      ]),
+      d('WLAN security and operations', 'Operations', null, [
+        ['WLAN security, QoS and troubleshooting', 180],
+      ]),
+    ],
+  },
+  {
+    code: 'HCIE',
+    slug: 'hcie',
+    name: 'Huawei Certified Internet Expert',
+    examCode: 'Written + lab',
+    provider: 'HUAWEI',
+    level: 'expert',
+    difficulty: 5,
+    specialties: ['SSIR'],
+    badgeAsset: null,
+    domains: [
+      d('Advanced routing and switching', 'Routing and switching', null, [
+        ['Advanced OSPF, IS-IS and BGP', 360],
+        ['MPLS, VPN and multicast', 300],
+      ]),
+      d('Network security and services', 'Security', null, [
+        ['Network security, QoS and IPv6 transition', 240],
+      ]),
+      d('Design and troubleshooting', 'Design', null, [
+        ['Large network design and fault diagnosis', 300],
       ]),
     ],
   },

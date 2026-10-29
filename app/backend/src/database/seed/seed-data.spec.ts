@@ -6,9 +6,9 @@ describe('seed data', () => {
     expect(() => validateSeedData(seedData)).not.toThrow();
   });
 
-  it('has the funded catalog from the Landing screen: 10 providers, 44 certifications', () => {
+  it('has the funded catalog: 10 providers, 56 certifications', () => {
     expect(seedData.providers).toHaveLength(10);
-    expect(seedData.certifications).toHaveLength(44);
+    expect(seedData.certifications).toHaveLength(56);
   });
 
   it('has 6 specialties and 7 paths', () => {

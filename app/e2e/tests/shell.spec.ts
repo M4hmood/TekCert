@@ -115,13 +115,13 @@ test.describe('catalog wiring', () => {
     const res = await request.get('/api/certifications');
     expect(res.ok()).toBe(true);
     const body = (await res.json()) as { total: number };
-    expect(body.total).toBe(44);
+    expect(body.total).toBe(56);
   });
 
   test('the catalog and certification pages read from the API', async ({ page }) => {
     await page.goto('/catalog');
     await expect(
-      page.getByText('44 certifications funded by the institute are ready.'),
+      page.getByText('56 certifications funded by the institute are ready.'),
     ).toBeVisible();
 
     await page.goto('/catalog/saa-c03');

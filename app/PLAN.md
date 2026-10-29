@@ -32,8 +32,9 @@ Solo developer + Claude Code · 1-week sprints · English only at launch · emai
 
 ## Backlog (from Sprint 0)
 - Staging on AWS, moved out of S00: Terraform for the 3-tier design in `../docs/AWS-Architecture-V1.drawio`, a one-command deploy and destroy, and a staging URL. The deploy bundles (`pnpm bundle`) and health checks are ready.
-- Staff review of the drafted catalog data: chapters, levels, difficulty, specialties and the 7 paths (`backend/src/database/seed/data/`). Also confirm that retired vendor certs (LFCE, CHSA, MCSA, AAD, EX180) are still funded.
-- Add the certifications the designs use outside the funded 44 (CompTIA, Google Cloud, SAP-C02, AI-102, AZ-305, DP-900/100, SC-900, SCS-C02, MLA-C01), if the institute funds them.
+- Staff review of the drafted catalog data: chapters, levels, difficulty, specialties and the 7 paths (`backend/src/database/seed/data/`). Also confirm that retired vendor certs (LFCE, CHSA, MCSA, the Cisco R&S track) are still funded.
+- Add the certifications the designs use outside the funded catalog (CompTIA, AI-102, AZ-305, DP-900/100, SC-900, SCS-C02, MLA-C01), if the institute funds them. Google certs are excluded: TEK-UP does not support them.
+- Find official badge images for the certs that have none yet (31 of the 56; see `badgeAsset: null` in the seed). Drop them in `frontend/public/badges/` and set the file name in the seed.
 - Upgrade to NestJS 12 once `nestjs-zod` supports it, and to ESLint 10 once `eslint-config-next` does (ADR-004).
 - Clean up expired rows in `sessions`, `email_tokens` and `login_attempts` (a scheduled job).
 - Move the per-IP auth rate limit to a shared store (e.g. Redis) once the API runs on several instances.

@@ -141,7 +141,7 @@ Status: **approved 2026-10-28, built.** Branch `sprint/S01-authentication`, one 
 3. "Stay signed in" lasts 30 days (sliding). Without it, the session lasts as long as the browser, capped at 12 hours.
 4. `GET /certifications` and `GET /certifications/:slug` stay public. All app screens require sign-in.
 5. Sign-up with an existing email gives the same "Check your inbox" response as a new sign-up. The owner gets an email saying someone tried to create an account, with links to sign in or reset the password. Nothing on screen reveals that the account exists.
-6. The sign-in hero shows a live "44 certifications funded by the institute" until verified certifications exist in Release 2.
+6. The sign-in hero shows a live "56 certifications funded by the institute" until verified certifications exist in Release 2.
 
 ### Questions
 1. **Visibility consent at sign-up (still open).** The design shows it pre-ticked: "my name, class and certifications are visible to TEK-UP students. You can change this at any time." Should it be:
@@ -152,7 +152,7 @@ Status: **approved 2026-10-28, built.** Branch `sprint/S01-authentication`, one 
 3. **Session lengths.** OK with "stay signed in" = 30 days (sliding) and unticked = a browser session capped at 12 hours?
 4. **Catalog API.** Should `GET /certifications` stay public? It's read-only with no personal data, and the sign-in hero and the S08 Landing page need it. Every screen in the app itself still requires sign-in.
 5. **Signing up with an email that already exists.** Show "An account already exists for this address. Sign in or reset your password" **(Recommended: addresses follow the guessable `firstname.lastname@tek-up.de` pattern, so hiding it protects little)**, or show the generic "check your inbox" and email the owner instead?
-6. **Hero stat.** Replace "142 certifications verified by TEK-UP students this semester" with a live "44 certifications funded by the institute" until verified certifications exist (Release 2)?
+6. **Hero stat.** Replace "142 certifications verified by TEK-UP students this semester" with a live "56 certifications funded by the institute" until verified certifications exist (Release 2)?
 
 ## Notes / decisions
 

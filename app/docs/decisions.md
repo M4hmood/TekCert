@@ -59,14 +59,14 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - TypeORM 1.x removed `loadRelationCountAndMap`, so chapter counts use a `@VirtualColumn` subquery.
 
 ## ADR-008 Catalog source of truth (S00)
-- **Context:** The Landing design lists 44 certifications from 10 providers. Catalogue, Parcours and Onboarding use a different sample that includes CompTIA, Google Cloud, SAP-C02, AI-102 and others.
+- **Context:** The Landing design listed 44 certifications from 10 providers. Catalogue, Parcours and Onboarding use a different sample that includes CompTIA, Google Cloud, SAP-C02, AI-102 and others.
 - **Decision:**
-  - The 44 funded certifications on the Landing screen are the catalog. The 7 paths were redrawn using only those 44.
+  - The funded certifications are the catalog; the 7 paths are redrawn using only those. S00 started from the Landing's 44. On 2026-10-29 the catalog was reset to the vendor sheets TEK-UP supplied (AWS, Cisco, Linux Foundation, Oracle, Red Hat, Huawei, Python Institute) plus the Azure, EC-Council and INE certs: 56 certs from 10 providers. Google (AAD) is out because TEK-UP does not support Google certifications; Red Hat RHCS (EX180) is out because the sheets do not show it (AWS AIF-C01 stays, added back at the user's request); Huawei, SAP-C02, eJPT and the Cisco and Red Hat variants are in.
   - Two Oracle certs would otherwise share the code "OCA", and two "OCP", so their codes are suffixed: `OCA-JAVA`, `OCA-DB`, `OCP-JAVA`, `OCP-DB`.
   - URLs use a `slug` because some codes aren't URL-safe (`PCPP-32-1/2` → `pcpp-32-1-2`).
 - **Consequences:**
   - Chapters, levels, difficulty, specialties and paths are drafts (marked `DRAFT` in the seed files) and need staff review. SAA-C03 matches its design exactly.
-  - Some Landing certs are retired by their vendors (e.g. LFCE, CHSA, MCSA, AAD, Red Hat EX180). Staff should confirm they are still funded.
+  - Some Landing certs are retired by their vendors (e.g. LFCE, CHSA, MCSA, and the Cisco CCENT, CCNA/CCNP/CCIE Routing & Switching track). Staff should confirm they are still funded.
 
 ## ADR-009 Classes (S00)
 - **Decision:** The class code follows the institute pattern: `ING-4-CIM-C` for years 4–5 and `ING-2-B` for years 1–3. Groups are rows, not an enum. The demo seed creates groups A–D, which gives 60 classes.

@@ -2,8 +2,8 @@ import type { PathSeed } from '../schema';
 
 /**
  * DRAFT: needs staff review.
- * The Parcours design used certifications outside the funded catalog (SAP-C02, AI-102, CompTIA…),
- * so each path is redrawn here from the 44 funded certifications only.
+ * The Parcours design used certifications outside the funded catalog (AI-102, CompTIA…),
+ * so each path is redrawn here from the funded certifications only.
  * Grid: col 0 → 2 is progression, row 0 → 2 is a track. `prerequisite` locks a node until it is earned.
  */
 export const paths: PathSeed[] = [
@@ -67,9 +67,9 @@ export const paths: PathSeed[] = [
     code: 'SSIR',
     name: 'Systems Security & Network Infrastructure',
     nodes: [
-      { cert: 'CCNA', col: 0, row: 0 },
-      { cert: 'CCNP', col: 1, row: 0, prerequisite: 'CCNA' },
-      { cert: 'CCIE', col: 2, row: 0, prerequisite: 'CCNP' },
+      { cert: 'CCNA-RS', col: 0, row: 0 },
+      { cert: 'CCNP-RS', col: 1, row: 0, prerequisite: 'CCNA-RS' },
+      { cert: 'CCIE-RS', col: 2, row: 0, prerequisite: 'CCNP-RS' },
       { cert: 'CND', col: 0, row: 1 },
       { cert: 'CEH', col: 1, row: 1 },
       { cert: 'eCPPT', col: 2, row: 1, prerequisite: 'CEH' },
@@ -86,7 +86,7 @@ export const paths: PathSeed[] = [
       { cert: 'AIF-C01', col: 1, row: 0 },
       { cert: 'PCEP', col: 0, row: 1 },
       { cert: 'PCAP', col: 1, row: 1, prerequisite: 'PCEP' },
-      { cert: 'CCNA', col: 0, row: 2 },
+      { cert: 'CCNA-RS', col: 0, row: 2 },
       { cert: 'AZ-204', col: 1, row: 2 },
     ],
   },
@@ -96,7 +96,6 @@ export const paths: PathSeed[] = [
     nodes: [
       { cert: 'AZ-900', col: 0, row: 0 },
       { cert: 'AZ-204', col: 1, row: 0 },
-      { cert: 'AAD', col: 2, row: 0 },
       { cert: 'CLF-C02', col: 0, row: 1 },
       { cert: 'DVA-C02', col: 1, row: 1 },
       { cert: 'CKAD', col: 2, row: 1 },
