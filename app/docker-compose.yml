@@ -19,5 +19,13 @@ services:
       timeout: 3s
       retries: 30
 
+  # Catches every email sent in development: inbox UI at http://localhost:8025
+  mail:
+    image: axllent/mailpit:v1.32
+    restart: unless-stopped
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+
 volumes:
   db-data:

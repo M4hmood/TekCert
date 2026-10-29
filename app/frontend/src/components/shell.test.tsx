@@ -5,6 +5,8 @@ import { BottomNav } from './BottomNav';
 import { Sidebar } from './Sidebar';
 import { ThemeToggle } from './ThemeToggle';
 
+const USER = { firstName: 'Yassine', lastName: 'Ben Amor', email: 'yassine.benamor@tek-up.de' };
+
 const pathname = vi.hoisted(() => ({ current: '/dashboard' }));
 vi.mock('next/navigation', () => ({ usePathname: () => pathname.current }));
 
@@ -21,7 +23,7 @@ describe('Sidebar', () => {
   });
 
   it('lists every MVP screen in two groups', () => {
-    render(<Sidebar initiallyCollapsed={false} />);
+    render(<Sidebar initiallyCollapsed={false} user={USER} />);
     const main = screen.getByRole('navigation', { name: 'Main navigation' });
     const mySpace = screen.getByRole('navigation', { name: 'My space' });
     expect(
@@ -40,13 +42,13 @@ describe('Sidebar', () => {
 
   it('marks the current section, including its sub-pages', () => {
     pathname.current = '/catalog/saa-c03';
-    render(<Sidebar initiallyCollapsed={false} />);
+    render(<Sidebar initiallyCollapsed={false} user={USER} />);
     expect(screen.getByRole('link', { name: 'Catalog' })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByRole('link', { name: 'Dashboard' })).not.toHaveAttribute('aria-current');
   });
 
   it('collapses and remembers the choice in a cookie', async () => {
-    render(<Sidebar initiallyCollapsed={false} />);
+    render(<Sidebar initiallyCollapsed={false} user={USER} />);
     await userEvent.click(screen.getByRole('button', { name: 'Collapse menu' }));
 
     expect(screen.getByRole('complementary')).toHaveAttribute('data-collapsed', 'true');
@@ -57,8 +59,16 @@ describe('Sidebar', () => {
     expect(document.cookie).toContain('sidebar=collapsed');
   });
 
+  it('shows the signed-in student and links to their profile', () => {
+    render(<Sidebar initiallyCollapsed={false} user={USER} />);
+    const account = screen.getByRole('link', { name: /Yassine Ben Amor/ });
+    expect(account).toHaveAttribute('href', '/profile');
+    expect(account).toHaveTextContent('YB');
+    expect(account).toHaveTextContent('yassine.benamor@tek-up.de');
+  });
+
   it('keeps accessible link names when collapsed', () => {
-    render(<Sidebar initiallyCollapsed />);
+    render(<Sidebar initiallyCollapsed user={USER} />);
     expect(screen.getByRole('link', { name: 'Leaderboard' })).toBeInTheDocument();
   });
 });

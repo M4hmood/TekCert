@@ -1,26 +1,13 @@
 import '@tekcert/ui/styles.css';
 import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Mono, Instrument_Sans, Newsreader } from 'next/font/google';
 import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
 import { parseTheme, THEME_COOKIE } from '@/lib/preferences';
 
-const newsreader = Newsreader({
-  subsets: ['latin'],
-  style: ['normal', 'italic'],
-  axes: ['opsz'],
-  variable: '--font-newsreader',
-});
-const instrumentSans = Instrument_Sans({ subsets: ['latin'], variable: '--font-instrument-sans' });
-const plexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-plex-mono',
-});
-
 export const metadata: Metadata = {
   title: { default: 'TekCert', template: '%s · TekCert' },
   description: 'IT certifications for TEK-UP students: prepare, track your progress, find help.',
+  icons: { icon: '/icons/tekcert.png', apple: '/icons/tekcert.png' },
 };
 
 export const viewport: Viewport = {
@@ -34,11 +21,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   // Read on the server so the first paint already has the chosen theme (no flash).
   const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
   return (
-    <html
-      lang="en"
-      data-theme={theme === 'system' ? undefined : theme}
-      className={`${newsreader.variable} ${instrumentSans.variable} ${plexMono.variable}`}
-    >
+    <html lang="en" data-theme={theme === 'system' ? undefined : theme}>
       <body>{children}</body>
     </html>
   );

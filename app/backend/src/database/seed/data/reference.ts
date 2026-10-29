@@ -11,8 +11,8 @@ export const specialties: SpecialtySeed[] = [
 ];
 
 /**
- * The 10 providers funded by the institute (Landing screen).
- * AWS, Azure, Red Hat and Google hues come from the designs; the others are new and spaced apart.
+ * The 10 providers funded by the institute.
+ * AWS, Azure and Red Hat hues come from the designs; the others are new and spaced apart.
  */
 export const providers: ProviderSeed[] = [
   { code: 'CISCO', name: 'Cisco', hue: 200 },
@@ -24,7 +24,7 @@ export const providers: ProviderSeed[] = [
   { code: 'ECCOUNCIL', name: 'EC-Council', hue: 100 },
   { code: 'INE', name: 'INE Security', hue: 175 },
   { code: 'PYTHON', name: 'Python Institute', hue: 310 },
-  { code: 'GOOGLE', name: 'Google Developers', hue: 150 },
+  { code: 'HUAWEI', name: 'Huawei', hue: 5 },
 ];
 
 /**

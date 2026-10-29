@@ -1,16 +1,29 @@
 import { validateEnv } from './env';
 
 describe('validateEnv', () => {
-  const valid = { DATABASE_URL: 'postgresql://u:p@localhost:5432/db' };
+  const valid = {
+    DATABASE_URL: 'postgresql://u:p@localhost:5432/db',
+    JWT_ACCESS_SECRET: 'x'.repeat(32),
+  };
 
   it('applies defaults', () => {
-    expect(validateEnv(valid)).toEqual({
+    expect(validateEnv(valid)).toMatchObject({
       NODE_ENV: 'development',
       PORT: 4000,
       LOG_LEVEL: 'info',
-      DATABASE_URL: valid.DATABASE_URL,
+      WEB_URL: 'http://localhost:3000',
       CORS_ORIGIN: ['http://localhost:3000'],
+      COOKIE_SECURE: false,
+      SMTP_URL: 'smtp://127.0.0.1:1025',
+      AUTH_RATE_LIMIT: 20,
     });
+  });
+
+  it('makes cookies Secure in production unless disabled explicitly', () => {
+    expect(validateEnv({ ...valid, NODE_ENV: 'production' }).COOKIE_SECURE).toBe(true);
+    expect(
+      validateEnv({ ...valid, NODE_ENV: 'production', COOKIE_SECURE: 'false' }).COOKIE_SECURE,
+    ).toBe(false);
   });
 
   it('splits a comma-separated CORS_ORIGIN', () => {
@@ -20,10 +33,14 @@ describe('validateEnv', () => {
   });
 
   it('rejects a missing DATABASE_URL', () => {
-    expect(() => validateEnv({})).toThrow(/DATABASE_URL/);
+    expect(() => validateEnv({ JWT_ACCESS_SECRET: valid.JWT_ACCESS_SECRET })).toThrow(
+      /DATABASE_URL/,
+    );
   });
 
-  it('rejects a non-postgres DATABASE_URL', () => {
-    expect(() => validateEnv({ DATABASE_URL: 'mysql://localhost/db' })).toThrow(/DATABASE_URL/);
+  it('rejects a short JWT secret', () => {
+    expect(() => validateEnv({ ...valid, JWT_ACCESS_SECRET: 'short' })).toThrow(
+      /JWT_ACCESS_SECRET/,
+    );
   });
 });

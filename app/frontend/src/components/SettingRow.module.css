@@ -1,0 +1,28 @@
+/* A settings row from Parametres: two lines of text on the left, the action on the right. */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 18px 20px;
+  border: 1px solid var(--ln);
+  border-radius: var(--radius-card);
+  background: var(--sf);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.meta {
+  color: var(--ink3);
+  font-size: 13.5px;
+}

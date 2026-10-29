@@ -1,4 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
+import { signInNewStudent } from './support';
 
 /** Every MVP screen reachable from the navigation, with the heading it should show. */
 const SIDEBAR_ROUTES = [
@@ -22,6 +23,11 @@ const BOTTOM_TABS = [
 ];
 
 const heading = (page: Page) => page.getByRole('heading', { level: 1 });
+
+// The app shell is for signed-in students: every test starts with a fresh, verified account.
+test.beforeEach(async ({ page }) => {
+  await signInNewStudent(page);
+});
 
 test.describe('desktop shell', () => {
   test.skip(({ viewport }) => (viewport?.width ?? 0) < 768, 'sidebar layout only');
@@ -83,12 +89,19 @@ test('theme toggle switches to dark and survives a reload', async ({ page }) => 
   await expect(html).toHaveAttribute('data-theme', 'dark');
 });
 
-test('screens outside the shell render without navigation', async ({ page }) => {
-  for (const path of ['/sign-in', '/onboarding']) {
-    await page.goto(path);
-    await expect(heading(page)).toBeVisible();
-    await expect(page.getByRole('navigation')).toHaveCount(0);
-  }
+test('onboarding renders outside the shell, without navigation', async ({ page }) => {
+  await page.goto('/onboarding');
+  await expect(heading(page)).toBeVisible();
+  await expect(page.getByRole('navigation')).toHaveCount(0);
+});
+
+test('the sidebar shows the signed-in student', async ({ page, viewport }) => {
+  test.skip((viewport?.width ?? 0) < 768, 'sidebar layout only');
+  await page.goto('/dashboard');
+  await expect(page.getByRole('link', { name: /Test Student/ })).toHaveAttribute(
+    'href',
+    '/profile',
+  );
 });
 
 test('unknown pages show the not-found screen', async ({ page }) => {
@@ -102,13 +115,13 @@ test.describe('catalog wiring', () => {
     const res = await request.get('/api/certifications');
     expect(res.ok()).toBe(true);
     const body = (await res.json()) as { total: number };
-    expect(body.total).toBe(44);
+    expect(body.total).toBe(56);
   });
 
   test('the catalog and certification pages read from the API', async ({ page }) => {
     await page.goto('/catalog');
     await expect(
-      page.getByText('44 certifications funded by the institute are ready.'),
+      page.getByText('56 certifications funded by the institute are ready.'),
     ).toBeVisible();
 
     await page.goto('/catalog/saa-c03');

@@ -59,14 +59,14 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - TypeORM 1.x removed `loadRelationCountAndMap`, so chapter counts use a `@VirtualColumn` subquery.
 
 ## ADR-008 Catalog source of truth (S00)
-- **Context:** The Landing design lists 44 certifications from 10 providers. Catalogue, Parcours and Onboarding use a different sample that includes CompTIA, Google Cloud, SAP-C02, AI-102 and others.
+- **Context:** The Landing design listed 44 certifications from 10 providers. Catalogue, Parcours and Onboarding use a different sample that includes CompTIA, Google Cloud, SAP-C02, AI-102 and others.
 - **Decision:**
-  - The 44 funded certifications on the Landing screen are the catalog. The 7 paths were redrawn using only those 44.
+  - The funded certifications are the catalog; the 7 paths are redrawn using only those. S00 started from the Landing's 44. On 2026-10-29 the catalog was reset to the vendor sheets TEK-UP supplied (AWS, Cisco, Linux Foundation, Oracle, Red Hat, Huawei, Python Institute) plus the Azure, EC-Council and INE certs: 56 certs from 10 providers. Google (AAD) is out because TEK-UP does not support Google certifications; Red Hat RHCS (EX180) is out because the sheets do not show it (AWS AIF-C01 stays, added back at the user's request); Huawei, SAP-C02, eJPT and the Cisco and Red Hat variants are in.
   - Two Oracle certs would otherwise share the code "OCA", and two "OCP", so their codes are suffixed: `OCA-JAVA`, `OCA-DB`, `OCP-JAVA`, `OCP-DB`.
   - URLs use a `slug` because some codes aren't URL-safe (`PCPP-32-1/2` → `pcpp-32-1-2`).
 - **Consequences:**
   - Chapters, levels, difficulty, specialties and paths are drafts (marked `DRAFT` in the seed files) and need staff review. SAA-C03 matches its design exactly.
-  - Some Landing certs are retired by their vendors (e.g. LFCE, CHSA, MCSA, AAD, Red Hat EX180). Staff should confirm they are still funded.
+  - Some Landing certs are retired by their vendors (e.g. LFCE, CHSA, MCSA, and the Cisco CCENT, CCNA/CCNP/CCIE Routing & Switching track). Staff should confirm they are still funded.
 
 ## ADR-009 Classes (S00)
 - **Decision:** The class code follows the institute pattern: `ING-4-CIM-C` for years 4–5 and `ING-2-B` for years 1–3. Groups are rows, not an enum. The demo seed creates groups A–D, which gives 60 classes.
@@ -75,7 +75,7 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
 ## ADR-010 Styling and theming (S00)
 - **Decision:**
   - The design tokens are CSS variables in `@tekcert/ui` (`tokens.css`, with light and dark palettes). Components use CSS Modules; there is no Tailwind.
-  - Fonts load through `next/font` (Newsreader, Instrument Sans, IBM Plex Mono). Material Symbols is self-hosted from the `material-symbols` package.
+  - Fonts are self-hosted from npm: `@fontsource` for Newsreader, Instrument Sans and IBM Plex Mono, and `material-symbols` for the icons. S01 replaced `next/font/google`, because every page returned 500 whenever Google Fonts was slow to answer.
   - The theme and the sidebar state live in cookies that the server reads, so the first paint is already correct with no flash. With no cookie, the theme follows the OS.
   - Breakpoints: expanded sidebar at ≥ 1280 px, collapsed rail at 768–1279 px, BottomNav below 768 px.
 - **Consequences:** Pages render on the server per request, which is fine for an authenticated app.
@@ -98,8 +98,42 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - One GitHub Actions job runs format, lint, typecheck, unit tests, API e2e, build and Playwright, with a Postgres 16 service.
 - **Consequences:** A green CI also proves the two deploy bundles run independently.
 
+## ADR-013 Session model (S01)
+- **Context:** The sprint asks for httpOnly cookie sessions with access and refresh tokens. The browser only talks to the web origin, which proxies `/api/*` (ADR-011).
+- **Decision:**
+  - **Access token:** a JWT signed with HS256 (`jsonwebtoken`), valid for 15 minutes, holding the user id and role. It travels in the `tc_access` cookie.
+  - **Refresh token:** 32 random bytes in the `tc_refresh` cookie. The database stores only its SHA-256 hash, one row per token in `sessions`.
+  - **Rotation:** every refresh replaces the refresh token. If a token that was already replaced shows up again, the whole sign-in (token family) is revoked. A 10-second grace period covers parallel requests that refresh at the same moment.
+  - **"Stay signed in":** a 30-day sliding expiry. Without it: browser-session cookies, and the sign-in ends after 12 hours at most.
+  - **Cookie flags:** both cookies are `HttpOnly` and `SameSite=Lax`, and `Secure` everywhere except local HTTP. Their path is `/`, which lets Next's `proxy.ts` refresh a session while rendering any page. The plan had scoped the refresh cookie to `/api/auth`, but then the page server never receives it.
+  - **CSRF:** `SameSite=Lax` blocks cross-site POSTs, and the API also refuses state-changing requests whose `Origin` header isn't the web app.
+  - **Per-account lockout:** 5 failures lock the address for 15 minutes. It's tracked per email in `login_attempts`, so an unknown address behaves exactly like a wrong password.
+  - **Per-IP limit:** `@nestjs/throttler` adds a limit per IP on `/auth/*`.
+  - **Who checks what:** `proxy.ts` only reads the token's expiry to decide where to send the browser. The API verifies every token.
+- **Consequences:**
+  - A stolen refresh token stops working as soon as the legitimate client refreshes.
+  - The throttler keeps its counts in memory, per instance. With several API instances on AWS, a shared store is needed (backlog).
+  - `JWT_ACCESS_SECRET` must come from Secrets Manager in the cloud.
+
+## ADR-014 Password hashing (S01)
+- **Decision:** argon2id through `@node-rs/argon2`, with the OWASP baseline (19 MiB memory, 2 iterations, 1 lane). pnpm installs the Linux binaries too (`supportedArchitectures`), so a bundle built on Windows runs on Amazon Linux. When the email is unknown, the API checks the password against a dummy hash, so response times don't reveal which accounts exist.
+- **Consequences:** No native compilation anywhere. Each hash takes about 20 ms on a laptop.
+
+## ADR-015 Transactional email (S01)
+- **Decision:**
+  - Nodemailer over SMTP (`SMTP_URL`) in every environment. Locally that's Mailpit from docker compose, with its inbox at http://localhost:8025. CI runs Mailpit as a service too.
+  - Emails send in the background: API responses never wait for SMTP.
+  - Templates are plain HTML plus text.
+  - Links are single-use and only their hash is stored: verification links last 24 hours, reset links 30 minutes, with a 60-second resend cooldown.
+  - The verify and reset pages send the token with a POST, so link scanners that open URLs can't use it up.
+  - Signing up with an existing address returns the same response as a new sign-up, and the owner gets an email instead.
+- **Consequences:**
+  - A delivery failure is logged rather than shown; the student can press "Resend".
+  - Staging still needs a real SMTP provider (open item).
+  - Use `127.0.0.1` rather than `localhost` in `SMTP_URL`: on Windows, nodemailer spends seconds resolving `localhost`.
+
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).
-- SMTP provider for transactional email
+- SMTP provider for transactional email in staging and production (the code is ready; see ADR-015)
 - File storage provider (S3-compatible)
 - Who administers the certification catalog before the staff console exists (seed files vs. a minimal admin page). For now the answer is the seed files in `backend/src/database/seed/data/`.

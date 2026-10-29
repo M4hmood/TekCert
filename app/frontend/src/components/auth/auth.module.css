@@ -1,0 +1,450 @@
+/* design/Connexion.dc.html: hero panel + centred form column (desktop), stacked on phones. */
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(420px, 600px) 1fr;
+  min-height: 100dvh;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 48px 56px;
+  overflow: hidden;
+  background: var(--hero);
+  color: var(--hero-ink);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.logo {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.brandName {
+  font-family: var(--font-serif);
+  font-size: 23px;
+  font-weight: 600;
+}
+
+.heroBody {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.headline {
+  font-family: var(--font-serif);
+  font-size: 56px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+}
+
+.headline em {
+  color: #e2bc66;
+}
+
+.stat {
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 48px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.center {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: min(100%, 420px);
+}
+
+/* Badge wall: three slowly scrolling columns, decorative only. */
+.wall {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  height: 380px;
+  overflow: hidden;
+  transform: rotate(-6deg);
+  transform-origin: center;
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+}
+
+.wallColumn {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-self: flex-start;
+  gap: 14px;
+  animation: wall-up 34s linear infinite;
+}
+
+.wallColumn:nth-child(2) {
+  margin-top: -40px;
+  animation: wall-down 40s linear infinite;
+}
+
+.wallColumn:nth-child(3) {
+  animation-duration: 46s;
+}
+
+.tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 104px;
+  height: 104px;
+  border-radius: 18px;
+  background: rgba(255, 253, 248, 0.96);
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.55);
+}
+
+.tile img {
+  width: auto;
+  max-width: 76px;
+  height: auto;
+  max-height: 76px;
+}
+
+@keyframes wall-up {
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes wall-down {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wallColumn {
+    animation: none;
+  }
+}
+
+/* Tabs: segmented control linking /sign-in and /sign-up. */
+.tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--sf2);
+}
+
+/* The white pill behind the active tab; it slides when switching. */
+.tabIndicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 7px;
+  background: var(--sf);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: transform 260ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.tabs[data-active='1'] .tabIndicator {
+  transform: translateX(100%);
+}
+
+.tab {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 44px;
+  border-radius: 7px;
+  color: var(--ink2);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.tab[aria-current='page'] {
+  color: var(--ink);
+}
+
+/* In-page steps (e.g. form → "Check your inbox") fade in; page switches use view transitions. */
+.result {
+  animation: auth-enter 240ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@keyframes auth-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Form content */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: 38px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+}
+
+.subtitle {
+  color: var(--ink2);
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+
+.names {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.submit {
+  height: 52px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.footnote {
+  color: var(--ink3);
+  font-size: 13.5px;
+  text-align: center;
+}
+
+.textLink {
+  min-height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--pri);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--pri);
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  list-style: none;
+}
+
+.rule {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink3);
+}
+
+.rule[data-met='true'] {
+  color: var(--ok);
+}
+
+.consent {
+  color: var(--ink2);
+  font-size: 14px;
+}
+
+/* "Check your inbox" and other result states */
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.resultIcon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--ok-sf);
+  color: var(--ok);
+}
+
+.resultIcon[data-tone='error'] {
+  background: var(--err-sf);
+  color: var(--err);
+}
+
+.resultText {
+  color: var(--ink2);
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+
+.resultText strong {
+  color: var(--ink);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 1023px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 22px;
+    padding: 28px 24px 32px;
+  }
+
+  .heroBody {
+    flex-basis: 100%;
+  }
+
+  .headline {
+    font-size: 36px;
+    line-height: 1.05;
+  }
+
+  .wall,
+  .stat {
+    display: none;
+  }
+
+  .main {
+    padding: 8px 20px 32px;
+  }
+
+  /* Phones and tablets: the form sits right under the hero, top-aligned. */
+  .center {
+    align-items: flex-start;
+    padding: 16px 0 0;
+  }
+
+  .column {
+    gap: 20px;
+  }
+
+  .title {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 479px) {
+  .names {
+    grid-template-columns: 1fr;
+  }
+}
+
+/*
+ * Page switches (see AuthContent): the old form fades out first, then the new one fades in (they
+ * never overlap). The form stays vertically centred, so when its height changes the box and the
+ * tab bar glide together to their new place. Nothing else on the page is cross-faded, and the tab
+ * bar stays live so its pill keeps sliding.
+ */
+:global(::view-transition-group(.auth-swap)),
+:global(::view-transition-group(auth-tabs)) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+:global(::view-transition-image-pair(.auth-swap)) {
+  isolation: auto;
+}
+
+:global(::view-transition-old(.auth-swap)) {
+  animation: auth-fade-out 120ms ease-in both;
+  mix-blend-mode: normal;
+}
+
+:global(::view-transition-new(.auth-swap)) {
+  animation: auth-fade-in 200ms 120ms ease-out both;
+  mix-blend-mode: normal;
+}
+
+:global(::view-transition-old(root)),
+:global(::view-transition-new(root)) {
+  animation: none;
+}
+
+:global(::view-transition-old(auth-tabs)) {
+  display: none;
+}
+
+:global(::view-transition-new(auth-tabs)) {
+  animation: none;
+}
+
+@keyframes auth-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes auth-fade-in {
+  from {
+    opacity: 0;
+  }
+}

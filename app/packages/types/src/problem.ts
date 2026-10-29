@@ -16,5 +16,9 @@ export const ProblemDetailsSchema = z.object({
       }),
     )
     .optional(),
+  /** Sign-in failures: attempts left before the lockout. */
+  attemptsLeft: z.number().int().nonnegative().optional(),
+  /** Lockouts and resend cooldowns: seconds until the action is allowed again. */
+  retryAfterSeconds: z.number().int().nonnegative().optional(),
 });
 export type ProblemDetails = z.infer<typeof ProblemDetailsSchema>;

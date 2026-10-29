@@ -1,6 +1,8 @@
 'use client';
 
+import type { CurrentUser } from '@tekcert/types';
 import { Icon, IconButton } from '@tekcert/ui';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -11,9 +13,10 @@ import styles from './Sidebar.module.css';
 export interface SidebarProps {
   /** Initial state from the sidebar cookie, so the server renders the right width. */
   initiallyCollapsed: boolean;
+  user: Pick<CurrentUser, 'firstName' | 'lastName' | 'email'>;
 }
 
-export function Sidebar({ initiallyCollapsed }: SidebarProps) {
+export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(initiallyCollapsed);
 
@@ -43,9 +46,14 @@ export function Sidebar({ initiallyCollapsed }: SidebarProps) {
     <aside className={styles.sidebar} data-collapsed={collapsed}>
       <div className={styles.top}>
         <Link href="/dashboard" className={styles.brand} aria-label="TekCert home">
-          <span className={styles.logo} aria-hidden>
-            T
-          </span>
+          <Image
+            src="/icons/tekcert.png"
+            alt=""
+            width={36}
+            height={36}
+            className={styles.logo}
+            priority
+          />
           <span className={styles.wordmark}>
             <span className={styles.name}>TekCert</span>
             <span className={styles.school}>TEK-UP</span>
@@ -71,16 +79,22 @@ export function Sidebar({ initiallyCollapsed }: SidebarProps) {
         {PERSONAL_NAV.map(renderLink)}
       </nav>
 
-      {/* Placeholder until sign-in exists (Sprint 1). */}
-      <Link href="/sign-in" className={styles.account} title="Sign in">
-        <span className={styles.avatar}>
-          <Icon name="person" />
+      {/* Class and level join the email here once onboarding exists (Sprint 2). */}
+      <Link href="/profile" className={styles.account} title="My profile">
+        <span className={styles.avatar} aria-hidden>
+          {initials(user)}
         </span>
         <span className={styles.accountText}>
-          <span className={styles.accountName}>Guest</span>
-          <span className={styles.accountMeta}>Sign in to see your profile</span>
+          <span className={styles.accountName}>
+            {user.firstName} {user.lastName}
+          </span>
+          <span className={styles.accountMeta}>{user.email}</span>
         </span>
       </Link>
     </aside>
   );
+}
+
+function initials({ firstName, lastName }: Pick<CurrentUser, 'firstName' | 'lastName'>): string {
+  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 }

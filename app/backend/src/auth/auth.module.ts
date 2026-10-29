@@ -1,0 +1,43 @@
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CLOCK, systemClock } from '../common/clock';
+import type { Env } from '../config/env';
+import { EmailToken, LoginAttempt, Session, User } from '../database/entities';
+import { AccessTokenService } from './access-token.service';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { EmailTokensService } from './email-tokens.service';
+import { AuthGuard, RolesGuard } from './guards';
+import { LoginAttemptsService } from './login-attempts.service';
+import { PasswordService } from './password.service';
+import { SessionsService } from './sessions.service';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([User, Session, EmailToken, LoginAttempt]),
+    // Per-IP brake on /auth/* (applied by the controller); the per-account lockout is separate.
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<Env, true>) => [
+        { ttl: 60_000, limit: config.get('AUTH_RATE_LIMIT', { infer: true }) },
+      ],
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [
+    { provide: CLOCK, useValue: systemClock },
+    AccessTokenService,
+    PasswordService,
+    SessionsService,
+    LoginAttemptsService,
+    EmailTokensService,
+    AuthService,
+    // Order matters: authenticate first, then check roles.
+    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+  ],
+})
+export class AuthModule {}

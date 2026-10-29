@@ -41,7 +41,7 @@ describe('API (e2e)', () => {
   describe('GET /certifications', () => {
     it('returns the full seeded catalog', async () => {
       const body = CertificationListSchema.parse((await get('/certifications').expect(200)).body);
-      expect(body.total).toBe(44);
+      expect(body.total).toBe(56);
       expect(new Set(body.items.map((c) => c.provider.code)).size).toBe(10);
     });
 
@@ -49,19 +49,25 @@ describe('API (e2e)', () => {
       const aws = CertificationListSchema.parse(
         (await get('/certifications?provider=aws').expect(200)).body,
       );
-      expect(aws.total).toBe(6);
+      expect(aws.total).toBe(7);
 
       const experts = CertificationListSchema.parse(
         (await get('/certifications?level=expert').expect(200)).body,
       );
-      expect(experts.items.map((c) => c.code).sort()).toEqual(['AZ-400', 'CCIE', 'CEPP']);
+      expect(experts.items.map((c) => c.code).sort()).toEqual([
+        'AZ-400',
+        'CCIE-RS',
+        'CEPP',
+        'HCIE',
+        'RHCA',
+      ]);
     });
 
     it('includes all-specialty certifications in a specialty filter', async () => {
       const dmwm = CertificationListSchema.parse(
         (await get('/certifications?specialty=DMWM').expect(200)).body,
       );
-      expect(dmwm.items.map((c) => c.code)).toEqual(expect.arrayContaining(['AZ-900', 'AAD']));
+      expect(dmwm.items.map((c) => c.code)).toEqual(expect.arrayContaining(['AZ-900', 'OCA-JAVA']));
       expect(dmwm.items.every((c) => c.forAllSpecialties || c.specialties.includes('DMWM'))).toBe(
         true,
       );

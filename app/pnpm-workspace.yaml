@@ -17,3 +17,10 @@ ignoredBuiltDependencies:
 # Only install peers we declare; otherwise optional peers (e.g. Prisma for @nestjs/terminus,
 # mysql2 for typeorm) get pulled in and bloat the deploy bundles.
 autoInstallPeers: false
+
+# Install native binaries for Linux too, so a bundle built on Windows also runs on Amazon Linux
+# (@node-rs/argon2 ships one prebuilt package per platform).
+supportedArchitectures:
+  os: [current, linux]
+  cpu: [current, x64, arm64]
+  libc: [current, glibc]

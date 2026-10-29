@@ -1,5 +1,10 @@
-/* design/Sidebar.dc.html: 256 px expanded, 76 px collapsed. */
+/*
+ * design/Sidebar.dc.html: 256 px expanded, 76 px collapsed.
+ * Collapsing animates the width only. Padding stays the same, so the icons keep their position
+ * and the links shrink to the 48 px pills of the rail while the labels fade out.
+ */
 .sidebar {
+  --ease: cubic-bezier(0.2, 0, 0, 1);
   position: sticky;
   top: 0;
   display: flex;
@@ -9,48 +14,57 @@
   width: var(--sidebar-width);
   height: 100dvh;
   padding: 20px 14px 16px;
-  overflow-y: auto;
+  overflow: hidden auto;
   border-right: 1px solid var(--ln);
   background: var(--sf);
   font-family: var(--font-sans);
+  transition: width 240ms var(--ease);
 }
 
+/* Brand row; the collapse button slides under the logo when collapsed. */
 .top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 6px;
+  position: relative;
+  flex: none;
+  height: 44px;
+  transition: height 240ms var(--ease);
+}
+
+.collapseToggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transition:
+    top 240ms var(--ease),
+    right 240ms var(--ease);
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 11px;
+  height: 44px;
+  padding-left: 7px;
   color: var(--ink);
   text-decoration: none;
 }
 
 .logo {
-  display: grid;
-  place-items: center;
   flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--pri);
-  box-shadow:
-    0 0 0 2px var(--sf),
-    0 0 0 3.5px var(--gold-fill);
-  color: var(--pri-ink);
-  font-family: var(--font-serif);
-  font-size: 19px;
-  font-weight: 600;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .wordmark {
   display: flex;
   flex-direction: column;
   gap: 3px;
+}
+
+/* Text that fades out when collapsed. It stays in the DOM, so links keep their accessible names. */
+:is(.wordmark, .groupLabel, .label, .accountText) {
+  white-space: nowrap;
+  transition: opacity 160ms var(--ease);
 }
 
 .name {
@@ -90,6 +104,7 @@
   gap: 12px;
   height: 44px;
   padding: 0 12px;
+  overflow: hidden;
   border-radius: var(--radius-field);
   color: var(--ink2);
   font-size: 14.5px;
@@ -110,14 +125,19 @@
 
 .account {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 11px;
   margin-top: auto;
   padding: 10px;
+  overflow: hidden;
   border: 1px solid var(--ln);
   border-radius: 10px;
   color: var(--ink);
   text-decoration: none;
+  transition:
+    padding 240ms var(--ease),
+    border-color 240ms var(--ease);
 }
 
 .account:hover {
@@ -131,8 +151,11 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: var(--sf2);
-  color: var(--ink2);
+  background: var(--pri-sf);
+  color: var(--pri);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .accountText {
@@ -155,78 +178,49 @@
   white-space: nowrap;
 }
 
-/*
- * Collapsed rail, chosen by the user (data-collapsed) or forced on tablets (media query below).
- * Labels are visually hidden, not removed, so links keep their accessible names.
- */
+/* Collapsed rail: chosen by the user (data-collapsed) or forced on tablets (media query below). */
 .sidebar[data-collapsed='true'] {
-  align-items: center;
   width: var(--sidebar-width-collapsed);
-  padding: 20px 0 16px;
-  gap: 24px;
 }
 
 .sidebar[data-collapsed='true'] .top {
-  flex-direction: column;
-  gap: 24px;
-  padding: 0;
+  height: 102px;
+}
+
+.sidebar[data-collapsed='true'] .collapseToggle {
+  top: 58px;
+  right: 2px;
 }
 
 .sidebar[data-collapsed='true'] :is(.wordmark, .groupLabel, .label, .accountText) {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-}
-
-.sidebar[data-collapsed='true'] .link {
-  justify-content: center;
-  width: 48px;
-  padding: 0;
+  opacity: 0;
 }
 
 .sidebar[data-collapsed='true'] .account {
-  padding: 0;
-  border: none;
+  padding: 4px;
+  border-color: transparent;
 }
 
 @media (max-width: 1279px) {
   .sidebar {
-    align-items: center;
     width: var(--sidebar-width-collapsed);
-    padding: 20px 0 16px;
-    gap: 24px;
   }
 
   .top {
-    flex-direction: column;
-    gap: 24px;
-    padding: 0;
+    height: 44px;
   }
 
   :is(.wordmark, .groupLabel, .label, .accountText) {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-  }
-
-  .link {
-    justify-content: center;
-    width: 48px;
-    padding: 0;
+    opacity: 0;
   }
 
   .account {
-    padding: 0;
-    border: none;
+    padding: 4px;
+    border-color: transparent;
   }
 
-  .collapseToggle {
+  /* More specific than the IconButton's own display rule. */
+  .top .collapseToggle {
     display: none;
   }
 }
