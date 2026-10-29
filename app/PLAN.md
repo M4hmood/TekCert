@@ -40,5 +40,10 @@ Solo developer + Claude Code · 1-week sprints · English only at launch · emai
 - Move the per-IP auth rate limit to a shared store (e.g. Redis) once the API runs on several instances.
 - Subset the Material Symbols font to the icons actually used (it is about 3 MB today). Fits with the S08 performance pass.
 
+## Decision: every profile is visible (2026-10-29)
+Students must accept profile visibility to sign up, and can't make their profile private afterwards (replaces S01 decision 1; built in S02). Impact on later sprints:
+- S05: drop the "private profile" state. The API rule becomes "signed-in students only", and visitors still see nothing.
+- S07: Settings › Privacy loses the profile-visibility switch. The leaderboard opt-out stays.
+
 ## Note on MVP scope
 Declaring certifications and staff review are in Release 2, so in Release 1 points come from chapters only. Certifications imported during onboarding stay “unverified” and earn no points until Release 2.
