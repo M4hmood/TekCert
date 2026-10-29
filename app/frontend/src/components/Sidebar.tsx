@@ -2,6 +2,7 @@
 
 import type { CurrentUser } from '@tekcert/types';
 import { Icon, IconButton } from '@tekcert/ui';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -45,9 +46,14 @@ export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
     <aside className={styles.sidebar} data-collapsed={collapsed}>
       <div className={styles.top}>
         <Link href="/dashboard" className={styles.brand} aria-label="TekCert home">
-          <span className={styles.logo} aria-hidden>
-            T
-          </span>
+          <Image
+            src="/icons/tekcert.png"
+            alt=""
+            width={36}
+            height={36}
+            className={styles.logo}
+            priority
+          />
           <span className={styles.wordmark}>
             <span className={styles.name}>TekCert</span>
             <span className={styles.school}>TEK-UP</span>

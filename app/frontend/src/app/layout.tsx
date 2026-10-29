@@ -7,6 +7,7 @@ import { parseTheme, THEME_COOKIE } from '@/lib/preferences';
 export const metadata: Metadata = {
   title: { default: 'TekCert', template: '%s · TekCert' },
   description: 'IT certifications for TEK-UP students: prepare, track your progress, find help.',
+  icons: { icon: '/icons/tekcert.png', apple: '/icons/tekcert.png' },
 };
 
 export const viewport: Viewport = {

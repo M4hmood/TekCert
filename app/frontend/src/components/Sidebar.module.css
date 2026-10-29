@@ -49,20 +49,10 @@
 }
 
 .logo {
-  display: grid;
-  place-items: center;
   flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--pri);
-  box-shadow:
-    0 0 0 2px var(--sf),
-    0 0 0 3.5px var(--gold-fill);
-  color: var(--pri-ink);
-  font-family: var(--font-serif);
-  font-size: 19px;
-  font-weight: 600;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .wordmark {

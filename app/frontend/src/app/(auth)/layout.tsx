@@ -1,4 +1,5 @@
 import { CertificationListSchema } from '@tekcert/types';
+import Image from 'next/image';
 import { type ReactNode, Suspense } from 'react';
 import styles from '@/components/auth/auth.module.css';
 import { AuthContent } from '@/components/auth/AuthContent';
@@ -23,9 +24,14 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
     <div className={styles.page}>
       <aside className={styles.hero}>
         <span className={styles.brand}>
-          <span className={styles.logo} aria-hidden>
-            T
-          </span>
+          <Image
+            src="/icons/tekcert.png"
+            alt=""
+            width={40}
+            height={40}
+            className={styles.logo}
+            priority
+          />
           <span className={styles.brandName}>TekCert</span>
         </span>
         <div className={styles.heroBody}>
