@@ -36,13 +36,11 @@ describe('apiGet', () => {
 
   it('calls API_URL and validates the response', async () => {
     vi.stubEnv('API_URL', 'http://api.internal/');
-    const fetchMock = vi.fn(async () => Response.json({ items: [], total: 0 }));
+    const empty = { items: [], total: 0, facets: { provider: {}, level: {}, specialty: {} } };
+    const fetchMock = vi.fn(async () => Response.json(empty));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(apiGet('/certifications', CertificationListSchema)).resolves.toEqual({
-      items: [],
-      total: 0,
-    });
+    await expect(apiGet('/certifications', CertificationListSchema)).resolves.toEqual(empty);
     expect(fetchMock).toHaveBeenCalledWith('http://api.internal/certifications', expect.anything());
   });
 

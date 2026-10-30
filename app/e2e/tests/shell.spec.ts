@@ -113,12 +113,10 @@ test.describe('catalog wiring', () => {
 
   test('the catalog and certification pages read from the API', async ({ page }) => {
     await page.goto('/catalog');
-    await expect(
-      page.getByText('56 certifications funded by the institute are ready.'),
-    ).toBeVisible();
+    await expect(page.getByText('56 certifications', { exact: true })).toBeVisible();
 
     await page.goto('/catalog/saa-c03');
     await expect(heading(page)).toHaveText('AWS Certified Solutions Architect – Associate');
-    await expect(page.getByText(/11 chapters across 4 exam domains/)).toBeVisible();
+    await expect(page.getByRole('tab', { name: /Syllabus/ })).toContainText('11');
   });
 });

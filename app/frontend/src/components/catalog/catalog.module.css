@@ -1,0 +1,662 @@
+/* Catalogue design: results on the left, a 248 px filter column on the right. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 248px;
+  gap: 32px;
+  align-items: start;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  grid-row: 1;
+  grid-column: 2;
+  gap: 26px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.legend {
+  padding: 0 0 8px;
+  color: var(--ink3);
+  font: var(--text-overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+
+.hint {
+  margin-top: 6px;
+  color: var(--ink3);
+  font-size: 13px;
+}
+
+/* Checkbox rows: a native checkbox, visually replaced by the design's square. */
+.checkRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  font-size: 14.5px;
+  cursor: pointer;
+}
+
+.checkInput {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkBox {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--ln2);
+  border-radius: 5px;
+  color: var(--pri-ink);
+}
+
+.checkInput:checked + .checkBox {
+  border-color: var(--pri);
+  background: var(--pri);
+}
+
+.checkInput:focus-visible + .checkBox {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.checkLabel {
+  flex: 1;
+}
+
+.checkStrong {
+  font-weight: 600;
+}
+
+.checkCount {
+  color: var(--ink3);
+  font-size: 13px;
+}
+
+.square,
+.round {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.round {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1.5px solid var(--ln2);
+  border-radius: 18px;
+  background: var(--sf);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggleLarge {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 20px;
+  background: transparent;
+  font-size: 14px;
+}
+
+.toggleOn {
+  border-color: var(--pri);
+  background: var(--pri);
+  color: var(--pri-ink);
+}
+
+.toggleOn .round {
+  box-shadow: 0 0 0 1.5px var(--pri-ink);
+}
+
+.difficulty {
+  display: flex;
+  gap: 6px;
+}
+
+.step {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--ln2);
+  border-radius: 8px;
+  background: var(--sf);
+  color: var(--ink2);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.stepInRange {
+  border-color: var(--pri-sf);
+  background: var(--pri-sf);
+  color: var(--pri);
+}
+
+.stepOn {
+  border-color: var(--pri);
+  background: var(--pri);
+  color: var(--pri-ink);
+}
+
+.difficultyLarge {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.difficultyLarge .step {
+  width: auto;
+  height: 44px;
+  background: transparent;
+  color: var(--ink);
+}
+
+.difficultyLarge .stepInRange {
+  background: var(--pri-sf);
+  color: var(--pri);
+}
+
+.difficultyLarge .stepOn {
+  background: var(--pri);
+  color: var(--pri-ink);
+}
+
+/* Search + sort */
+.toolbar {
+  display: flex;
+  gap: 12px;
+}
+
+.search {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 8px 0 14px;
+  border: 1.5px solid var(--ln2);
+  border-radius: 10px;
+  background: var(--sf);
+}
+
+.search:focus-within {
+  border-color: var(--pri);
+}
+
+.searchIcon {
+  color: var(--ink3);
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 15.5px;
+}
+
+.searchInput::-webkit-search-cancel-button {
+  display: none;
+}
+
+.searchInput::placeholder {
+  color: #8a8e9c;
+}
+
+.searchClear {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink3);
+  cursor: pointer;
+}
+
+.sort {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 0 0 14px;
+  border: 1.5px solid var(--ln2);
+  border-radius: 10px;
+  background: var(--sf);
+  font-size: 14.5px;
+}
+
+.sort:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.sortLabel {
+  color: var(--ink3);
+}
+
+.sortSelect {
+  height: 100%;
+  padding-right: 38px;
+  border: none;
+  background: none;
+  outline: none;
+  font-weight: 700;
+  cursor: pointer;
+  appearance: none;
+}
+
+.sortIcon {
+  position: absolute;
+  right: 12px;
+  color: var(--ink3);
+  pointer-events: none;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+}
+
+.count {
+  color: var(--ink2);
+  font-size: 14.5px;
+}
+
+.count strong {
+  color: var(--ink);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 8px 0 12px;
+  border: none;
+  border-radius: 16px;
+  background: var(--pri-sf);
+  color: var(--pri);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.clearAll {
+  height: 32px;
+  border: none;
+  background: none;
+  color: var(--pri);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Results */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grid > li {
+  display: flex;
+}
+
+.card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--ln);
+  border-radius: var(--radius-card);
+  background: var(--sf);
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.card:hover {
+  border-color: var(--ln2);
+  box-shadow: 0 10px 28px -14px rgba(19, 26, 44, 0.3);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.code {
+  color: var(--ink3);
+  font: var(--text-code);
+  font-size: 12px;
+}
+
+.cardTitleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 50px;
+}
+
+.cardTitle {
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  color: var(--ink2);
+  font-size: 13px;
+}
+
+.cardFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--ln);
+}
+
+.earned {
+  color: var(--ink2);
+  font-size: 13px;
+}
+
+.earned strong {
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 17px;
+}
+
+/* Mobile-only controls */
+.mobileFilters,
+.mobileOnly {
+  display: none;
+}
+
+.mobileMeta {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink2);
+  font-size: 12.5px;
+}
+
+.mobileMeta strong {
+  color: var(--ink);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.filtersButton,
+.providerChip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid var(--ln2);
+  border-radius: 20px;
+  background: var(--sf);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filtersButton {
+  border-color: var(--pri);
+  background: var(--pri);
+  color: var(--pri-ink);
+}
+
+.providerChip {
+  gap: 7px;
+}
+
+.providerChipOn {
+  border-color: var(--pri);
+  background: var(--pri-sf);
+  color: var(--pri);
+}
+
+/* Filter sheet */
+.sheet {
+  width: 100%;
+  max-width: 100%;
+  max-height: 92dvh;
+  margin: auto 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 20px 20px 0 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.sheet::backdrop {
+  background: rgba(19, 26, 44, 0.5);
+}
+
+.sheetBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px 20px 24px;
+}
+
+.grabber {
+  align-self: center;
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--ln2);
+}
+
+.sheetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sheetTitle {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.sheetReset {
+  min-height: 44px;
+  border: none;
+  background: none;
+  color: var(--pri);
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sheetGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.sheetGroup .legend {
+  padding-bottom: 10px;
+}
+
+.sheetGroup .toggles {
+  gap: 8px;
+}
+
+.sheetApply {
+  height: 52px;
+  border: none;
+  border-radius: 10px;
+  background: var(--pri);
+  color: var(--pri-ink);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Loading skeleton (Catalogue › loading) */
+.skeleton {
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skeletonBlock {
+  display: block;
+  border-radius: 5px;
+  background: var(--sf2);
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1023px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .layout {
+    display: block;
+  }
+
+  .filters,
+  .sort,
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: flex;
+  }
+
+  .content {
+    gap: 12px;
+  }
+
+  .mobileFilters {
+    display: flex;
+    gap: 8px;
+    margin-right: -16px;
+    padding-right: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .search {
+    padding-left: 14px;
+  }
+
+  .summary {
+    min-height: 0;
+  }
+
+  .count {
+    font-size: 13.5px;
+  }
+
+  .chip,
+  .clearAll {
+    display: none;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .card {
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .cardTitleRow {
+    min-height: 0;
+  }
+
+  .cardTitle {
+    font-size: 19px;
+  }
+}
