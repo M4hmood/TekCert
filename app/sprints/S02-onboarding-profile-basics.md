@@ -10,26 +10,26 @@
 3. Stop and wait for approval.
 
 ## Scope
-- [ ] 4 steps: year (ING-1…5), specialty or target specialty + group, existing certifications (saved as unverified), profile photo
-- [ ] Photo upload to S3-compatible storage (MinIO locally), square crop, 5 MB limit
-- [ ] Privacy toggles: visible profile, appear on leaderboards
-- [ ] Recommended path result screen (from seeded paths)
-- [ ] Skip / resume onboarding; redirect until complete
+- [x] 4 steps: year (ING-1…5), specialty or target specialty + group, existing certifications (saved as unverified), profile photo
+- [x] Photo upload to S3-compatible storage (MinIO locally), square crop, 5 MB limit. S3Mock locally, because MinIO no longer publishes images (ADR-016)
+- [x] Privacy toggles: visible profile, appear on leaderboards. Profiles are always visible now (decision 2026-10-29), so only the leaderboard switch remains
+- [x] Recommended path result screen (from seeded paths)
+- [x] Skip / resume onboarding; redirect until complete
 
 ## Done when
-- [ ] Onboarding desktop + mobile states match the design
-- [ ] A user’s class, specialty and privacy settings are stored and used by later sprints
+- [x] Onboarding desktop + mobile states match the design
+- [x] A user’s class, specialty and privacy settings are stored and used by later sprints
 
 ## Out of scope
 - Proof upload for existing certs (Release 2)
 
 ## Plan
 
-Status: **draft, waiting for approval.** Branch `sprint/S02-onboarding-profile-basics`, one PR at the end.
+Status: **approved 2026-10-29 with the recommended answers, built.** Branch `sprint/S02-onboarding-profile-basics`, one PR at the end.
 
 ### 0. Change to S01: every profile is visible (decided 2026-10-29)
 This replaces S01 decision 1 (optional, unticked consent).
-- **Sign-up:** the checkbox becomes required. `SignUpSchema` takes `acceptVisibility: z.literal(true)`, so the API rejects a sign-up without it (422), not only the form. The form shows an inline error under the box: "You need to accept this to create an account."
+- **Sign-up:** the checkbox becomes required. `SignUpSchema` takes `acceptVisibility: z.literal(true)`, so the API rejects a sign-up without it (400 validation error), not only the form. The form shows an inline error under the box: "You need to accept this to create an account."
 - **Copy:** the design's "You can change this at any time" is no longer true. New text: "I understand that my name, class, certifications and institute email are visible to TEK-UP students."
 - **Database (in `AddOnboarding`):**
   - drop `users.profile_visible`; a column that is always true only invites bugs
@@ -38,7 +38,7 @@ This replaces S01 decision 1 (optional, unticked consent).
 - **API:** `/auth/me` loses `profileVisible`. Every signed-in student can see every other student's profile and photo; visitors still see nothing.
 - **Leaderboards stay opt-out:** "Appear on leaderboards" keeps its switch (on by default, as in the design).
 - **Later sprints:** S05 loses the "private profile" state and S07 loses the profile-visibility setting (noted in PLAN.md).
-- **Tests updated:** the types, Vitest and API e2e sign-up tests; a new one checks that a sign-up without the box returns 422.
+- **Tests updated:** the types, Vitest and API e2e sign-up tests; a new one checks that a sign-up without the box returns 400.
 
 ### 1. Flow
 - **Step 1 · Year:** ING-1 … ING-5 cards, plus the "Coming from a 3-year bachelor's? Pick ING-3" note.
@@ -76,7 +76,7 @@ This replaces S01 decision 1 (optional, unticked consent).
 |---|---|
 | `GET /onboarding` | The saved state (step, year, specialty/target, group, class code, certification ids, privacy, avatar URL, completed) plus the options: specialties with hue and path preview, and groups per year. |
 | `PUT /onboarding/enrolment` | `{ year, specialty?, targetSpecialty?, group }`. The shared zod schema enforces `specialty` for 4–5 and `targetSpecialty` (nullable) for 1–3. Resolves the class, returns the class code and the number of onboarded classmates. |
-| `PUT /onboarding/certifications` | `{ certificationIds[] }`: replaces the set of onboarding-sourced unverified certifications. Unknown ids → 422. |
+| `PUT /onboarding/certifications` | `{ slugs[] }`: replaces the set of onboarding-sourced unverified certifications. Unknown slugs → 422. |
 | `PUT /onboarding/privacy` | `{ leaderboardVisible }`. |
 | `PUT /me/avatar` | Multipart, field `photo`. Multer caps the body at 5 MB (413 above). The magic bytes must be JPEG or PNG (415 otherwise; the browser's MIME type isn't trusted). `sharp` center-crops to a square as a safety net, resizes to 512×512, re-encodes as WebP and strips EXIF/GPS. Uploads to S3, then deletes the previous object. |
 | `DELETE /me/avatar` | Removes the photo. |
@@ -119,7 +119,7 @@ This replaces S01 decision 1 (optional, unticked consent).
   - a 6 MB photo → 413, a fake `.png` that is really a PDF → 415, a real PNG → 512×512 WebP that can be fetched
   - another signed-in student can fetch the photo; a visitor gets 401
   - `/auth/me.onboardingCompleted`
-  - sign-up without the visibility box → 422
+  - sign-up without the visibility box → 400
 - **Vitest:** the year branch switches the step 2 variant and its label, Continue enables only when valid, certification search, switches, the photo pre-checks.
 - **Playwright:**
   - new user is redirected to onboarding → full desktop flow (ING-4 CIM, one certification, photo fixture, switches) → result → dashboard
@@ -151,3 +151,28 @@ This replaces S01 decision 1 (optional, unticked consent).
 7. **Leaderboard opt-out.** Profiles are now compulsory-public. Should "Appear on leaderboards" stay a switch the student can turn off **(Recommended: the request was about profiles, and the design has the switch)**, or become compulsory too?
 
 ## Notes / decisions
+
+### Decisions from review (2026-10-29)
+1. Groups are labelled "Group A…D", matching the seeded class codes.
+2. ING-4/5 students pick their group under the specialty cards.
+3. Steps 1–2 are required; steps 3–4 can be skipped. There is no global "skip onboarding".
+4. The result shows the path row holding most of the student's certifications (the first row on a tie). The count covers the whole path.
+5. Every profile is visible (section 0). "Appear on leaderboards" stays an opt-out switch, on by default.
+
+### Outcome (2026-10-30)
+Tests:
+- types: 37 (Vitest)
+- backend: 43 unit + 53 API e2e (Jest)
+- frontend: 50 (Vitest)
+- Playwright: 34 passing at 1440 and 390 px (7 skipped by design: desktop-only or mobile-only tests)
+
+Format, lint, typecheck and build all pass. I compared screenshots of every step at both widths, in light and dark, with design/Onboarding.dc.html.
+
+Where the build differs from the plan:
+- **S3Mock instead of MinIO.** MinIO no longer publishes container images: both Docker Hub and quay.io refuse the pull. S3Mock (`adobe/s3mock:4.11.0`) speaks the same S3 API, creates the bucket from an env var and runs as a CI service container. The code only uses the AWS SDK, so nothing changes for S3 on AWS (ADR-016).
+- **Validation errors are 400, not 422.** A sign-up without the visibility box and an invalid enrolment return the existing 400 validation problem, like every other schema error. 422 is kept for well-formed requests that name an unknown class or certification.
+- **Step 1 isn't saved on its own.** The year is saved with step 2 (one request for the whole class). Leaving after step 1 means picking the year again.
+- **"Skip this step" saves an empty list** of certifications, so the saved step still moves forward and a later resume starts at step 4.
+- **After sign-in or email verification**, a student who hasn't finished onboarding goes straight to `/onboarding` (instead of `/dashboard` and a redirect).
+- **Copy kept from the design** that refers to later work: "You can follow others too" (following paths is Release 2) and "until you upload proof" (proof upload is Release 2).
+- **Not built:** "N students are preparing it" on the result needs S04 progress data.

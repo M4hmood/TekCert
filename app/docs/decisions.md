@@ -132,8 +132,75 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - Staging still needs a real SMTP provider (open item).
   - Use `127.0.0.1` rather than `localhost` in `SMTP_URL`: on Windows, nodemailer spends seconds resolving `localhost`.
 
+## ADR-016 Profile photos (S02)
+- **Decision:**
+  - Photos go through the API, not presigned uploads: `PUT /me/avatar` (multipart, field `photo`). Multer caps the body at 5 MB and keeps it in memory.
+  - The API checks the magic bytes (JPEG or PNG only; the file name and the browser's type aren't trusted). `sharp` then applies the EXIF orientation, centre-crops to a square, resizes to 512×512 and re-encodes as WebP. Re-encoding drops EXIF, GPS and anything appended to the file. It also refuses images over 50 megapixels (decompression bombs).
+  - The browser crops first (`react-easy-crop`, square, zoom, keyboard-movable) and sends a JPEG of at most 1024 px. The server crop is a safety net.
+  - Storage is S3 through `@aws-sdk/client-s3` with a private bucket. The object key contains a content hash (`avatars/<user>/<hash>.webp`). The old object is deleted after a replacement.
+  - Photos are only served by `GET /users/:id/avatar`, which needs a session. Every profile is visible to signed-in students (PLAN.md decision, 2026-10-29), so any signed-in student may load any photo. URLs carry `?v=<hash>`, so `Cache-Control: private, max-age=86400` is safe.
+  - Locally and in CI the S3 server is **S3Mock** (`adobe/s3mock`), not MinIO: MinIO no longer publishes container images (Docker Hub and quay.io both refuse pulls). S3Mock is configured entirely with env vars and creates the bucket at start, so it also runs as a GitHub Actions service container.
+  - On AWS, `S3_ENDPOINT` and the keys stay unset, so the SDK uses the regional endpoint and the instance role.
+- **Consequences:**
+  - S3Mock doesn't check credentials or bucket policies. Access rules are only exercised for real on AWS (staging backlog).
+  - Uploads go through the web proxy and the API (5 MB at most), which is fine at TekCert's scale. Presigned uploads would only be worth it for much larger files (Release 2 proofs, maybe).
+
+## ADR-017 Backend module boundaries (proposed, after S02)
+- **Context:** All 13 entities sit in `database/entities/`, and every feature module registers whatever repositories it wants. Auth, onboarding and avatars each read and write `users` on their own. No module exports a service. `CLOCK` is provided twice. `avatarPath()` lives in avatars but auth and onboarding import it. S03 (catalog) and S05 (directory) will add more readers of the same tables.
+- **Decision:**
+  - **Each module owns its entities.** A module calls `TypeOrmModule.forFeature` only for entities it owns. Other modules reach that data by importing the module and injecting the service it exports, never by injecting its repository.
+  - **Ownership:**
+
+    | Module | Owns | Exports |
+    |---|---|---|
+    | `users/` (new) | `User` | `UsersService` |
+    | `school/` (new) | `Specialty`, `SchoolClass` | `SchoolService` |
+    | `certifications/` | `Provider`, `Certification`, `CertificationDomain`, `Chapter`, `UserCertification` | `CertificationsService`, `UserCertificationsService` |
+    | `paths/` (new) | `Path`, `PathNode` | `PathsService` |
+    | `auth/` | `Session`, `EmailToken`, `LoginAttempt` | nothing (global guards) |
+    | `onboarding/`, `avatars/`, `health/` | nothing | nothing |
+
+    S04 decides whether `UserCertification` moves to a progress module.
+  - **Dependency direction:** `auth`, `onboarding` and `avatars` depend on `users`, `school`, `certifications` and `paths`. Those four depend only on infrastructure: config, database, mail, storage and common. A cycle means an entity has the wrong owner. Fix the ownership instead of using `forwardRef`.
+  - **Module layout:** `*.module.ts`, `*.controller.ts` and `*.service.ts`, plus their specs, sit at the module root. Everything else goes in subfolders, and each module only has the ones it needs: `dto/`, `entities/`, `guards/`, `decorators/`, `utils/` (pure functions, specs alongside), `templates/`, `indicators/`, `interfaces/`, `adapters/`.
+  - **Infrastructure:** a global `CommonModule` provides `CLOCK` once. `common/` is split into `filters/`, `exceptions/`, `middleware/` (origin check) and `utils/` (clock). Mail and storage keep only their port in `interfaces/`, and storage keeps the S3 implementation in `adapters/`. The auth email templates move to `auth/templates/`, so `mail/` is transport only. `database/` keeps the connection, `data-source.ts`, the naming strategy, the `Timestamped` base, migrations and seed. It also keeps one `entities.ts` registry that imports every module's entities, because the TypeORM CLI needs the full list.
+  - **Transactions across modules:** the caller opens `dataSource.transaction(...)` and passes its `EntityManager` to the exported methods, which take an optional last `manager` argument. Onboarding's held-certifications step does this today. No new dependency.
+  - **Enforcement:** an ESLint `no-restricted-imports` rule bans `*/entities/*` imports from other modules. Entity files (needed for relations) and the database registry are exempt.
+- **Target tree:**
+  ```
+  src/
+    main.ts  setup.ts  app.module.ts
+    config/env.ts
+    common/    common.module.ts  filters/  exceptions/  middleware/  utils/
+    database/  database.module.ts  data-source.ts  entities.ts  timestamped.ts  snake-naming.strategy.ts  migrations/  seed/
+    mail/      mail.module.ts  interfaces/mail-sender.ts
+    storage/   storage.module.ts  interfaces/object-storage.ts  adapters/s3-storage.ts
+    health/    health.module.ts  health.controller.ts  indicators/database.indicator.ts
+    users/     users.module.ts  users.service.ts  entities/user.entity.ts  utils/avatar-path.ts
+    school/    school.module.ts  school.service.ts  entities/{specialty,school-class}.entity.ts
+    certifications/ certifications.{module,controller,service}.ts  user-certifications.service.ts
+               dto/  entities/{provider,certification,certification-domain,chapter,user-certification}.entity.ts
+    paths/     paths.module.ts  paths.service.ts  entities/{path,path-node}.entity.ts  utils/recommended-path.ts
+    auth/      auth.{module,controller,service}.ts  {access-token,password,sessions,login-attempts,email-tokens}.service.ts
+               dto/  entities/{session,email-token,login-attempt}.entity.ts  guards/{auth,roles}.guard.ts
+               decorators/auth.decorators.ts  utils/{cookies,tokens}.ts  templates/emails.ts
+    onboarding/ onboarding.{module,controller,service}.ts  dto/
+    avatars/   avatars.{module,controller,service}.ts  dto/  utils/avatar-image.ts
+  ```
+- **Plan (one PR, no behaviour change):**
+  1. Infrastructure: `CommonModule`, then the new folder layout for common, mail, storage and health.
+  2. `UsersModule`: move `User` and `avatarPath`, then switch auth, avatars and onboarding to `UsersService`.
+  3. `SchoolModule`, `PathsModule` and the certifications entities with `UserCertificationsService`. Onboarding then injects only services.
+  4. Auth internals into `dto/`, `entities/`, `guards/`, `decorators/`, `utils/` and `templates/`.
+  5. Entity registry, delete `database/entities/`, update the test imports, add the lint rule.
+  6. Check: typecheck, lint, all API unit and e2e tests, Playwright. `migration:generate` must produce an empty diff, because tables and columns don't change.
+- **Consequences:**
+  - The change is a structural refactor: the HTTP API, the schema and the migrations stay the same.
+  - Services grow small, intention-named methods (for example `UsersService.setAvatarKey`, `SchoolService.findClassByCode`). Ad-hoc queries in other modules go away.
+  - Unit tests can mock a single exported service instead of several repositories.
+  - Timing: after the S02 PR merges and before S03, which reworks the catalog, and S05, which adds a users controller.
+
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).
 - SMTP provider for transactional email in staging and production (the code is ready; see ADR-015)
-- File storage provider (S3-compatible)
 - Who administers the certification catalog before the staff console exists (seed files vs. a minimal admin page). For now the answer is the seed files in `backend/src/database/seed/data/`.
