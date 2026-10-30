@@ -18,8 +18,8 @@ import { AVATAR_MAX_BYTES } from '@tekcert/types';
 import type { Response } from 'express';
 import { ZodResponse } from 'nestjs-zod';
 import type { AccessClaims } from '../auth/access-token.service';
-import { CurrentAuth } from '../auth/decorators';
-import { AvatarDto, UserParamsDto } from './avatars.dto';
+import { CurrentAuth } from '../auth/decorators/auth.decorators';
+import { AvatarDto, UserParamsDto } from './dto/avatars.dto';
 import { AvatarsService } from './avatars.service';
 
 @ApiTags('avatars')

@@ -46,7 +46,7 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
 - **Context:** S00 was first built with Prisma 7. On review, the team chose TypeORM instead, before the PR was merged.
 - **Decision:**
   - TypeORM 1.1 with `@nestjs/typeorm` and the `pg` driver.
-  - Entities are decorated classes in `backend/src/database/entities`. Every column has an explicit type, so the CLI also works under `tsx`, which emits no decorator metadata.
+  - Entities are decorated classes in each module's `entities/` folder, registered in `backend/src/database/entities.ts` (ADR-017). Every column has an explicit type, so the CLI also works under `tsx`, which emits no decorator metadata.
   - A snake_case naming strategy maps `providerId` to `provider_id`.
   - Enums are native Postgres enums. UUIDs come from `gen_random_uuid()`.
   - One `dataSourceOptions()` function feeds both the Nest app and the TypeORM CLI (`src/database/data-source.ts`).
@@ -145,7 +145,7 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - S3Mock doesn't check credentials or bucket policies. Access rules are only exercised for real on AWS (staging backlog).
   - Uploads go through the web proxy and the API (5 MB at most), which is fine at TekCert's scale. Presigned uploads would only be worth it for much larger files (Release 2 proofs, maybe).
 
-## ADR-017 Backend module boundaries (proposed, after S02)
+## ADR-017 Backend module boundaries (between S02 and S03)
 - **Context:** All 13 entities sit in `database/entities/`, and every feature module registers whatever repositories it wants. Auth, onboarding and avatars each read and write `users` on their own. No module exports a service. `CLOCK` is provided twice. `avatarPath()` lives in avatars but auth and onboarding import it. S03 (catalog) and S05 (directory) will add more readers of the same tables.
 - **Decision:**
   - **Each module owns its entities.** A module calls `TypeOrmModule.forFeature` only for entities it owns. Other modules reach that data by importing the module and injecting the service it exports, never by injecting its repository.
@@ -165,8 +165,8 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - **Module layout:** `*.module.ts`, `*.controller.ts` and `*.service.ts`, plus their specs, sit at the module root. Everything else goes in subfolders, and each module only has the ones it needs: `dto/`, `entities/`, `guards/`, `decorators/`, `utils/` (pure functions, specs alongside), `templates/`, `indicators/`, `interfaces/`, `adapters/`.
   - **Infrastructure:** a global `CommonModule` provides `CLOCK` once. `common/` is split into `filters/`, `exceptions/`, `middleware/` (origin check) and `utils/` (clock). Mail and storage keep only their port in `interfaces/`, and storage keeps the S3 implementation in `adapters/`. The auth email templates move to `auth/templates/`, so `mail/` is transport only. `database/` keeps the connection, `data-source.ts`, the naming strategy, the `Timestamped` base, migrations and seed. It also keeps one `entities.ts` registry that imports every module's entities, because the TypeORM CLI needs the full list.
   - **Transactions across modules:** the caller opens `dataSource.transaction(...)` and passes its `EntityManager` to the exported methods, which take an optional last `manager` argument. Onboarding's held-certifications step does this today. No new dependency.
-  - **Enforcement:** an ESLint `no-restricted-imports` rule bans `*/entities/*` imports from other modules. Entity files (needed for relations) and the database registry are exempt.
-- **Target tree:**
+  - **Enforcement:** an ESLint rule (`@typescript-eslint/no-restricted-imports` in `backend/eslint.config.mjs`) rejects value imports of another module's `entities/`. Type-only imports are allowed, so a service can name what another module returns. Entity files (needed for relations) and `database/` are exempt.
+- **Tree:**
   ```
   src/
     main.ts  setup.ts  app.module.ts
@@ -180,25 +180,19 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
     school/    school.module.ts  school.service.ts  entities/{specialty,school-class}.entity.ts
     certifications/ certifications.{module,controller,service}.ts  user-certifications.service.ts
                dto/  entities/{provider,certification,certification-domain,chapter,user-certification}.entity.ts
-    paths/     paths.module.ts  paths.service.ts  entities/{path,path-node}.entity.ts  utils/recommended-path.ts
+    paths/     paths.module.ts  paths.service.ts  entities/{path,path-node}.entity.ts
     auth/      auth.{module,controller,service}.ts  {access-token,password,sessions,login-attempts,email-tokens}.service.ts
                dto/  entities/{session,email-token,login-attempt}.entity.ts  guards/{auth,roles}.guard.ts
                decorators/auth.decorators.ts  utils/{cookies,tokens}.ts  templates/emails.ts
-    onboarding/ onboarding.{module,controller,service}.ts  dto/
+    onboarding/ onboarding.{module,controller,service}.ts  dto/  utils/recommended-path.ts
     avatars/   avatars.{module,controller,service}.ts  dto/  utils/avatar-image.ts
   ```
-- **Plan (one PR, no behaviour change):**
-  1. Infrastructure: `CommonModule`, then the new folder layout for common, mail, storage and health.
-  2. `UsersModule`: move `User` and `avatarPath`, then switch auth, avatars and onboarding to `UsersService`.
-  3. `SchoolModule`, `PathsModule` and the certifications entities with `UserCertificationsService`. Onboarding then injects only services.
-  4. Auth internals into `dto/`, `entities/`, `guards/`, `decorators/`, `utils/` and `templates/`.
-  5. Entity registry, delete `database/entities/`, update the test imports, add the lint rule.
-  6. Check: typecheck, lint, all API unit and e2e tests, Playwright. `migration:generate` must produce an empty diff, because tables and columns don't change.
+  `recommended-path.ts` (track selection, peer initials) stays in onboarding: it builds onboarding's result screen, and `paths/` only serves the path data.
 - **Consequences:**
-  - The change is a structural refactor: the HTTP API, the schema and the migrations stay the same.
+  - The change is a structural refactor: the HTTP API, the schema and the migrations stay the same. `migration:generate --check` finds no changes.
   - Services grow small, intention-named methods (for example `UsersService.setAvatarKey`, `SchoolService.findClassByCode`). Ad-hoc queries in other modules go away.
   - Unit tests can mock a single exported service instead of several repositories.
-  - Timing: after the S02 PR merges and before S03, which reworks the catalog, and S05, which adds a users controller.
+  - New features follow the same pattern: S03 extends `certifications/`, and S05 adds a `users.controller.ts`.
 
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).

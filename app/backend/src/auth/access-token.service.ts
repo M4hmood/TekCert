@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { type Role, RoleSchema } from '@tekcert/types';
 import jwt from 'jsonwebtoken';
-import { CLOCK, type Clock } from '../common/clock';
+import { CLOCK, type Clock } from '../common/utils/clock';
 import type { Env } from '../config/env';
-import { MINUTE } from './tokens';
+import { MINUTE } from './utils/tokens';
 
 export const ACCESS_TOKEN_TTL_MS = 15 * MINUTE;
 const ISSUER = 'tekcert-api';

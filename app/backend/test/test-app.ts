@@ -4,8 +4,8 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import type { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
-import { CLOCK, type Clock } from '../src/common/clock';
-import { InMemoryMailSender, MAIL_SENDER } from '../src/mail/mail.sender';
+import { CLOCK, type Clock } from '../src/common/utils/clock';
+import { InMemoryMailSender, MAIL_SENDER } from '../src/mail/interfaces/mail-sender';
 import { configureApp } from '../src/setup';
 
 /** A clock the tests can move forward to cross expiry and lockout windows. */

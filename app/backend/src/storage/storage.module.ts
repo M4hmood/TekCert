@@ -2,8 +2,8 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Env } from '../config/env';
-import { OBJECT_STORAGE, type ObjectStorage } from './object-storage';
-import { s3ClientConfig, S3Storage } from './s3-storage';
+import { OBJECT_STORAGE, type ObjectStorage } from './interfaces/object-storage';
+import { s3ClientConfig, S3Storage } from './adapters/s3-storage';
 
 @Global()
 @Module({

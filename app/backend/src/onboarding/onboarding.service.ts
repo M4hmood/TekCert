@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import {
   AUTH_PROBLEM,
   classCodeFor,
@@ -16,39 +16,31 @@ import {
   type SpecialtyOption,
   YearSchema,
 } from '@tekcert/types';
-import { type DataSource, In, type Repository } from 'typeorm';
-import { avatarPath } from '../avatars/avatar-image';
-import { CLOCK, type Clock } from '../common/clock';
-import { ProblemException } from '../common/problem.exception';
-import {
-  Certification,
-  Path,
-  type PathNode,
-  SchoolClass,
-  Specialty,
-  User,
-  UserCertification,
-} from '../database/entities';
-import { initialsOf, type PathNodeInput, selectTrack } from './recommended-path';
+import type { DataSource } from 'typeorm';
+import { CertificationsService } from '../certifications/certifications.service';
+import { UserCertificationsService } from '../certifications/user-certifications.service';
+import { ProblemException } from '../common/exceptions/problem.exception';
+import { CLOCK, type Clock } from '../common/utils/clock';
+import type { PathNode } from '../paths/entities/path-node.entity';
+import { PathsService } from '../paths/paths.service';
+import { SchoolService } from '../school/school.service';
+import { avatarPath } from '../users/utils/avatar-path';
+import { type UserWithEnrolment, UsersService } from '../users/users.service';
+import { initialsOf, type PathNodeInput, selectTrack } from './utils/recommended-path';
 
-/** The shared path for ING-1…3 students who haven't chosen a specialty yet. */
-const FUNDAMENTALS_PATH = 'FOND';
+/** How many peers' initials the result screen shows. */
+const PEER_PREVIEW = 3;
 
-/** Moves the saved step forward, never back (Back in the wizard doesn't undo progress). */
-const advanceTo = (step: number) => () => `GREATEST("onboarding_step", ${step})`;
-
-type LoadedUser = User & { class: (SchoolClass & { specialty: Specialty | null }) | null };
+type EnrolledUser = UserWithEnrolment & { class: NonNullable<UserWithEnrolment['class']> };
 
 @Injectable()
 export class OnboardingService {
   constructor(
-    @InjectRepository(User) private readonly users: Repository<User>,
-    @InjectRepository(SchoolClass) private readonly classes: Repository<SchoolClass>,
-    @InjectRepository(Specialty) private readonly specialties: Repository<Specialty>,
-    @InjectRepository(Certification) private readonly certifications: Repository<Certification>,
-    @InjectRepository(UserCertification)
-    private readonly userCertifications: Repository<UserCertification>,
-    @InjectRepository(Path) private readonly paths: Repository<Path>,
+    private readonly users: UsersService,
+    private readonly school: SchoolService,
+    private readonly certifications: CertificationsService,
+    private readonly userCertifications: UserCertificationsService,
+    private readonly paths: PathsService,
     @InjectDataSource() private readonly dataSource: DataSource,
     @Inject(CLOCK) private readonly clock: Clock,
   ) {}
@@ -57,7 +49,7 @@ export class OnboardingService {
     const user = await this.loadUser(userId);
     const [enrolment, held, specialties] = await Promise.all([
       this.savedEnrolment(user),
-      this.heldCertifications(userId),
+      this.userCertifications.heldBy(userId),
       this.specialtyOptions(),
     ]);
     return {
@@ -76,7 +68,7 @@ export class OnboardingService {
   /** Step 2: places the student in a seeded class (and, in ING-1…3, records the target). */
   async saveEnrolment(userId: string, input: EnrolmentInput): Promise<OnboardingState> {
     const code = classCodeFor(input);
-    const schoolClass = await this.classes.findOneBy({ code });
+    const schoolClass = await this.school.findClassByCode(code);
     if (!schoolClass) {
       throw new ProblemException({
         type: ONBOARDING_PROBLEM.unknownClass,
@@ -87,16 +79,12 @@ export class OnboardingService {
     }
     const target =
       'targetSpecialty' in input && input.targetSpecialty
-        ? await this.specialties.findOneByOrFail({ code: input.targetSpecialty })
+        ? await this.school.getSpecialtyByCode(input.targetSpecialty)
         : null;
-    await this.users.update(
-      { id: userId },
-      {
-        classId: schoolClass.id,
-        targetSpecialtyId: target?.id ?? null,
-        onboardingStep: advanceTo(ONBOARDING_STEP.certifications),
-      },
-    );
+    await this.users.advanceOnboarding(userId, ONBOARDING_STEP.certifications, {
+      classId: schoolClass.id,
+      targetSpecialtyId: target?.id ?? null,
+    });
     return this.state(userId);
   }
 
@@ -106,12 +94,7 @@ export class OnboardingService {
    */
   async saveCertifications(userId: string, slugs: string[]): Promise<OnboardingState> {
     await this.requireEnrolment(userId);
-    const found = slugs.length
-      ? await this.certifications.find({
-          where: { slug: In(slugs), isActive: true },
-          select: { id: true, slug: true },
-        })
-      : [];
+    const found = await this.certifications.findActiveBySlugs(slugs);
     if (found.length !== slugs.length) {
       const known = new Set(found.map((cert) => cert.slug));
       throw new ProblemException({
@@ -123,33 +106,12 @@ export class OnboardingService {
     }
 
     await this.dataSource.transaction(async (manager) => {
-      await manager.delete(UserCertification, {
+      await this.userCertifications.replaceOnboardingDeclarations(
         userId,
-        source: 'onboarding',
-        status: 'unverified',
-      });
-      if (found.length) {
-        await manager
-          .createQueryBuilder()
-          .insert()
-          .into(UserCertification)
-          .values(
-            found.map((cert) => ({
-              userId,
-              certificationId: cert.id,
-              source: 'onboarding' as const,
-              status: 'unverified' as const,
-            })),
-          )
-          // A certification already recorded another way keeps that record.
-          .orIgnore()
-          .execute();
-      }
-      await manager.update(
-        User,
-        { id: userId },
-        { onboardingStep: advanceTo(ONBOARDING_STEP.photo) },
+        found.map((cert) => cert.id),
+        manager,
       );
+      await this.users.advanceOnboarding(userId, ONBOARDING_STEP.photo, {}, manager);
     });
     return this.state(userId);
   }
@@ -157,13 +119,9 @@ export class OnboardingService {
   /** Step 4. Profiles are always visible; only the leaderboards are opt-out. */
   async savePrivacy(userId: string, input: PrivacyInput): Promise<OnboardingState> {
     await this.requireEnrolment(userId);
-    await this.users.update(
-      { id: userId },
-      {
-        leaderboardVisible: input.leaderboardVisible,
-        onboardingStep: advanceTo(ONBOARDING_STEP.result),
-      },
-    );
+    await this.users.advanceOnboarding(userId, ONBOARDING_STEP.result, {
+      leaderboardVisible: input.leaderboardVisible,
+    });
     return this.state(userId);
   }
 
@@ -171,10 +129,7 @@ export class OnboardingService {
   async complete(userId: string): Promise<OnboardingState> {
     const user = await this.requireEnrolment(userId);
     if (!user.onboardingCompletedAt) {
-      await this.users.update(
-        { id: userId },
-        { onboardingCompletedAt: this.clock.now(), onboardingStep: ONBOARDING_STEP.result },
-      );
+      await this.users.completeOnboarding(userId, this.clock.now(), ONBOARDING_STEP.result);
     }
     return this.state(userId);
   }
@@ -188,14 +143,11 @@ export class OnboardingService {
     const specialtyId = user.class.specialtyId ?? user.targetSpecialtyId;
     const reason = user.class.specialtyId ? 'specialty' : specialtyId ? 'target' : 'undecided';
 
-    const path = await this.paths.findOne({
-      where: specialtyId ? { specialtyId } : { code: FUNDAMENTALS_PATH },
-      relations: { specialty: true, nodes: { certification: true, prerequisite: true } },
-    });
+    const path = await this.paths.findForSpecialty(specialtyId);
     if (!path) throw new NotFoundException('No path is seeded for this specialty');
 
     const [held, peers] = await Promise.all([
-      this.heldCertifications(userId),
+      this.userCertifications.heldBy(userId),
       this.peers(userId, specialtyId),
     ]);
     return {
@@ -207,11 +159,8 @@ export class OnboardingService {
     };
   }
 
-  private async loadUser(userId: string): Promise<LoadedUser> {
-    const user = await this.users.findOne({
-      where: { id: userId },
-      relations: { class: { specialty: true }, targetSpecialty: true },
-    });
+  private async loadUser(userId: string): Promise<UserWithEnrolment> {
+    const user = await this.users.findWithEnrolment(userId);
     if (!user) {
       throw new ProblemException({
         type: AUTH_PROBLEM.unauthenticated,
@@ -219,13 +168,11 @@ export class OnboardingService {
         status: HttpStatus.UNAUTHORIZED,
       });
     }
-    return user as LoadedUser;
+    return user;
   }
 
   /** Steps 3–5 need the class: later sprints rank and group students by it. */
-  private async requireEnrolment(
-    userId: string,
-  ): Promise<LoadedUser & { class: NonNullable<LoadedUser['class']> }> {
+  private async requireEnrolment(userId: string): Promise<EnrolledUser> {
     const user = await this.loadUser(userId);
     if (!user.class) {
       throw new ProblemException({
@@ -235,10 +182,10 @@ export class OnboardingService {
         detail: 'Onboarding step 2 (year, specialty and group) is not saved yet.',
       });
     }
-    return user as LoadedUser & { class: NonNullable<LoadedUser['class']> };
+    return user as EnrolledUser;
   }
 
-  private async savedEnrolment(user: LoadedUser): Promise<SavedEnrolment | null> {
+  private async savedEnrolment(user: UserWithEnrolment): Promise<SavedEnrolment | null> {
     if (!user.class) return null;
     return {
       year: YearSchema.parse(user.class.year),
@@ -248,24 +195,15 @@ export class OnboardingService {
         ? SpecialtyCodeSchema.parse(user.targetSpecialty.code)
         : null,
       classCode: user.class.code,
-      classmates: await this.users.countBy({ classId: user.class.id }),
+      classmates: await this.users.countInClass(user.class.id),
     };
-  }
-
-  private async heldCertifications(userId: string): Promise<{ code: string; slug: string }[]> {
-    const rows = await this.userCertifications.find({
-      where: { userId },
-      relations: { certification: true },
-      order: { createdAt: 'ASC' },
-    });
-    return rows.map((row) => ({ code: row.certification.code, slug: row.certification.slug }));
   }
 
   /** The six specialties in design order, each with the first track of its path as a preview. */
   private async specialtyOptions(): Promise<SpecialtyOption[]> {
     const [specialties, paths] = await Promise.all([
-      this.specialties.find(),
-      this.paths.find({ relations: { nodes: { certification: true } } }),
+      this.school.listSpecialties(),
+      this.paths.listWithNodes(),
     ]);
     const options = specialties.map((specialty) => {
       const path = paths.find((p) => p.specialtyId === specialty.id);
@@ -290,25 +228,8 @@ export class OnboardingService {
     userId: string,
     specialtyId: string | null,
   ): Promise<RecommendedPath['peers']> {
-    const qb = this.users
-      .createQueryBuilder('u')
-      .innerJoin('u.class', 'c')
-      .select(['u.id', 'u.firstName', 'u.lastName', 'u.onboardingCompletedAt'])
-      .where('u.onboardingCompletedAt IS NOT NULL')
-      .andWhere('u.id <> :userId', { userId });
-    if (specialtyId) {
-      qb.andWhere(
-        '(c.specialtyId = :specialtyId OR (c.specialtyId IS NULL AND u.targetSpecialtyId = :specialtyId))',
-        { specialtyId },
-      );
-    } else {
-      qb.andWhere('c.specialtyId IS NULL AND u.targetSpecialtyId IS NULL');
-    }
-    const [recent, count] = await qb
-      .orderBy('u.onboardingCompletedAt', 'DESC')
-      .take(3)
-      .getManyAndCount();
-    return { count, initials: recent.map((peer) => initialsOf(peer.firstName, peer.lastName)) };
+    const { users, count } = await this.users.findOnboardedPeers(userId, specialtyId, PEER_PREVIEW);
+    return { count, initials: users.map((peer) => initialsOf(peer.firstName, peer.lastName)) };
   }
 }
 

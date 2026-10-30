@@ -1,29 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { CLOCK, systemClock } from '../common/clock';
-import {
-  Certification,
-  Path,
-  SchoolClass,
-  Specialty,
-  User,
-  UserCertification,
-} from '../database/entities';
+import { CertificationsModule } from '../certifications/certifications.module';
+import { PathsModule } from '../paths/paths.module';
+import { SchoolModule } from '../school/school.module';
+import { UsersModule } from '../users/users.module';
 import { OnboardingController } from './onboarding.controller';
 import { OnboardingService } from './onboarding.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      User,
-      SchoolClass,
-      Specialty,
-      Certification,
-      UserCertification,
-      Path,
-    ]),
-  ],
+  imports: [UsersModule, SchoolModule, CertificationsModule, PathsModule],
   controllers: [OnboardingController],
-  providers: [{ provide: CLOCK, useValue: systemClock }, OnboardingService],
+  providers: [OnboardingService],
 })
 export class OnboardingModule {}

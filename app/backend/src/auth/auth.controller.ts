@@ -16,7 +16,7 @@ import { type Accepted, AUTH_PROBLEM } from '@tekcert/types';
 import type { Request, Response } from 'express';
 import { ZodResponse } from 'nestjs-zod';
 import type { AccessClaims } from './access-token.service';
-import { ProblemException } from '../common/problem.exception';
+import { ProblemException } from '../common/exceptions/problem.exception';
 import type { Env } from '../config/env';
 import {
   AcceptedDto,
@@ -26,10 +26,10 @@ import {
   SignInDto,
   SignUpDto,
   VerifyEmailDto,
-} from './auth.dto';
+} from './dto/auth.dto';
 import { AuthService } from './auth.service';
-import { clearSessionCookies, REFRESH_COOKIE, setSessionCookies } from './cookies';
-import { CurrentAuth, Public } from './decorators';
+import { clearSessionCookies, REFRESH_COOKIE, setSessionCookies } from './utils/cookies';
+import { CurrentAuth, Public } from './decorators/auth.decorators';
 import { type DeviceInfo, SessionsService } from './sessions.service';
 
 const ACCEPTED: Accepted = { status: 'accepted' };

@@ -7,8 +7,8 @@ import type {
   CertificationSummary,
   SpecialtyCode,
 } from '@tekcert/types';
-import { Brackets, type Repository } from 'typeorm';
-import { Certification } from '../database/entities';
+import { Brackets, In, type Repository } from 'typeorm';
+import { Certification } from './entities/certification.entity';
 
 @Injectable()
 export class CertificationsService {
@@ -50,6 +50,15 @@ export class CertificationsService {
 
     const rows = await qb.getMany();
     return { items: rows.map(toSummary), total: rows.length };
+  }
+
+  /** Active certifications among `slugs`; unknown or retired slugs are left out. */
+  findActiveBySlugs(slugs: string[]): Promise<Pick<Certification, 'id' | 'slug'>[]> {
+    if (!slugs.length) return Promise.resolve([]);
+    return this.certifications.find({
+      where: { slug: In(slugs), isActive: true },
+      select: { id: true, slug: true },
+    });
   }
 
   async findBySlug(slug: string): Promise<CertificationDetail> {

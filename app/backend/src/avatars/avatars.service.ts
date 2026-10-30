@@ -1,11 +1,14 @@
 import { HttpStatus, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { type Avatar, ONBOARDING_PROBLEM } from '@tekcert/types';
-import type { Repository } from 'typeorm';
-import { ProblemException } from '../common/problem.exception';
-import { User } from '../database/entities';
-import { OBJECT_STORAGE, type ObjectStorage, type StoredObject } from '../storage/object-storage';
-import { avatarKey, avatarPath, processAvatar, sniffImageType } from './avatar-image';
+import { ProblemException } from '../common/exceptions/problem.exception';
+import {
+  OBJECT_STORAGE,
+  type ObjectStorage,
+  type StoredObject,
+} from '../storage/interfaces/object-storage';
+import { avatarPath } from '../users/utils/avatar-path';
+import { UsersService } from '../users/users.service';
+import { avatarKey, processAvatar, sniffImageType } from './utils/avatar-image';
 
 const invalidImage = (detail: string) =>
   new ProblemException({
@@ -20,7 +23,7 @@ export class AvatarsService {
   private readonly logger = new Logger(AvatarsService.name);
 
   constructor(
-    @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly users: UsersService,
     @Inject(OBJECT_STORAGE) private readonly storage: ObjectStorage,
   ) {}
 
@@ -34,17 +37,17 @@ export class AvatarsService {
     }
 
     const key = avatarKey(userId, processed.hash);
-    const previous = await this.currentKey(userId);
+    const previous = await this.users.avatarKeyOf(userId);
     await this.storage.put(key, processed.body, 'image/webp');
-    await this.users.update({ id: userId }, { avatarKey: key });
+    await this.users.setAvatarKey(userId, key);
     if (previous && previous !== key) await this.deleteQuietly(previous);
     return { avatarPath: avatarPath(userId, key) };
   }
 
   async remove(userId: string): Promise<void> {
-    const previous = await this.currentKey(userId);
+    const previous = await this.users.avatarKeyOf(userId);
     if (!previous) return;
-    await this.users.update({ id: userId }, { avatarKey: null });
+    await this.users.setAvatarKey(userId, null);
     await this.deleteQuietly(previous);
   }
 
@@ -53,18 +56,10 @@ export class AvatarsService {
    * may load any photo. The route itself is not public.
    */
   async read(userId: string): Promise<StoredObject> {
-    const key = await this.currentKey(userId);
+    const key = await this.users.avatarKeyOf(userId);
     const object = key ? await this.storage.get(key) : null;
     if (!object) throw new NotFoundException('No profile photo');
     return object;
-  }
-
-  private async currentKey(userId: string): Promise<string | null> {
-    const user = await this.users.findOne({
-      where: { id: userId },
-      select: { id: true, avatarKey: true },
-    });
-    return user?.avatarKey ?? null;
   }
 
   /** An orphaned object only wastes space; it must not fail the student's request. */

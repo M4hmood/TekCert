@@ -6,7 +6,7 @@ import type { Express } from 'express';
 import helmet from 'helmet';
 import { Logger } from 'nestjs-pino';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
-import { originCheck } from './common/origin-check';
+import { originCheck } from './common/middleware/origin-check';
 import type { Env } from './config/env';
 
 /** HTTP-level setup shared by main.ts and the e2e tests, so tests run the real stack. */

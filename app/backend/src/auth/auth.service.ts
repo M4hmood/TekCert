@@ -1,6 +1,5 @@
 import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
 import {
   AUTH_PROBLEM,
   type CurrentUser,
@@ -9,19 +8,19 @@ import {
   type SignInInput,
   type SignUpInput,
 } from '@tekcert/types';
-import type { Repository } from 'typeorm';
-import { avatarPath } from '../avatars/avatar-image';
-import { CLOCK, type Clock } from '../common/clock';
-import { ProblemException } from '../common/problem.exception';
+import { CLOCK, type Clock } from '../common/utils/clock';
+import { ProblemException } from '../common/exceptions/problem.exception';
 import type { Env } from '../config/env';
-import { User } from '../database/entities';
-import { MAIL_SENDER, type MailSender } from '../mail/mail.sender';
-import { accountExistsMail, resetPasswordMail, verifyEmailMail } from '../mail/templates';
-import type { IssuedSession } from './cookies';
+import { MAIL_SENDER, type MailSender } from '../mail/interfaces/mail-sender';
+import type { User } from '../users/entities/user.entity';
+import { avatarPath } from '../users/utils/avatar-path';
+import { UsersService } from '../users/users.service';
 import { EmailTokensService } from './email-tokens.service';
 import { LoginAttemptsService } from './login-attempts.service';
 import { PasswordService } from './password.service';
 import { type DeviceInfo, SessionsService } from './sessions.service';
+import { accountExistsMail, resetPasswordMail, verifyEmailMail } from './templates/emails';
+import type { IssuedSession } from './utils/cookies';
 
 type SignIn = Required<SignInInput>;
 
@@ -39,7 +38,7 @@ export class AuthService {
   private readonly webUrl: string;
 
   constructor(
-    @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly users: UsersService,
     private readonly passwords: PasswordService,
     private readonly sessions: SessionsService,
     private readonly attempts: LoginAttemptsService,
@@ -58,27 +57,25 @@ export class AuthService {
   async signUp(input: SignUpInput): Promise<void> {
     // Hash first on every path so response times don't reveal existing accounts either.
     const passwordHash = await this.passwords.hash(input.password);
-    const existing = await this.users.findOneBy({ email: input.email });
+    const existing = await this.users.findByEmail(input.email);
     if (existing) {
       if (existing.emailVerifiedAt) await this.sendAccountExists(existing);
       else await this.sendVerification(existing);
       return;
     }
-    const user = await this.users.save(
-      this.users.create({
-        email: input.email,
-        firstName: input.firstName,
-        lastName: input.lastName,
-        passwordHash,
-        // The schema only accepts sign-ups that accept profile visibility.
-        visibilityConsentedAt: this.clock.now(),
-      }),
-    );
+    const user = await this.users.create({
+      email: input.email,
+      firstName: input.firstName,
+      lastName: input.lastName,
+      passwordHash,
+      // The schema only accepts sign-ups that accept profile visibility.
+      visibilityConsentedAt: this.clock.now(),
+    });
     await this.sendVerification(user);
   }
 
   async resendVerification(email: string): Promise<void> {
-    const user = await this.users.findOneBy({ email });
+    const user = await this.users.findByEmail(email);
     if (user && !user.emailVerifiedAt) await this.sendVerification(user);
   }
 
@@ -86,11 +83,10 @@ export class AuthService {
   async verifyEmail(token: string, device: DeviceInfo): Promise<SessionResult> {
     const userId = await this.emailTokens.consume(token, 'verify_email');
     if (!userId) throw invalidLink();
-    await this.users.update({ id: userId }, { emailVerifiedAt: this.clock.now() });
-    const user = await this.users.findOneOrFail({
-      where: { id: userId },
-      relations: { class: true },
-    });
+    await this.users.markEmailVerified(userId, this.clock.now());
+    const user = await this.users.findWithClass(userId);
+    // The token row cascades with the account, so this only happens if it was just deleted.
+    if (!user) throw invalidLink();
     return { user: toCurrentUser(user), session: await this.sessions.create(user, false, device) };
   }
 
@@ -98,12 +94,7 @@ export class AuthService {
     const status = await this.attempts.status(input.email);
     if (status.locked) throw lockedProblem(status.retryAfterSeconds);
 
-    const user = await this.users
-      .createQueryBuilder('user')
-      .addSelect('user.passwordHash')
-      .leftJoinAndSelect('user.class', 'class')
-      .where('user.email = :email', { email: input.email })
-      .getOne();
+    const user = await this.users.findForSignIn(input.email);
     const valid = await this.passwords.verify(user?.passwordHash, input.password);
 
     if (!user || !valid) {
@@ -134,7 +125,7 @@ export class AuthService {
 
   /** Always succeeds from the caller's point of view; sends a link only to existing accounts. */
   async forgotPassword(email: string): Promise<void> {
-    const user = await this.users.findOneBy({ email });
+    const user = await this.users.findByEmail(email);
     if (!user) return;
     const token = await this.emailTokens.issue(user.id, 'reset_password');
     if (!token) return;
@@ -150,21 +141,20 @@ export class AuthService {
   async resetPassword({ token, password }: ResetPasswordInput): Promise<void> {
     const userId = await this.emailTokens.consume(token, 'reset_password');
     if (!userId) throw invalidLink();
-    const user = await this.users.findOneByOrFail({ id: userId });
-    await this.users.update(
-      { id: userId },
-      {
-        passwordHash: await this.passwords.hash(password),
-        // The reset link proves the student owns the mailbox.
-        emailVerifiedAt: user.emailVerifiedAt ?? this.clock.now(),
-      },
+    const user = await this.users.findById(userId);
+    if (!user) throw invalidLink();
+    await this.users.setPassword(
+      userId,
+      await this.passwords.hash(password),
+      // The reset link proves the student owns the mailbox.
+      user.emailVerifiedAt ?? this.clock.now(),
     );
     await this.sessions.revokeAllForUser(userId);
     await this.attempts.reset(user.email);
   }
 
   async me(userId: string): Promise<CurrentUser> {
-    const user = await this.users.findOne({ where: { id: userId }, relations: { class: true } });
+    const user = await this.users.findWithClass(userId);
     if (!user) {
       throw new ProblemException({
         type: AUTH_PROBLEM.unauthenticated,
