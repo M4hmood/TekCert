@@ -12,6 +12,8 @@ export default async function ShellLayout({ children }: { children: ReactNode })
   // proxy.ts already redirects visitors without a session; this catches revoked or forged tokens.
   const user = await getCurrentUser();
   if (!user) redirect('/sign-in');
+  // Every app screen needs the class and path chosen in onboarding.
+  if (!user.onboardingCompleted) redirect('/onboarding');
   const collapsed = parseSidebarCollapsed((await cookies()).get(SIDEBAR_COOKIE)?.value);
   return (
     <div className={styles.shell}>

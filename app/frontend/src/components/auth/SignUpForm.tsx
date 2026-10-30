@@ -13,13 +13,13 @@ import styles from './auth.module.css';
 import { CheckInbox } from './CheckInbox';
 import { PasswordChecklist } from './PasswordChecklist';
 
-type FieldName = 'firstName' | 'lastName' | 'email' | 'password';
+type FieldName = 'firstName' | 'lastName' | 'email' | 'password' | 'acceptVisibility';
 type Errors = Partial<Record<FieldName, string>>;
 
 export function SignUpForm() {
   const checklistId = useId();
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' });
-  const [profileVisible, setProfileVisible] = useState(false);
+  const [acceptVisibility, setAcceptVisibility] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [problem, setProblem] = useState<ProblemDetails | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -37,14 +37,14 @@ export function SignUpForm() {
     );
   }
 
-  const update = (name: FieldName, value: string) => {
+  const update = (name: Exclude<FieldName, 'acceptVisibility'>, value: string) => {
     setForm((f) => ({ ...f, [name]: value }));
     setErrors((e) => ({ ...e, [name]: undefined }));
   };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const parsed = SignUpSchema.safeParse({ ...form, profileVisible });
+    const parsed = SignUpSchema.safeParse({ ...form, acceptVisibility });
     if (!parsed.success) {
       setErrors(firstErrorPerField(parsed.error.issues));
       return;
@@ -121,13 +121,19 @@ export function SignUpForm() {
       >
         <PasswordChecklist id={checklistId} password={form.password} />
       </PasswordField>
+      {/* Required: every profile is visible to signed-in students (PLAN.md, 2026-10-29). */}
       <Checkbox
         className={styles.consent}
-        checked={profileVisible}
-        onChange={(e) => setProfileVisible(e.target.checked)}
+        checked={acceptVisibility}
+        error={errors.acceptVisibility}
+        onChange={(e) => {
+          setAcceptVisibility(e.target.checked);
+          setErrors((current) => ({ ...current, acceptVisibility: undefined }));
+        }}
+        required
       >
-        I agree that my name, class and certifications are visible to TEK-UP students. You can
-        change this at any time.
+        I understand that my name, class, certifications and institute email are visible to TEK-UP
+        students.
       </Checkbox>
       <Button type="submit" className={styles.submit} disabled={submitting}>
         {submitting ? 'Creating your account…' : 'Create my account'}

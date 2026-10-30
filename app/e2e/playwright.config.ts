@@ -3,8 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * Smoke tests against production builds: the API from backend/dist and the frontend from its
  * standalone bundle, each started as its own process, as they will run on separate EC2 instances.
- * Run `pnpm build` first. Requires Postgres and Mailpit (pnpm db:up); tests use the tekcert_test
- * database and read emails from Mailpit's API.
+ * Run `pnpm build` first. Requires Postgres, Mailpit and S3Mock (pnpm db:up); tests use the
+ * tekcert_test database and read emails from Mailpit's API.
  */
 
 const API_PORT = 4010;
@@ -57,6 +57,12 @@ export default defineConfig({
         SMTP_URL: process.env.SMTP_URL ?? 'smtp://127.0.0.1:1025',
         // Every test signs up from the same IP.
         AUTH_RATE_LIMIT: '1000',
+        // S3Mock from docker compose (a service container in CI) stores the profile photos.
+        S3_ENDPOINT: process.env.S3_ENDPOINT ?? 'http://127.0.0.1:9090',
+        S3_FORCE_PATH_STYLE: 'true',
+        S3_BUCKET: 'tekcert-avatars',
+        S3_ACCESS_KEY_ID: 'e2e',
+        S3_SECRET_ACCESS_KEY: 'e2e',
       },
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,

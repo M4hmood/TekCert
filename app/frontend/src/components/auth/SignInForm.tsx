@@ -46,7 +46,8 @@ export function SignInForm({ next }: { next?: string }) {
       CurrentUserSchema,
     );
     if (result.ok) {
-      router.replace(safeNextPath(next));
+      // Students who haven't finished onboarding finish it first (the shell would redirect anyway).
+      router.replace(result.data.onboardingCompleted ? safeNextPath(next) : '/onboarding');
       router.refresh();
       return;
     }

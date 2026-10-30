@@ -5,7 +5,13 @@ import { BottomNav } from './BottomNav';
 import { Sidebar } from './Sidebar';
 import { ThemeToggle } from './ThemeToggle';
 
-const USER = { firstName: 'Yassine', lastName: 'Ben Amor', email: 'yassine.benamor@tek-up.de' };
+const USER = {
+  firstName: 'Yassine',
+  lastName: 'Ben Amor',
+  email: 'yassine.benamor@tek-up.de',
+  classCode: 'ING-4-CIM-C',
+  avatarPath: null,
+};
 
 const pathname = vi.hoisted(() => ({ current: '/dashboard' }));
 vi.mock('next/navigation', () => ({ usePathname: () => pathname.current }));
@@ -64,7 +70,19 @@ describe('Sidebar', () => {
     const account = screen.getByRole('link', { name: /Yassine Ben Amor/ });
     expect(account).toHaveAttribute('href', '/profile');
     expect(account).toHaveTextContent('YB');
-    expect(account).toHaveTextContent('yassine.benamor@tek-up.de');
+    expect(account).toHaveTextContent('ING-4-CIM-C');
+  });
+
+  it('shows the profile photo through the API proxy when there is one', () => {
+    render(
+      <Sidebar
+        initiallyCollapsed={false}
+        user={{ ...USER, avatarPath: '/users/u1/avatar?v=abc' }}
+      />,
+    );
+    const account = screen.getByRole('link', { name: /Yassine Ben Amor/ });
+    expect(account.querySelector('img')).toHaveAttribute('src', '/api/users/u1/avatar?v=abc');
+    expect(account).not.toHaveTextContent('YB');
   });
 
   it('keeps accessible link names when collapsed', () => {
