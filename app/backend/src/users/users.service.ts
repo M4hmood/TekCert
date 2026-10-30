@@ -21,6 +21,26 @@ export type OnboardingChanges = Partial<
   Pick<User, 'classId' | 'targetSpecialtyId' | 'leaderboardVisible'>
 >;
 
+/**
+ * Which students a "who to ask" list may show, besides being in `ids`. Every field is optional
+ * and they combine with AND.
+ */
+export interface CommunityFilter {
+  /** The student asking: never listed. */
+  excludeUserId: string;
+  classId?: string;
+  /** Same path: class specialty (ING-4/5) or target specialty (ING-1…3); null = undecided. */
+  pathSpecialtyId?: string | null;
+  year?: number;
+  /** The class specialty; `none` = ING-1…3. */
+  classSpecialty?: string;
+}
+
+/** A student as other students see them, with `class` and its `specialty` loaded. */
+export type CommunityMember = User & {
+  class: SchoolClass & { specialty: Specialty | null };
+};
+
 /** Owns the `users` table: other modules read and change accounts through this service. */
 @Injectable()
 export class UsersService {
@@ -131,5 +151,39 @@ export class UsersService {
       .take(take)
       .getManyAndCount();
     return { users, count };
+  }
+
+  /**
+   * The students among `ids` who may appear in a "who to ask" list: email verified, onboarding
+   * finished, matching `filter`. Every profile is visible to signed-in students (2026-10-29).
+   */
+  findCommunityMembers(ids: string[], filter: CommunityFilter): Promise<CommunityMember[]> {
+    if (!ids.length) return Promise.resolve([]);
+    const qb = this.users
+      .createQueryBuilder('u')
+      .innerJoinAndSelect('u.class', 'c')
+      .leftJoinAndSelect('c.specialty', 's')
+      .where('u.id IN (:...ids)', { ids })
+      .andWhere('u.id <> :me', { me: filter.excludeUserId })
+      .andWhere('u.emailVerifiedAt IS NOT NULL')
+      .andWhere('u.onboardingCompletedAt IS NOT NULL');
+    if (filter.classId) qb.andWhere('c.id = :classId', { classId: filter.classId });
+    if (filter.pathSpecialtyId !== undefined) {
+      if (filter.pathSpecialtyId) {
+        qb.andWhere(
+          '(c.specialtyId = :pathSpecialtyId OR (c.specialtyId IS NULL AND u.targetSpecialtyId = :pathSpecialtyId))',
+          { pathSpecialtyId: filter.pathSpecialtyId },
+        );
+      } else {
+        qb.andWhere('c.specialtyId IS NULL AND u.targetSpecialtyId IS NULL');
+      }
+    }
+    if (filter.year) qb.andWhere('c.year = :year', { year: filter.year });
+    if (filter.classSpecialty === 'none') {
+      qb.andWhere('c.specialtyId IS NULL');
+    } else if (filter.classSpecialty) {
+      qb.andWhere('s.code = :classSpecialty', { classSpecialty: filter.classSpecialty });
+    }
+    return qb.getMany() as Promise<CommunityMember[]>;
   }
 }

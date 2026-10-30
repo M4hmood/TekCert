@@ -1,5 +1,6 @@
 import {
   CertificationLevelSchema,
+  ResourceKindSchema,
   SlugSchema,
   SpecialtyCodeSchema,
   SPECIALTY_CODES,
@@ -68,6 +69,26 @@ export const CertificationSeedSchema = z
     }
   });
 
+export const ResourceSeedSchema = z.object({
+  kind: ResourceKindSchema,
+  title: z.string().min(1).max(160),
+  url: z.url({ protocol: /^https$/ }).max(500),
+  duration: z.string().max(16).optional(),
+});
+
+/** The certification page content beyond the syllabus, keyed by certification code. */
+export const CertificationDetailsSeedSchema = z.object({
+  summary: z.string().min(20).max(400),
+  description: z.string().min(20).optional(),
+  minutes: z.number().int().positive().optional(),
+  questions: z.number().int().positive().optional(),
+  passingScore: z.string().max(40).optional(),
+  languages: z.string().max(120).optional(),
+  delivery: z.string().max(80).optional(),
+  validityYears: z.number().int().positive().optional(),
+  resources: z.array(ResourceSeedSchema).min(1),
+});
+
 export const PathSeedSchema = z.object({
   code: z.union([z.literal('FOND'), SpecialtyCodeSchema]),
   name: z.string().min(1),
@@ -87,6 +108,8 @@ export type SpecialtySeed = z.infer<typeof SpecialtySeedSchema>;
 export type ProviderSeed = z.infer<typeof ProviderSeedSchema>;
 export type CertificationSeed = z.infer<typeof CertificationSeedSchema>;
 export type PathSeed = z.infer<typeof PathSeedSchema>;
+export type ResourceSeed = z.infer<typeof ResourceSeedSchema>;
+export type CertificationDetailsSeed = z.infer<typeof CertificationDetailsSeedSchema>;
 
 /** Chapter positions in syllabus order: explicit `order`, else 1, 2, 3… across domains. */
 export function chapterOrders(domains: z.infer<typeof DomainSeedSchema>[]): number[] {
@@ -98,6 +121,7 @@ export interface SeedData {
   specialties: SpecialtySeed[];
   providers: ProviderSeed[];
   certifications: CertificationSeed[];
+  details: Record<string, CertificationDetailsSeed>;
   paths: PathSeed[];
   groups: string[];
 }
@@ -117,6 +141,10 @@ export function validateSeedData(data: SeedData): SeedData {
   collect(ProviderSeedSchema, data.providers, 'providers');
   collect(CertificationSeedSchema, data.certifications, 'certifications');
   collect(PathSeedSchema, data.paths, 'paths');
+  for (const [code, details] of Object.entries(data.details)) {
+    const result = CertificationDetailsSeedSchema.safeParse(details);
+    if (!result.success) problems.push(`details ${code}: ${z.prettifyError(result.error)}`);
+  }
 
   const duplicates = (values: string[], label: string): void => {
     const seen = new Set<string>();
@@ -156,6 +184,10 @@ export function validateSeedData(data: SeedData): SeedData {
     if (!providerCodes.has(cert.provider)) {
       problems.push(`${cert.code}: unknown provider ${cert.provider}`);
     }
+    if (!data.details[cert.code]) problems.push(`${cert.code}: no details`);
+  }
+  for (const code of Object.keys(data.details)) {
+    if (!certCodes.has(code)) problems.push(`details for unknown cert ${code}`);
   }
   for (const path of data.paths) {
     if (path.code !== 'FOND' && !specialtyCodes.has(path.code)) {

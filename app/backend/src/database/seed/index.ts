@@ -5,6 +5,7 @@ import { dataSourceOptions } from '../data-source';
 import {
   Certification,
   CertificationDomain,
+  CertificationResource,
   Chapter,
   Path,
   PathNode,
@@ -12,6 +13,7 @@ import {
   SchoolClass,
   Specialty,
 } from '../entities';
+import { certificationDetails } from './data/certification-details';
 import { certifications } from './data/certifications';
 import { paths } from './data/paths';
 import { groups, providers, specialties } from './data/reference';
@@ -23,7 +25,14 @@ import { chapterOrders, type SeedData, validateSeedData } from './schema';
  * so future progress rows that reference them survive a re-seed.
  */
 
-export const seedData: SeedData = { specialties, providers, certifications, paths, groups };
+export const seedData: SeedData = {
+  specialties,
+  providers,
+  certifications,
+  details: certificationDetails,
+  paths,
+  groups,
+};
 
 export async function seed(dataSource: DataSource): Promise<void> {
   const data = validateSeedData(seedData);
@@ -103,6 +112,7 @@ async function seedCertifications(
 ): Promise<Map<string, string>> {
   const ids = new Map<string, string>();
   for (const c of data.certifications) {
+    const details = required(data.details, c.code);
     const certId = await upsertByCode(manager, Certification, {
       code: c.code,
       slug: c.slug,
@@ -112,6 +122,14 @@ async function seedCertifications(
       difficulty: c.difficulty,
       forAllSpecialties: c.specialties === 'ALL',
       badgeAsset: c.badgeAsset,
+      summary: details.summary,
+      description: details.description ?? null,
+      examMinutes: details.minutes ?? null,
+      questionCount: details.questions ?? null,
+      passingScore: details.passingScore ?? null,
+      languages: details.languages ?? null,
+      delivery: details.delivery ?? null,
+      validityYears: details.validityYears ?? null,
       isActive: true,
       providerId: required(providerIds, c.provider),
     });
@@ -158,6 +176,20 @@ async function seedCertifications(
         ['certificationId', 'order'],
       );
     }
+    // Resources have no dependants, so the simplest correct sync is replace-all.
+    await manager.delete(CertificationResource, { certificationId: certId });
+    await manager.insert(
+      CertificationResource,
+      details.resources.map((r, i) => ({
+        certificationId: certId,
+        order: i + 1,
+        kind: r.kind,
+        title: r.title,
+        url: r.url,
+        duration: r.duration ?? null,
+      })),
+    );
+
     // Drop chapters and domains that no longer exist in the data file.
     await manager.delete(Chapter, { certificationId: certId, order: Not(In(orders)) });
     await manager.delete(CertificationDomain, {
@@ -202,8 +234,8 @@ async function seedPaths(
   }
 }
 
-function required(map: Map<string, string>, key: string): string {
-  const value = map.get(key);
+function required<T>(map: Map<string, T> | Record<string, T>, key: string): T {
+  const value = map instanceof Map ? map.get(key) : map[key];
   if (!value) throw new Error(`Seed reference not found: ${key}`);
   return value;
 }

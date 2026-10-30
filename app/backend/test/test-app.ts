@@ -91,3 +91,18 @@ export async function signUpAndVerify(
     .expect(200);
   return { agent, email };
 }
+
+/** Signs up, verifies and finishes onboarding in `enrolment`, declaring `certifications`. */
+export async function onboardedStudent(
+  t: TestApp,
+  enrolment: Record<string, unknown>,
+  certifications: string[] = [],
+  names: { firstName?: string; lastName?: string } = {},
+): Promise<{ agent: ReturnType<typeof request.agent>; email: string; id: string }> {
+  const { agent, email } = await signUpAndVerify(t, uniqueEmail('student'), names);
+  await agent.put('/onboarding/enrolment').send(enrolment).expect(200);
+  await agent.put('/onboarding/certifications').send({ slugs: certifications }).expect(200);
+  await agent.post('/onboarding/complete').expect(200);
+  const me = await agent.get('/auth/me').expect(200);
+  return { agent, email, id: (me.body as { id: string }).id };
+}
