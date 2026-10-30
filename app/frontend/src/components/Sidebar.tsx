@@ -8,12 +8,13 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { isActive, MAIN_NAV, type NavItem, PERSONAL_NAV } from '@/lib/navigation';
 import { SIDEBAR_COOKIE, writePreference } from '@/lib/preferences';
+import { Avatar } from './Avatar';
 import styles from './Sidebar.module.css';
 
 export interface SidebarProps {
   /** Initial state from the sidebar cookie, so the server renders the right width. */
   initiallyCollapsed: boolean;
-  user: Pick<CurrentUser, 'firstName' | 'lastName' | 'email'>;
+  user: Pick<CurrentUser, 'firstName' | 'lastName' | 'email' | 'classCode' | 'avatarPath'>;
 }
 
 export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
@@ -79,22 +80,21 @@ export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
         {PERSONAL_NAV.map(renderLink)}
       </nav>
 
-      {/* Class and level join the email here once onboarding exists (Sprint 2). */}
+      {/* The level joins the class here with points (Sprint 4). */}
       <Link href="/profile" className={styles.account} title="My profile">
-        <span className={styles.avatar} aria-hidden>
-          {initials(user)}
-        </span>
+        <Avatar
+          firstName={user.firstName}
+          lastName={user.lastName}
+          avatarPath={user.avatarPath}
+          className={styles.avatar}
+        />
         <span className={styles.accountText}>
           <span className={styles.accountName}>
             {user.firstName} {user.lastName}
           </span>
-          <span className={styles.accountMeta}>{user.email}</span>
+          <span className={styles.accountMeta}>{user.classCode ?? user.email}</span>
         </span>
       </Link>
     </aside>
   );
-}
-
-function initials({ firstName, lastName }: Pick<CurrentUser, 'firstName' | 'lastName'>): string {
-  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 }

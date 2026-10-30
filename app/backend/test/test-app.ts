@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import request from 'supertest';
 import type { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { CLOCK, type Clock } from '../src/common/clock';
@@ -53,4 +54,40 @@ export function tokenFromMail(mail: InMemoryMailSender, to: string, path: string
   const match = message?.text.match(new RegExp(`${path}\\?token=([A-Za-z0-9_-]{43})`));
   if (!match?.[1]) throw new Error(`No ${path} link sent to ${to}`);
   return match[1];
+}
+
+export const PASSWORD = 'correct-horse-9';
+
+/** POST /auth/sign-up with valid defaults (visibility accepted); `extra` overrides any field. */
+export function signUpRequest(
+  server: App,
+  email: string,
+  extra: Record<string, unknown> = {},
+): request.Test {
+  return request(server)
+    .post('/auth/sign-up')
+    .send({
+      firstName: 'Yassine',
+      lastName: 'Ben Amor',
+      email,
+      password: PASSWORD,
+      acceptVisibility: true,
+      ...extra,
+    });
+}
+
+/** Signs up and verifies; returns an agent that holds the session cookies. */
+export async function signUpAndVerify(
+  t: TestApp,
+  email = uniqueEmail(),
+  names: { firstName?: string; lastName?: string } = {},
+): Promise<{ agent: ReturnType<typeof request.agent>; email: string }> {
+  const server = t.app.getHttpServer();
+  await signUpRequest(server, email, names).expect(202);
+  const agent = request.agent(server);
+  await agent
+    .post('/auth/verify-email')
+    .send({ token: tokenFromMail(t.mail, email, '/verify-email') })
+    .expect(200);
+  return { agent, email };
 }

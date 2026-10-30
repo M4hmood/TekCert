@@ -1,5 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { linkFromEmail, PASSWORD, signInNewStudent, uniqueEmail } from './support';
+import {
+  completeOnboarding,
+  linkFromEmail,
+  PASSWORD,
+  signInOnboardedStudent,
+  uniqueEmail,
+} from './support';
 
 test.describe('authentication', () => {
   test('sign up → verify the email → sign out → sign in', async ({ page }) => {
@@ -8,9 +14,15 @@ test.describe('authentication', () => {
     await page.goto('/sign-up');
     await page.getByLabel('First name').fill('Yassine');
     await page.getByLabel('Last name').fill('Ben Amor');
-    await page.getByLabel('Institute email').fill(email);
+    await page.getByLabel('Institute email', { exact: true }).fill(email);
     await expect(page.getByText('Institute address recognised')).toBeVisible();
     await page.getByLabel('Password', { exact: true }).fill(PASSWORD);
+    await page.getByRole('button', { name: 'Create my account' }).click();
+    // Profile visibility must be accepted to sign up.
+    await expect(
+      page.getByRole('alert').filter({ hasText: 'You need to accept this to create an account' }),
+    ).toBeVisible();
+    await page.getByRole('checkbox', { name: /my name, class, certifications/ }).check();
     await page.getByRole('button', { name: 'Create my account' }).click();
 
     await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible();
@@ -18,10 +30,11 @@ test.describe('authentication', () => {
       page.getByRole('button', { name: /Resend in 0:5\d|Resend in 1:00/ }),
     ).toBeDisabled();
 
-    // Open the link from the email, like the student would.
+    // Open the link from the email, like the student would: a new account starts onboarding.
     await page.goto(await linkFromEmail(page.request, email, '/verify-email'));
-    await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dashboard');
+    await expect(page).toHaveURL(/\/onboarding$/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Which year are you in?');
+    await completeOnboarding(page.request);
 
     // Sign out from Settings (reached through Profile on phones).
     await page.goto('/settings');
@@ -37,7 +50,7 @@ test.describe('authentication', () => {
   });
 
   test('a protected page sends visitors to sign in, then back', async ({ page, browser }) => {
-    const email = await signInNewStudent(await (await browser.newContext()).newPage());
+    const email = await signInOnboardedStudent(await (await browser.newContext()).newPage());
 
     await page.goto('/catalog/saa-c03');
     await expect(page).toHaveURL(/\/sign-in\?next=%2Fcatalog%2Fsaa-c03$/);
@@ -69,7 +82,7 @@ test.describe('authentication', () => {
   });
 
   test('forgot password → reset → sign in with the new password', async ({ page, browser }) => {
-    const email = await signInNewStudent(await (await browser.newContext()).newPage());
+    const email = await signInOnboardedStudent(await (await browser.newContext()).newPage());
 
     await page.goto('/sign-in');
     await page.getByRole('link', { name: 'Forgot password?' }).click();
@@ -92,7 +105,7 @@ test.describe('authentication', () => {
   });
 
   test('signed-in students skip the sign-in page', async ({ page }) => {
-    await signInNewStudent(page);
+    await signInOnboardedStudent(page);
     await page.goto('/sign-in');
     await expect(page).toHaveURL(/\/dashboard$/);
   });

@@ -24,7 +24,9 @@ const USER = {
   firstName: 'Yassine',
   lastName: 'Ben Amor',
   role: 'student',
-  profileVisible: false,
+  classCode: null,
+  avatarPath: null,
+  onboardingCompleted: true,
 };
 
 beforeEach(() => {
@@ -63,6 +65,13 @@ describe('SignInForm', () => {
     expect(url).toBe('/api/auth/sign-in');
     expect(JSON.parse(String(init.body))).toMatchObject({ remember: true });
     expect(router.replace).toHaveBeenCalledWith('/catalog?q=aws');
+  });
+
+  it('sends a student who has not finished onboarding to it first', async () => {
+    mockApi(200, { ...USER, onboardingCompleted: false });
+    render(<SignInForm next="/catalog?q=aws" />);
+    await fillAndSubmit();
+    expect(router.replace).toHaveBeenCalledWith('/onboarding');
   });
 
   it('ignores a next parameter that points to another site', async () => {
@@ -132,21 +141,32 @@ describe('SignUpForm', () => {
     expect(screen.getByText('Institute address recognised')).toBeInTheDocument();
   });
 
-  it('starts with the visibility consent unticked and sends it only when ticked', async () => {
-    const fetchMock = mockApi(202, { status: 'accepted' });
-    render(<SignUpForm />);
-    const consent = screen.getByRole('checkbox');
-    expect(consent).not.toBeChecked();
-
+  async function fillValidForm() {
     await userEvent.type(screen.getByLabelText('First name'), 'Yassine');
     await userEvent.type(screen.getByLabelText('Last name'), 'Ben Amor');
     await userEvent.type(screen.getByLabelText('Institute email'), 'yassine.benamor@tek-up.de');
     await userEvent.type(screen.getByLabelText('Password'), 'correct-horse-9');
-    await userEvent.click(consent);
-    await userEvent.click(screen.getByRole('button', { name: 'Create my account' }));
+  }
 
+  it('requires the visibility box before calling the API', async () => {
+    const fetchMock = mockApi(202, { status: 'accepted' });
+    render(<SignUpForm />);
+    const visibility = screen.getByRole('checkbox');
+    expect(visibility).not.toBeChecked();
+
+    await fillValidForm();
+    await userEvent.click(screen.getByRole('button', { name: 'Create my account' }));
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'You need to accept this to create an account',
+    );
+    expect(visibility).toHaveAttribute('aria-invalid', 'true');
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    await userEvent.click(visibility);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Create my account' }));
     const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
-    expect(JSON.parse(String(init.body))).toMatchObject({ profileVisible: true });
+    expect(JSON.parse(String(init.body))).toMatchObject({ acceptVisibility: true });
     expect(await screen.findByText(/A link valid for 24 hours was sent to/)).toBeInTheDocument();
   });
 
@@ -160,6 +180,7 @@ describe('SignUpForm', () => {
       'errorRequired',
       'errorUse your @tek-up.de address',
       'errorPassword needs: 8 characters',
+      'errorYou need to accept this to create an account',
     ]);
     expect(fetchMock).not.toHaveBeenCalled();
   });

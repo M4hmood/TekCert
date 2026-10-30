@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
-import { signInNewStudent } from './support';
+import { signInOnboardedStudent } from './support';
 
 /** Every MVP screen reachable from the navigation, with the heading it should show. */
 const SIDEBAR_ROUTES = [
@@ -24,9 +24,9 @@ const BOTTOM_TABS = [
 
 const heading = (page: Page) => page.getByRole('heading', { level: 1 });
 
-// The app shell is for signed-in students: every test starts with a fresh, verified account.
+// The app shell is for onboarded students: every test starts with a fresh account in ING-4-CIM-A.
 test.beforeEach(async ({ page }) => {
-  await signInNewStudent(page);
+  await signInOnboardedStudent(page);
 });
 
 test.describe('desktop shell', () => {
@@ -89,19 +89,12 @@ test('theme toggle switches to dark and survives a reload', async ({ page }) => 
   await expect(html).toHaveAttribute('data-theme', 'dark');
 });
 
-test('onboarding renders outside the shell, without navigation', async ({ page }) => {
-  await page.goto('/onboarding');
-  await expect(heading(page)).toBeVisible();
-  await expect(page.getByRole('navigation')).toHaveCount(0);
-});
-
 test('the sidebar shows the signed-in student', async ({ page, viewport }) => {
   test.skip((viewport?.width ?? 0) < 768, 'sidebar layout only');
   await page.goto('/dashboard');
-  await expect(page.getByRole('link', { name: /Test Student/ })).toHaveAttribute(
-    'href',
-    '/profile',
-  );
+  const account = page.getByRole('link', { name: /Test Student/ });
+  await expect(account).toHaveAttribute('href', '/profile');
+  await expect(account).toContainText('ING-4-CIM-A');
 });
 
 test('unknown pages show the not-found screen', async ({ page }) => {

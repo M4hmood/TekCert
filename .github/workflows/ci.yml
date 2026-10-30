@@ -40,6 +40,13 @@ jobs:
         ports:
           - 1025:1025
           - 8025:8025
+      # S3-compatible storage for profile photos; creates the bucket at start (ADR-016).
+      storage:
+        image: adobe/s3mock:4.11.0
+        env:
+          COM_ADOBE_TESTING_S3MOCK_STORE_INITIAL_BUCKETS: tekcert-avatars
+        ports:
+          - 9090:9090
 
     env:
       TEST_DATABASE_URL: postgresql://tekcert:tekcert@localhost:5432/tekcert_test

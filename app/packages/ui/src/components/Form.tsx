@@ -133,17 +133,29 @@ function FieldMessage({ id, error, success }: { id: string; error?: string; succ
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   children: ReactNode;
+  /** Shown under the box in red, e.g. for a box that must be ticked. */
+  error?: string;
 }
 
-export function Checkbox({ children, className, ...input }: CheckboxProps) {
+export function Checkbox({ children, className, error, ...input }: CheckboxProps) {
+  const messageId = `${useId()}-message`;
+  // Same element tree with or without an error, so the input keeps its focus and identity.
   return (
-    <label className={cx(styles.checkbox, className)}>
-      <input type="checkbox" {...input} />
-      <span className={styles.box} aria-hidden>
-        <Icon name="check" size={18} />
-      </span>
-      <span>{children}</span>
-    </label>
+    <div className={cx(styles.checkboxField, className)}>
+      <label className={styles.checkbox}>
+        <input
+          type="checkbox"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? messageId : undefined}
+          {...input}
+        />
+        <span className={styles.box} aria-hidden>
+          <Icon name="check" size={18} />
+        </span>
+        <span>{children}</span>
+      </label>
+      <FieldMessage id={messageId} error={error} />
+    </div>
   );
 }
 

@@ -7,14 +7,14 @@ A web platform where TEK-UP students prepare the IT certifications funded by the
 ### Prerequisites
 - Node 24 LTS: `nvm install 24.22.1 && nvm use 24.22.1` (`.nvmrc` pins the version)
 - pnpm through Corepack: `corepack enable`
-- Docker Desktop, for PostgreSQL 16
+- Docker Desktop, for PostgreSQL 16, Mailpit and S3Mock
 
 ### First run
 ```bash
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 pnpm install
-pnpm db:up          # start Postgres and Mailpit in Docker
+pnpm db:up          # start Postgres, Mailpit and S3Mock in Docker
 pnpm db:migrate     # apply TypeORM migrations
 pnpm db:seed        # load the 56 certifications, chapters, classes and paths
 pnpm dev            # db + API on :4000 + web on :3000
@@ -25,8 +25,11 @@ Once it's running:
 - the API docs (OpenAPI) are at http://localhost:4000/docs
 - `GET http://localhost:4000/certifications` returns the seeded catalog
 - every email the app sends (verification, password reset) lands in Mailpit at http://localhost:8025
+- profile photos are stored in S3Mock (an S3-compatible server) on http://localhost:9090, bucket `tekcert-avatars`
 
-Create an account at http://localhost:3000/sign-up with any `@tek-up.de` address, then open the confirmation link from Mailpit.
+Create an account at http://localhost:3000/sign-up with any `@tek-up.de` address, then open the confirmation link from Mailpit. A new account starts with onboarding (year, class, certifications, photo).
+
+If your `backend/.env` predates Sprint 2, copy the `S3_*` lines from `backend/.env.example` into it.
 
 ### Everyday commands
 | Command | What it does |

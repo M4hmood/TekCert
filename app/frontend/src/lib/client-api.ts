@@ -13,11 +13,13 @@ const NETWORK_PROBLEM: ProblemDetails = {
 };
 
 async function call<S extends z.ZodType>(
-  method: 'GET' | 'POST',
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   path: string,
   body: unknown,
   schema?: S,
 ): Promise<ApiResult<z.infer<S>>> {
+  // FormData sets its own multipart content type (with the boundary).
+  const isForm = body instanceof FormData;
   let res: Response;
   try {
     res = await fetch(`/api${path}`, {
@@ -25,9 +27,9 @@ async function call<S extends z.ZodType>(
       credentials: 'same-origin',
       headers: {
         accept: 'application/json',
-        ...(body !== undefined && { 'content-type': 'application/json' }),
+        ...(body !== undefined && !isForm && { 'content-type': 'application/json' }),
       },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
     });
   } catch {
     return { ok: false, problem: NETWORK_PROBLEM };
@@ -47,6 +49,23 @@ async function call<S extends z.ZodType>(
 
 export function postJson<S extends z.ZodType>(path: string, body?: unknown, schema?: S) {
   return call('POST', path, body ?? {}, schema);
+}
+
+export function getJson<S extends z.ZodType>(path: string, schema: S) {
+  return call('GET', path, undefined, schema);
+}
+
+export function putJson<S extends z.ZodType>(path: string, body: unknown, schema?: S) {
+  return call('PUT', path, body, schema);
+}
+
+/** Multipart upload, e.g. the profile photo. */
+export function putForm<S extends z.ZodType>(path: string, form: FormData, schema?: S) {
+  return call('PUT', path, form, schema);
+}
+
+export function deleteRequest(path: string) {
+  return call('DELETE', path, undefined);
 }
 
 /**

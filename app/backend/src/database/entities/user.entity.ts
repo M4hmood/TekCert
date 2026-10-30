@@ -1,6 +1,7 @@
 import { ROLES, type Role } from '@tekcert/types';
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { SchoolClass } from './school-class.entity';
+import { Specialty } from './specialty.entity';
 import { Timestamped } from './timestamps';
 
 @Entity('users')
@@ -29,14 +30,18 @@ export class User extends Timestamped {
   @Column({ type: 'timestamptz', nullable: true })
   emailVerifiedAt!: Date | null;
 
-  /** Visible to other students in community and rankings. Opt-in at sign-up, editable later. */
-  @Column({ type: 'boolean', default: false })
-  profileVisible!: boolean;
+  /**
+   * Every profile is visible to signed-in students; this records when the student accepted that
+   * at sign-up (required to create an account).
+   */
+  @Column({ type: 'timestamptz' })
+  visibilityConsentedAt!: Date;
 
-  /** When the student last gave visibility consent (null if never). */
-  @Column({ type: 'timestamptz', nullable: true })
-  visibilityConsentedAt!: Date | null;
+  /** Shown on leaderboards. Opt-out in onboarding and settings. */
+  @Column({ type: 'boolean', default: true })
+  leaderboardVisible!: boolean;
 
+  /** Set in onboarding step 2. ING-4/5 classes also carry the specialty. */
   @Index()
   @Column({ type: 'uuid', nullable: true })
   classId!: string | null;
@@ -44,4 +49,23 @@ export class User extends Timestamped {
   @ManyToOne(() => SchoolClass, { nullable: true })
   @JoinColumn({ name: 'class_id' })
   class!: SchoolClass | null;
+
+  /** ING-1…3 only: the specialty the student is aiming for. Null means undecided. */
+  @Column({ type: 'uuid', nullable: true })
+  targetSpecialtyId!: string | null;
+
+  @ManyToOne(() => Specialty, { nullable: true })
+  @JoinColumn({ name: 'target_specialty_id' })
+  targetSpecialty!: Specialty | null;
+
+  /** Object key of the profile photo in storage; it contains a content hash, so it changes with the photo. */
+  @Column({ type: 'varchar', length: 128, nullable: true })
+  avatarKey!: string | null;
+
+  /** The furthest onboarding step reached (1–5): the wizard resumes there. */
+  @Column({ type: 'smallint', default: 1 })
+  onboardingStep!: number;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  onboardingCompletedAt!: Date | null;
 }

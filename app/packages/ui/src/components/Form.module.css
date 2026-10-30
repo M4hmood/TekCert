@@ -127,6 +127,16 @@
   color: var(--pri-ink);
 }
 
+.checkboxField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checkbox input[aria-invalid='true'] + .box {
+  border-color: var(--err);
+}
+
 .checkbox input:focus-visible + .box {
   outline: 2px solid var(--focus);
   outline-offset: 2px;

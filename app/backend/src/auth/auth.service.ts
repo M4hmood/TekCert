@@ -10,6 +10,7 @@ import {
   type SignUpInput,
 } from '@tekcert/types';
 import type { Repository } from 'typeorm';
+import { avatarPath } from '../avatars/avatar-image';
 import { CLOCK, type Clock } from '../common/clock';
 import { ProblemException } from '../common/problem.exception';
 import type { Env } from '../config/env';
@@ -22,7 +23,6 @@ import { LoginAttemptsService } from './login-attempts.service';
 import { PasswordService } from './password.service';
 import { type DeviceInfo, SessionsService } from './sessions.service';
 
-type SignUp = Required<Pick<SignUpInput, 'profileVisible'>> & Omit<SignUpInput, 'profileVisible'>;
 type SignIn = Required<SignInInput>;
 
 const invalidLink = () =>
@@ -55,7 +55,7 @@ export class AuthService {
    * Same answer whether or not the address is taken, so sign-up never reveals an account.
    * The owner of an existing account gets an email instead.
    */
-  async signUp(input: SignUp): Promise<void> {
+  async signUp(input: SignUpInput): Promise<void> {
     // Hash first on every path so response times don't reveal existing accounts either.
     const passwordHash = await this.passwords.hash(input.password);
     const existing = await this.users.findOneBy({ email: input.email });
@@ -64,15 +64,14 @@ export class AuthService {
       else await this.sendVerification(existing);
       return;
     }
-    const now = this.clock.now();
     const user = await this.users.save(
       this.users.create({
         email: input.email,
         firstName: input.firstName,
         lastName: input.lastName,
         passwordHash,
-        profileVisible: input.profileVisible,
-        visibilityConsentedAt: input.profileVisible ? now : null,
+        // The schema only accepts sign-ups that accept profile visibility.
+        visibilityConsentedAt: this.clock.now(),
       }),
     );
     await this.sendVerification(user);
@@ -88,7 +87,10 @@ export class AuthService {
     const userId = await this.emailTokens.consume(token, 'verify_email');
     if (!userId) throw invalidLink();
     await this.users.update({ id: userId }, { emailVerifiedAt: this.clock.now() });
-    const user = await this.users.findOneByOrFail({ id: userId });
+    const user = await this.users.findOneOrFail({
+      where: { id: userId },
+      relations: { class: true },
+    });
     return { user: toCurrentUser(user), session: await this.sessions.create(user, false, device) };
   }
 
@@ -99,6 +101,7 @@ export class AuthService {
     const user = await this.users
       .createQueryBuilder('user')
       .addSelect('user.passwordHash')
+      .leftJoinAndSelect('user.class', 'class')
       .where('user.email = :email', { email: input.email })
       .getOne();
     const valid = await this.passwords.verify(user?.passwordHash, input.password);
@@ -161,7 +164,7 @@ export class AuthService {
   }
 
   async me(userId: string): Promise<CurrentUser> {
-    const user = await this.users.findOneBy({ id: userId });
+    const user = await this.users.findOne({ where: { id: userId }, relations: { class: true } });
     if (!user) {
       throw new ProblemException({
         type: AUTH_PROBLEM.unauthenticated,
@@ -213,6 +216,7 @@ export interface SessionResult {
   session: IssuedSession;
 }
 
+/** `user.class` must be loaded. */
 function toCurrentUser(user: User): CurrentUser {
   return {
     id: user.id,
@@ -220,7 +224,9 @@ function toCurrentUser(user: User): CurrentUser {
     firstName: user.firstName,
     lastName: user.lastName,
     role: user.role,
-    profileVisible: user.profileVisible,
+    classCode: user.class?.code ?? null,
+    avatarPath: avatarPath(user.id, user.avatarKey),
+    onboardingCompleted: user.onboardingCompletedAt !== null,
   };
 }
 

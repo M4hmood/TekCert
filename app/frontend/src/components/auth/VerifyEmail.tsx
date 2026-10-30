@@ -29,7 +29,7 @@ export function VerifyEmail({ token }: { token: string | null }) {
         return;
       }
       setState('verified');
-      router.replace('/dashboard');
+      router.replace(result.data.onboardingCompleted ? '/dashboard' : '/onboarding');
       router.refresh();
     });
   }, [token, router]);

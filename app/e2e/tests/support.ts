@@ -48,11 +48,37 @@ export async function linkFromEmail(
  */
 export async function signInNewStudent(page: Page, email = uniqueEmail()): Promise<string> {
   await page.request.post('/api/auth/sign-up', {
-    data: { firstName: 'Test', lastName: 'Student', email, password: PASSWORD },
+    data: {
+      firstName: 'Test',
+      lastName: 'Student',
+      email,
+      password: PASSWORD,
+      acceptVisibility: true,
+    },
   });
   const link = await linkFromEmail(page.request, email, '/verify-email');
   const token = new URL(link).searchParams.get('token');
   const res = await page.request.post('/api/auth/verify-email', { data: { token } });
   expect(res.ok()).toBe(true);
+  return email;
+}
+
+/**
+ * Finishes onboarding through the API (ING-4 CIM, group A), as the app screens require.
+ * The browser must already be signed in.
+ */
+export async function completeOnboarding(request: APIRequestContext): Promise<void> {
+  const enrolment = await request.put('/api/onboarding/enrolment', {
+    data: { year: 4, specialty: 'CIM', group: 'A' },
+  });
+  expect(enrolment.ok()).toBe(true);
+  const done = await request.post('/api/onboarding/complete');
+  expect(done.ok()).toBe(true);
+}
+
+/** A verified student who has finished onboarding, signed in in this browser. */
+export async function signInOnboardedStudent(page: Page, email = uniqueEmail()): Promise<string> {
+  await signInNewStudent(page, email);
+  await completeOnboarding(page.request);
   return email;
 }
