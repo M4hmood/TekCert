@@ -2,11 +2,13 @@ import { randomUUID } from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, type Repository } from 'typeorm';
-import { CLOCK, type Clock } from '../common/clock';
-import { Session, User } from '../database/entities';
+import { CLOCK, type Clock } from '../common/utils/clock';
+import type { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 import { AccessTokenService } from './access-token.service';
-import type { IssuedSession } from './cookies';
-import { addMs, DAY, hashToken, HOUR, randomToken } from './tokens';
+import { Session } from './entities/session.entity';
+import type { IssuedSession } from './utils/cookies';
+import { addMs, DAY, hashToken, HOUR, randomToken } from './utils/tokens';
 
 /** "Stay signed in": 30 days, extended on every refresh. */
 export const REMEMBER_TTL_MS = 30 * DAY;
@@ -31,7 +33,7 @@ export type RotateResult =
 export class SessionsService {
   constructor(
     @InjectRepository(Session) private readonly sessions: Repository<Session>,
-    @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly users: UsersService,
     private readonly accessTokens: AccessTokenService,
     @Inject(CLOCK) private readonly clock: Clock,
   ) {}
@@ -59,7 +61,7 @@ export class SessionsService {
     }
     if (current.expiresAt <= now) return { ok: false, reason: 'expired' };
 
-    const user = await this.users.findOneBy({ id: current.userId });
+    const user = await this.users.findById(current.userId);
     if (!user) return { ok: false, reason: 'unknown' };
 
     // Remembered sessions slide forward; browser sessions keep their original 12-hour cap.

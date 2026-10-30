@@ -1,5 +1,5 @@
 import type { Repository } from 'typeorm';
-import type { LoginAttempt } from '../database/entities';
+import type { LoginAttempt } from './entities/login-attempt.entity';
 import { LoginAttemptsService } from './login-attempts.service';
 
 /** Just enough of a TypeORM repository, backed by a Map. */

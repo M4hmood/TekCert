@@ -3,21 +3,25 @@ import { ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CLOCK, systemClock } from '../common/clock';
 import type { Env } from '../config/env';
-import { EmailToken, LoginAttempt, Session, User } from '../database/entities';
+import { UsersModule } from '../users/users.module';
 import { AccessTokenService } from './access-token.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { EmailTokensService } from './email-tokens.service';
-import { AuthGuard, RolesGuard } from './guards';
+import { EmailToken } from './entities/email-token.entity';
+import { LoginAttempt } from './entities/login-attempt.entity';
+import { Session } from './entities/session.entity';
+import { AuthGuard } from './guards/auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 import { LoginAttemptsService } from './login-attempts.service';
 import { PasswordService } from './password.service';
 import { SessionsService } from './sessions.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Session, EmailToken, LoginAttempt]),
+    TypeOrmModule.forFeature([Session, EmailToken, LoginAttempt]),
+    UsersModule,
     // Per-IP brake on /auth/* (applied by the controller); the per-account lockout is separate.
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
@@ -28,7 +32,6 @@ import { SessionsService } from './sessions.service';
   ],
   controllers: [AuthController],
   providers: [
-    { provide: CLOCK, useValue: systemClock },
     AccessTokenService,
     PasswordService,
     SessionsService,

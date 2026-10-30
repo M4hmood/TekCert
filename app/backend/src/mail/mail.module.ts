@@ -2,7 +2,7 @@ import { Global, Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createTransport } from 'nodemailer';
 import type { Env } from '../config/env';
-import { MAIL_SENDER, type MailSender } from './mail.sender';
+import { MAIL_SENDER, type MailSender } from './interfaces/mail-sender';
 
 @Global()
 @Module({

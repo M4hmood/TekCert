@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LOCKOUT_MINUTES, MAX_LOGIN_ATTEMPTS } from '@tekcert/types';
 import type { Repository } from 'typeorm';
-import { CLOCK, type Clock } from '../common/clock';
-import { LoginAttempt } from '../database/entities';
-import { addMs, MINUTE } from './tokens';
+import { CLOCK, type Clock } from '../common/utils/clock';
+import { LoginAttempt } from './entities/login-attempt.entity';
+import { addMs, MINUTE } from './utils/tokens';
 
 const LOCKOUT_MS = LOCKOUT_MINUTES * MINUTE;
 

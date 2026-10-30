@@ -4,13 +4,13 @@ import { type EnrolmentInput, EnrolmentSchema } from '@tekcert/types';
 import { ZodResponse, ZodValidationPipe } from 'nestjs-zod';
 import { z } from 'zod';
 import type { AccessClaims } from '../auth/access-token.service';
-import { CurrentAuth } from '../auth/decorators';
+import { CurrentAuth } from '../auth/decorators/auth.decorators';
 import {
   CertificationPicksDto,
   OnboardingStateDto,
   PrivacyDto,
   RecommendedPathDto,
-} from './onboarding.dto';
+} from './dto/onboarding.dto';
 import { OnboardingService } from './onboarding.service';
 
 type BodySchema = NonNullable<

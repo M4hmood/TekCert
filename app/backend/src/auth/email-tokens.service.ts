@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RESEND_COOLDOWN_SECONDS } from '@tekcert/types';
 import { IsNull, MoreThan, type Repository } from 'typeorm';
-import { CLOCK, type Clock } from '../common/clock';
-import { EmailToken, type EmailTokenType } from '../database/entities/email-token.entity';
-import { addMs, DAY, hashToken, MINUTE, randomToken } from './tokens';
+import { CLOCK, type Clock } from '../common/utils/clock';
+import { EmailToken, type EmailTokenType } from './entities/email-token.entity';
+import { addMs, DAY, hashToken, MINUTE, randomToken } from './utils/tokens';
 
 export const EMAIL_TOKEN_TTL_MS: Record<EmailTokenType, number> = {
   verify_email: DAY,
