@@ -10,22 +10,22 @@
 3. Stop and wait for approval.
 
 ## Scope
-- [ ] Catalog: search by name or code, filters (provider, level, specialty, max difficulty), sort, empty and loading states, mobile filter sheet
-- [ ] Certification page tabs: Overview, Syllabus (chapters), Resources (external links), Who to ask (earned / preparing lists)
-- [ ] “Start” a certification → status in progress
-- [ ] Read-only “who to ask” from real users, respecting privacy
-- [ ] Certification logos (badges) on catalog cards and the certification page (see Notes: "Badge images")
+- [x] Catalog: search by name or code, filters (provider, level, specialty, max difficulty), sort, empty and loading states, mobile filter sheet
+- [x] Certification page tabs: Overview, Syllabus (chapters), Resources (external links), Who to ask (earned / preparing lists)
+- [x] “Start” a certification → status in progress
+- [x] Read-only “who to ask” from real users, respecting privacy
+- [x] Certification logos (badges) on catalog cards and the certification page (see Notes: "Badge images")
 
 ## Done when
-- [ ] Catalog filters are URL-driven (shareable links)
-- [ ] Certification page works for all 56 seeded certs
+- [x] Catalog filters are URL-driven (shareable links)
+- [x] Certification page works for all 56 seeded certs
 
 ## Out of scope
 - Declare as earned, exam request, practice tests (Release 2)
 
 ## Plan
 
-Status: **approved 2026-10-30 with the recommended answers.** Branch `sprint/S03-catalog-certification-page`, cut from `main` after the ADR-017 refactor merged (PR #4). One PR at the end.
+Status: **approved 2026-10-30 with the recommended answers, built.** Branch `sprint/S03-catalog-certification-page`, cut from `main` after the ADR-017 refactor merged (PR #4). One PR at the end.
 
 ### 0. What the designs show that S03 leaves out
 - **Release 2, hidden:** the "Practice tests" tab, "Declare as earned", "Add proof", "Request an exam", the exam-request box and the "+500 points once verified" panel.
@@ -146,6 +146,24 @@ The list query (comma lists, `maxDifficulty`, `sort`), the facets, the extended 
 2. Descriptions, exam facts and resources are drafted for all 56 certifications from the vendors' public pages, marked DRAFT for staff review. Every certification links to its official page.
 3. "Who to ask" gets the full design: scope switch plus specialty and level selects.
 4. Each person card has a mail button to the institute email until profiles arrive in S05.
+
+### Outcome (2026-10-30)
+Tests:
+- types: 59 (Vitest)
+- backend: 54 unit + 69 API e2e (Jest)
+- frontend: 67 (Vitest)
+- Playwright: 42 passing at 1440 and 390 px (11 skipped by design: desktop-only or mobile-only tests)
+
+Format, lint, typecheck and build pass. `migration:generate --check` finds no drift. Screens checked at both widths, light and dark, against design/Catalogue and design/Fiche-certification.
+
+Where the build differs from the plan:
+- **Two text fields, not one.** The design has a short line under the title and a longer Overview text, so `certifications` gets `summary` (required) and `description` (optional; the summary stands in). Only SAA-C03 has a description for now.
+- **Badge base URL is `NEXT_PUBLIC_BADGE_BASE_URL`.** Cards are client components, so the setting must be public to the browser. Default `/badges`.
+- **Status card copy.** In progress says "Started October 30" and offers "Go to the syllabus"; held certifications say "Declared …" with a note that proof upload comes later. The toast says "SAA-C03 started · it is now in progress" rather than "Added to your dashboard", since the dashboard arrives in S04.
+- **Syllabus side note** explains that ticking chapters arrives in the next update, instead of the design's "Tick a chapter…".
+- **"Who to ask" cards** show "Unverified" instead of "Verified" (Release 1), a "started Oct 2026" date instead of a percentage (S04), and a mail button (decision 4). The subtitle no longer says "Only public profiles are shown", since every profile is visible.
+- **Not shown:** the design's free-text prerequisites ("Hands-on AWS console experience") and the "+500 points" panel (Release 2).
+- **Validation errors stay 400.** `?level=master` returns 400 with the error on `level.0`, since levels are now a comma list.
 
 ### Certification catalog (56 certs, 10 providers, as of 2026-10-29)
 Source of truth: `backend/src/database/seed/data/certifications.ts` (loaded by `pnpm db:seed`). Built from the vendor sheets TEK-UP supplied plus the Azure, EC-Council and INE certs. Google certs are excluded (not supported by TEK-UP). Chapters, difficulty and specialties are drafts for staff review. Badge = file in `frontend/public/badges/`; "none" shows the provider chip.

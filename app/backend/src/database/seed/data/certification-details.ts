@@ -272,7 +272,7 @@ export const certificationDetails: Record<string, CertificationDetailsSeed> = {
       { ...wellArchitected, duration: '3 h' },
       video('Exam Prep SAA-C03 (Skill Builder)', 'https://skillbuilder.aws/', '6 h'),
       video(
-        'Complete SAA-C03 prep (freeCodeCamp)',
+        'Free AWS exam prep videos (freeCodeCamp)',
         'https://www.youtube.com/@freecodecamp',
         '≈ 10 h',
       ),
