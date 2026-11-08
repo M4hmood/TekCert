@@ -152,7 +152,7 @@ Tests:
 - types: 71 (Vitest)
 - backend: 54 unit + 69 API e2e (Jest)
 - frontend: 74 (Vitest)
-- Playwright: 43 of 44 passing at 1440 and 390 px (11 skipped by design: desktop-only or mobile-only tests). The one failure is the S02 onboarding test on desktop, which reads the photo's width before it has finished loading; it passed 2 of 3 reruns.
+- Playwright: 44 passing at 1440 and 390 px (11 skipped by design: desktop-only or mobile-only tests). The S02 onboarding test read the photo's width before it had loaded and failed now and then; it now waits for the width.
 
 Format, lint, typecheck and build pass. `migration:generate --check` finds no drift. Screens checked at both widths, light and dark, against design/Catalogue and design/Fiche-certification.
 
