@@ -25,6 +25,11 @@
   line-height: 1.15;
 }
 
+.description {
+  color: var(--ink2);
+  font-size: 15px;
+}
+
 .actions {
   display: flex;
   align-items: center;
@@ -46,5 +51,9 @@
 
   .title {
     font-size: 28px;
+  }
+
+  .description {
+    display: none;
   }
 }

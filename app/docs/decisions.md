@@ -194,6 +194,22 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - Unit tests can mock a single exported service instead of several repositories.
   - New features follow the same pattern: S03 extends `certifications/`, and S05 adds a `users.controller.ts`.
 
+## ADR-018 Catalog content, "Start" and who to ask (S03)
+- **Context:** The certification page needs content the seed didn't have (a summary, exam facts, resources), a way to start a certification, and lists of students to ask. The catalog filters must be shareable links.
+- **Decision:**
+  - **One set of catalog rules.** Search, filters, sort and facet counts are pure functions in `@tekcert/types` (`filterCatalog`, `catalogFacets`, `parseCatalogQuery`, `serializeCatalogQuery`). The API, the server render of `/catalog` and the browser all use them. The page loads the 56 certifications once and filters in the browser, so results and the mobile sheet's "Show N" count are instant. The URL is updated with `history.replaceState`, so a link opens filtered on first paint.
+  - **Pagination is a view of that list:** 12 certifications per page (`paginateCatalog`), the page in the URL (`?page=2`), and any change of search, filter or sort goes back to page 1. `GET /certifications` still returns every match, because the facet counts and the onboarding picker need the whole catalog.
+  - **Content in the seed.** `seed/data/certification-details.ts` holds a summary, optional longer description, exam facts (all nullable) and 1–7 external resources per certification. It is a DRAFT for staff review: apart from SAA-C03, most summaries and exam facts were written from general knowledge and not checked against the vendors' pages. The seed refuses a certification without details. Resources are replaced on every seed run; their host is derived from the URL.
+  - **Prerequisites** aren't new data: they are the `prerequisite` of the certification on any seeded path (`PathsService.prerequisitesOf`).
+  - **"Start" is a `preparations` row** (user, certification, `started_at`, unique pair). `PUT /me/preparations/:slug` is idempotent (201, then 200) and refuses a certification the student already holds (409). It lives in `certifications/` next to `user_certifications` so no module cycle appears. S04 adds chapter progress and points on top of it.
+  - **My status** (`GET /me/certifications`) merges both tables: held (unverified in Release 1) wins over in progress.
+  - **Who to ask** (`GET /certifications/:slug/community`) is for signed-in students only. It lists students with a verified email who finished onboarding, never the viewer, with name, photo path, class, year, specialty, institute email and a date. Scopes (class, specialty, year) are relative to the viewer; ING-1…3 students match "my specialty" through their target specialty. At most 50 per list, newest first, with the full count. The users table is read through `UsersService.findCommunityMembers` (ADR-017).
+  - **Badges** are files in `frontend/public/badges` rendered with `next/image`; the base URL is `NEXT_PUBLIC_BADGE_BASE_URL` (default `/badges`), so moving them to CloudFront later needs no data change.
+- **Consequences:**
+  - Counts on the public catalog (`earnedCount`) name nobody, so the catalog endpoints stay public for the landing page.
+  - The facet counts ignore their own filter, which is what makes "tick a second provider" predictable.
+  - Resource links can rot; staff review owns them (PLAN.md backlog).
+
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).
 - SMTP provider for transactional email in staging and production (the code is ready; see ADR-015)

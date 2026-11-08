@@ -13,6 +13,7 @@ import {
   VirtualColumn,
 } from 'typeorm';
 import { CertificationDomain } from './certification-domain.entity';
+import { CertificationResource } from './certification-resource.entity';
 import { Chapter } from './chapter.entity';
 import { Provider } from './provider.entity';
 import { Specialty } from '../../school/entities/specialty.entity';
@@ -51,6 +52,34 @@ export class Certification extends Timestamped {
   @Column({ type: 'varchar', length: 160, nullable: true })
   badgeAsset!: string | null;
 
+  /** One or two sentences shown under the name. */
+  @Column({ type: 'text' })
+  summary!: string;
+
+  /** Longer text for the Overview tab; the summary stands in when null. */
+  @Column({ type: 'text', nullable: true })
+  description!: string | null;
+
+  // Exam facts: null when the vendor doesn't publish them (retired or hands-on exams).
+  @Column({ type: 'smallint', nullable: true })
+  examMinutes!: number | null;
+
+  @Column({ type: 'smallint', nullable: true })
+  questionCount!: number | null;
+
+  /** Free text, the vendor's own format: "720 / 1,000", "70 %". */
+  @Column({ type: 'varchar', length: 40, nullable: true })
+  passingScore!: string | null;
+
+  @Column({ type: 'varchar', length: 120, nullable: true })
+  languages!: string | null;
+
+  @Column({ type: 'varchar', length: 80, nullable: true })
+  delivery!: string | null;
+
+  @Column({ type: 'smallint', nullable: true })
+  validityYears!: number | null;
+
   /** Certifications removed from the catalog are deactivated, never deleted. */
   @Column({ type: 'boolean', default: true })
   isActive!: boolean;
@@ -76,6 +105,9 @@ export class Certification extends Timestamped {
 
   @OneToMany(() => Chapter, (chapter) => chapter.certification)
   chapters!: Chapter[];
+
+  @OneToMany(() => CertificationResource, (resource) => resource.certification)
+  resources!: CertificationResource[];
 
   @VirtualColumn({
     type: 'int',

@@ -36,6 +36,8 @@ Solo developer + Claude Code · 1-week sprints · English only at launch · emai
 - Add the certifications the designs use outside the funded catalog (CompTIA, AI-102, AZ-305, DP-900/100, SC-900, SCS-C02, MLA-C01), if the institute funds them. Google certs are excluded: TEK-UP does not support them.
 - Find official badge images for the certs that have none yet (31 of the 56; see `badgeAsset: null` in the seed). Drop them in `frontend/public/badges/` and set the file name in the seed.
 - Upgrade to NestJS 12 once `nestjs-zod` supports it, and to ESLint 10 once `eslint-config-next` does (ADR-004).
+- Staff review of the drafted certification page content (S03): summaries, exam facts and resource links in `backend/src/database/seed/data/certification-details.ts`. Most summaries and exam facts were written from general knowledge, so check them against each vendor's page. These links block automated checks or weren't confirmed and need a manual look: the Oracle exam pages and Live SQL, the Huawei Talent portal, edube.org, the Cisco certifications hub, docs.ansible.com, and the Red Hat developer, EX294 and certifications hub pages.
+- "Stop preparing" a certification (S03 only has Start). Fits with S04 progress or S07 settings.
 - Clean up expired rows in `sessions`, `email_tokens` and `login_attempts` (a scheduled job).
 - Move the per-IP auth rate limit to a shared store (e.g. Redis) once the API runs on several instances.
 - Subset the Material Symbols font to the icons actually used (it is about 3 MB today). Fits with the S08 performance pass.

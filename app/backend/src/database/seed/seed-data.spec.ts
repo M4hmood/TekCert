@@ -25,6 +25,22 @@ describe('seed data', () => {
     expect(saa?.domains.map((d) => d.weight)).toEqual([30, 26, 24, 20]);
   });
 
+  it('gives every certification a summary and an official https link first', () => {
+    for (const cert of seedData.certifications) {
+      const details = seedData.details[cert.code];
+      expect(details?.summary.length).toBeGreaterThan(20);
+      expect(details?.resources[0]).toMatchObject({
+        kind: 'doc',
+        url: expect.stringMatching(/^https:\/\//),
+      });
+    }
+  });
+
+  it('reports a certification without details', () => {
+    const { ['SAA-C03']: _saa, ...rest } = seedData.details;
+    expect(() => validateSeedData({ ...seedData, details: rest })).toThrow(/SAA-C03: no details/);
+  });
+
   it('reports broken references', () => {
     const broken: SeedData = {
       ...seedData,

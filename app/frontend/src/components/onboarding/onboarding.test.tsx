@@ -42,6 +42,7 @@ function cert(code: string, name: string, provider = 'AWS'): CertificationSummar
     specialties: [],
     chapterCount: 10,
     badgeAsset: null,
+    earnedCount: 0,
   };
 }
 

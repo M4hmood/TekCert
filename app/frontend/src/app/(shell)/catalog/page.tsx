@@ -1,27 +1,52 @@
-import { CertificationListSchema } from '@tekcert/types';
+import {
+  CertificationListSchema,
+  type MyCertificationStatus,
+  MyCertificationsSchema,
+  parseCatalogPage,
+  parseCatalogQuery,
+} from '@tekcert/types';
+import { Alert } from '@tekcert/ui';
 import type { Metadata } from 'next';
-import { Placeholder } from '@/components/Placeholder';
+import { CatalogView } from '@/components/catalog/CatalogView';
+import { PageHeader } from '@/components/PageHeader';
 import { apiGet } from '@/lib/api';
+import { getAsStudent } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'Catalog' };
 export const dynamic = 'force-dynamic';
 
-async function catalogSize(): Promise<number | null> {
-  try {
-    return (await apiGet('/certifications', CertificationListSchema)).total;
-  } catch {
-    return null;
-  }
-}
+type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
-export default async function CatalogPage() {
-  const total = await catalogSize();
+export default async function CatalogPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const query = parseCatalogQuery(params);
+  const [catalog, mine] = await Promise.all([
+    apiGet('/certifications', CertificationListSchema).catch(() => null),
+    // The pills are a nice-to-have: the catalog still shows without them.
+    getAsStudent('/me/certifications', MyCertificationsSchema).catch(() => null),
+  ]);
+  const statuses: Record<string, MyCertificationStatus> = Object.fromEntries(
+    (mine?.items ?? []).map((item) => [item.slug, item.status]),
+  );
+
   return (
-    <Placeholder title="Catalog" icon="menu_book" arrives="Sprint 3">
-      {total === null
-        ? 'The catalog could not be loaded right now.'
-        : `${total} certifications funded by the institute are ready.`}{' '}
-      Browsing and filters are built in Sprint 3.
-    </Placeholder>
+    <>
+      <PageHeader
+        title="Catalog"
+        description="Every certification funded by TEK-UP this academic year."
+      />
+      {catalog ? (
+        <CatalogView
+          certifications={catalog.items}
+          initialQuery={query}
+          initialPage={parseCatalogPage(params)}
+          mine={statuses}
+        />
+      ) : (
+        <Alert tone="error">
+          The catalog could not be loaded right now. Reload the page to try again.
+        </Alert>
+      )}
+    </>
   );
 }

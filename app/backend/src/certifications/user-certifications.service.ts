@@ -21,6 +21,43 @@ export class UserCertificationsService {
     return rows.map((row) => ({ code: row.certification.code, slug: row.certification.slug }));
   }
 
+  /** The student's certifications with the day each was declared. */
+  async listForUser(userId: string): Promise<{ certificationId: string; since: Date }[]> {
+    const rows = await this.userCertifications.find({
+      where: { userId },
+      select: { certificationId: true, createdAt: true },
+    });
+    return rows.map((row) => ({ certificationId: row.certificationId, since: row.createdAt }));
+  }
+
+  async holds(userId: string, certificationId: string): Promise<boolean> {
+    return this.userCertifications.existsBy({ userId, certificationId });
+  }
+
+  /** How many students hold each certification. Certifications nobody holds are absent. */
+  async countByCertification(): Promise<Map<string, number>> {
+    const rows = await this.userCertifications
+      .createQueryBuilder('uc')
+      .select('uc.certificationId', 'certificationId')
+      .addSelect('COUNT(*)::int', 'count')
+      .groupBy('uc.certificationId')
+      .getRawMany<{ certificationId: string; count: number }>();
+    return new Map(rows.map((row) => [row.certificationId, row.count]));
+  }
+
+  countFor(certificationId: string): Promise<number> {
+    return this.userCertifications.countBy({ certificationId });
+  }
+
+  /** Who holds the certification, with the day they declared it. */
+  async holdersOf(certificationId: string): Promise<{ userId: string; since: Date }[]> {
+    const rows = await this.userCertifications.find({
+      where: { certificationId },
+      select: { userId: true, createdAt: true },
+    });
+    return rows.map((row) => ({ userId: row.userId, since: row.createdAt }));
+  }
+
   /**
    * Replaces the certifications declared during onboarding. They stay unverified until proof
    * upload and staff review exist (Release 2). Pass `manager` to run inside the caller's
