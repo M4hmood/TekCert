@@ -149,14 +149,15 @@ The list query (comma lists, `maxDifficulty`, `sort`), the facets, the extended 
 
 ### Outcome (2026-10-30)
 Tests:
-- types: 59 (Vitest)
+- types: 71 (Vitest)
 - backend: 54 unit + 69 API e2e (Jest)
-- frontend: 67 (Vitest)
-- Playwright: 42 passing at 1440 and 390 px (11 skipped by design: desktop-only or mobile-only tests)
+- frontend: 74 (Vitest)
+- Playwright: 43 of 44 passing at 1440 and 390 px (11 skipped by design: desktop-only or mobile-only tests). The one failure is the S02 onboarding test on desktop, which reads the photo's width before it has finished loading; it passed 2 of 3 reruns.
 
 Format, lint, typecheck and build pass. `migration:generate --check` finds no drift. Screens checked at both widths, light and dark, against design/Catalogue and design/Fiche-certification.
 
 Where the build differs from the plan:
+- **Seed content isn't from the vendors' pages as planned.** Apart from SAA-C03, most summaries and exam facts were written from general knowledge, and only some were checked. See the PLAN.md backlog for the review, including the links that couldn't be confirmed.
 - **Two text fields, not one.** The design has a short line under the title and a longer Overview text, so `certifications` gets `summary` (required) and `description` (optional; the summary stands in). Only SAA-C03 has a description for now.
 - **Badge base URL is `NEXT_PUBLIC_BADGE_BASE_URL`.** Cards are client components, so the setting must be public to the browser. Default `/badges`.
 - **Status card copy.** In progress says "Started October 30" and offers "Go to the syllabus"; held certifications say "Declared …" with a note that proof upload comes later. The toast says "SAA-C03 started · it is now in progress" rather than "Added to your dashboard", since the dashboard arrives in S04.

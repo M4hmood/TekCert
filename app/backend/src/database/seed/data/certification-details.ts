@@ -5,9 +5,10 @@ import type { CertificationDetailsSeed, ResourceSeed } from '../schema';
  * recommended external resources (TekCert hosts no courses).
  *
  * SAA-C03 matches the Fiche-certification design.
- * DRAFT: needs staff review. Everything else is drafted from the vendors' public pages
- * (October 2026). Facts a vendor doesn't publish, or that changed after an exam was retired,
- * are left out and the page hides them. Every certification links to the vendor's own page
+ * DRAFT: needs staff review. Everything else was written from general knowledge of each exam
+ * (October 2026), and most of it has not been checked against the vendor's page, so durations,
+ * question counts, passing scores and validity are unconfirmed. Facts without a confident
+ * value are left out and the page hides them. Every certification links to a vendor page
  * first; retired exams link to the vendor's certification hub instead.
  */
 
