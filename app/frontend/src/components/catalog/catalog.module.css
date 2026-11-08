@@ -652,6 +652,21 @@
   background: var(--sf2);
 }
 
+.skeletonTitle {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 0.84em bar + 0.36em of margin = the title's 1.2 line height, at either font size. */
+.skeletonTitleLine {
+  height: 0.84em;
+  margin-block: 0.18em;
+  border-radius: 5px;
+  background: var(--sf2);
+}
+
 @keyframes shimmer {
   0%,
   100% {
@@ -683,6 +698,10 @@
 
   .mobileOnly {
     display: flex;
+  }
+
+  .skeletonDesktopLine {
+    display: none;
   }
 
   .content {
