@@ -36,6 +36,14 @@ test.describe('catalog on desktop', () => {
     await expect(shared.getByRole('checkbox', { name: /Amazon Web Services/ })).toBeChecked();
   });
 
+  test('keeps the theme button on the title line, as on other pages', async ({ page }) => {
+    const buttonTop = async (path: string) => {
+      await page.goto(path);
+      return (await page.getByRole('button', { name: 'Change theme' }).boundingBox())?.y;
+    };
+    expect(await buttonTop('/catalog')).toBe(await buttonTop('/dashboard'));
+  });
+
   test('clears every filter at once', async ({ page }) => {
     await page.goto('/catalog?provider=REDHAT&maxDifficulty=3');
     await expect(resultCount(page)).toHaveText('0 certifications');

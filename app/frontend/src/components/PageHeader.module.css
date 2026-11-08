@@ -1,8 +1,9 @@
+/* The description gets its own row, so the actions stay on the title line on every page. */
 .header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 6px 16px;
 }
 
 .titles {
@@ -26,6 +27,7 @@
 }
 
 .description {
+  grid-column: 1 / -1;
   color: var(--ink2);
   font-size: 15px;
 }
