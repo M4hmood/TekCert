@@ -2,7 +2,8 @@ import '@tekcert/ui/styles.css';
 import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
-import { parseTheme, THEME_COOKIE } from '@/lib/preferences';
+import { Splash } from '@/components/Splash';
+import { parseTheme, SPLASH_COOKIE, THEME_COOKIE } from '@/lib/preferences';
 
 export const metadata: Metadata = {
   title: { default: 'TekCert', template: '%s · TekCert' },
@@ -19,10 +20,14 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // Read on the server so the first paint already has the chosen theme (no flash).
-  const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
+  const jar = await cookies();
+  const theme = parseTheme(jar.get(THEME_COOKIE)?.value);
   return (
     <html lang="en" data-theme={theme === 'system' ? undefined : theme}>
-      <body>{children}</body>
+      <body>
+        {!jar.has(SPLASH_COOKIE) && <Splash />}
+        {children}
+      </body>
     </html>
   );
 }
