@@ -50,7 +50,8 @@ test.describe('onboarding', () => {
     // The cropped photo is served back through the API.
     const photo = page.locator('img[src^="/api/users/"]');
     await expect(photo).toBeVisible();
-    expect(await photo.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(512);
+    // The element is visible before the file has loaded, and its width is 0 until then.
+    await expect.poll(() => photo.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(512);
 
     const leaderboards = page.getByRole('switch', { name: 'Appear on leaderboards' });
     await expect(leaderboards).toHaveAttribute('aria-checked', 'true');
