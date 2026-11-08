@@ -3,6 +3,7 @@ import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CatalogView } from './CatalogView';
+import { pageItems } from './Pagination';
 import { CertBadge } from './parts';
 
 function cert(overrides: Partial<CertificationSummary> & { code: string }): CertificationSummary {
@@ -56,6 +57,8 @@ const cardNames = () =>
     .filter((href) => href?.startsWith('/catalog/'));
 
 beforeAll(() => {
+  // jsdom has no layout, so no scrolling.
+  Element.prototype.scrollIntoView = vi.fn();
   // jsdom has no <dialog> modal support.
   HTMLDialogElement.prototype.showModal = function showModal(this: HTMLDialogElement) {
     this.setAttribute('open', '');
@@ -73,7 +76,12 @@ afterEach(() => {
 describe('CatalogView', () => {
   it('lists every certification, most earned first, with my status', () => {
     render(
-      <CatalogView certifications={CERTS} initialQuery={{}} mine={{ 'saa-c03': 'in_progress' }} />,
+      <CatalogView
+        certifications={CERTS}
+        initialQuery={{}}
+        initialPage={1}
+        mine={{ 'saa-c03': 'in_progress' }}
+      />,
     );
     expect(count()).toBe('4 certifications');
     expect(cardNames()).toEqual([
@@ -93,6 +101,7 @@ describe('CatalogView', () => {
       <CatalogView
         certifications={CERTS}
         initialQuery={{ provider: ['AZURE'], level: ['expert'] }}
+        initialPage={1}
         mine={{}}
       />,
     );
@@ -103,7 +112,7 @@ describe('CatalogView', () => {
 
   it('filters, writes the URL and removes a filter from its chip', async () => {
     const user = userEvent.setup();
-    render(<CatalogView certifications={CERTS} initialQuery={{}} mine={{}} />);
+    render(<CatalogView certifications={CERTS} initialQuery={{}} initialPage={1} mine={{}} />);
 
     await user.click(screen.getByRole('checkbox', { name: /Microsoft Azure/ }));
     await user.click(
@@ -123,7 +132,7 @@ describe('CatalogView', () => {
 
   it('counts each provider with the other filters applied', async () => {
     const user = userEvent.setup();
-    render(<CatalogView certifications={CERTS} initialQuery={{}} mine={{}} />);
+    render(<CatalogView certifications={CERTS} initialQuery={{}} initialPage={1} mine={{}} />);
     await user.click(screen.getByRole('button', { name: 'Difficulty up to 1' }));
     expect(
       screen.getByRole('checkbox', { name: /Amazon Web Services/ }).closest('label'),
@@ -137,7 +146,7 @@ describe('CatalogView', () => {
   it('searches after a short pause and offers to clear a search with no result', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    render(<CatalogView certifications={CERTS} initialQuery={{}} mine={{}} />);
+    render(<CatalogView certifications={CERTS} initialQuery={{}} initialPage={1} mine={{}} />);
 
     await user.type(screen.getByRole('searchbox'), 'az-1');
     act(() => vi.advanceTimersByTime(300));
@@ -163,6 +172,7 @@ describe('CatalogView', () => {
       <CatalogView
         certifications={CERTS}
         initialQuery={{ provider: ['AZURE'], maxDifficulty: 1 }}
+        initialPage={1}
         mine={{}}
       />,
     );
@@ -173,7 +183,7 @@ describe('CatalogView', () => {
 
   it('applies the mobile filter sheet only on "Show N"', async () => {
     const user = userEvent.setup();
-    render(<CatalogView certifications={CERTS} initialQuery={{}} mine={{}} />);
+    render(<CatalogView certifications={CERTS} initialQuery={{}} initialPage={1} mine={{}} />);
     await user.click(screen.getByRole('button', { name: 'Filters' }));
     const sheet = screen.getByRole('dialog', { name: 'Filters' });
     await user.click(within(sheet).getByRole('button', { name: 'Expert' }));
@@ -185,11 +195,85 @@ describe('CatalogView', () => {
 
   it('sorts from the menu', async () => {
     const user = userEvent.setup();
-    render(<CatalogView certifications={CERTS} initialQuery={{}} mine={{}} />);
+    render(<CatalogView certifications={CERTS} initialQuery={{}} initialPage={1} mine={{}} />);
     await user.selectOptions(screen.getByRole('combobox'), 'name');
     expect(cardNames()[0]).toBe('/catalog/clf-c02');
     expect(cardNames()[1]).toBe('/catalog/saa-c03');
     expect(window.location.search).toBe('?sort=name');
+  });
+});
+
+describe('pagination', () => {
+  // Named so "most earned" (all 0) falls back to this alphabetical order.
+  const MANY = Array.from({ length: 30 }, (_, i) => {
+    const code = `C-${String(i + 1).padStart(2, '0')}`;
+    return cert({ code, name: code });
+  });
+  const shownSlugs = () => cardNames().map((href) => href?.replace('/catalog/', ''));
+  const view = (initialPage = 1, initialQuery = {}) =>
+    render(
+      <CatalogView
+        certifications={MANY}
+        initialQuery={initialQuery}
+        initialPage={initialPage}
+        mine={{}}
+      />,
+    );
+
+  it('shows 12 certifications at a time and counts them all', () => {
+    view();
+    expect(cardNames()).toHaveLength(12);
+    expect(count()).toBe('30 certifications');
+    expect(screen.getByText('1–12 of 30')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Page 1' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('button', { name: 'Previous page' })).toBeDisabled();
+  });
+
+  it('moves between pages, writes the URL and moves focus to the results', async () => {
+    const user = userEvent.setup();
+    view();
+    await user.click(screen.getByRole('button', { name: 'Page 3' }));
+    expect(shownSlugs()).toEqual(MANY.slice(24).map((c) => c.slug));
+    expect(screen.getByText('25–30 of 30')).toBeInTheDocument();
+    expect(window.location.search).toBe('?page=3');
+    expect(screen.getByRole('button', { name: 'Next page' })).toBeDisabled();
+    expect(document.activeElement?.tagName).toBe('UL');
+
+    await user.click(screen.getByRole('button', { name: 'Previous page' }));
+    expect(screen.getByText('13–24 of 30')).toBeInTheDocument();
+    expect(window.location.search).toBe('?page=2');
+  });
+
+  it('opens on the page in the URL, or the last one when it is past the end', () => {
+    const { unmount } = view(2);
+    expect(shownSlugs()[0]).toBe('c-13');
+    unmount();
+    view(99);
+    expect(screen.getByRole('button', { name: 'Page 3' })).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('goes back to page 1 when a filter or the sort changes', async () => {
+    const user = userEvent.setup();
+    view(3);
+    await user.selectOptions(screen.getByRole('combobox'), 'name');
+    expect(screen.getByRole('button', { name: 'Page 1' })).toHaveAttribute('aria-current', 'page');
+    expect(window.location.search).toBe('?sort=name');
+  });
+
+  it('is hidden when everything fits on one page', () => {
+    view(1, { q: 'C-01' });
+    expect(screen.queryByRole('navigation', { name: 'Pagination' })).toBeNull();
+  });
+});
+
+describe('pageItems', () => {
+  it('shows every page when there are few', () => {
+    expect(pageItems(2, 3)).toEqual([1, 2, 3]);
+  });
+
+  it('keeps the ends and the neighbours of the current page', () => {
+    expect(pageItems(5, 9)).toEqual([1, 'gap', 4, 5, 6, 'gap', 9]);
+    expect(pageItems(1, 9)).toEqual([1, 2, 'gap', 9]);
   });
 });
 

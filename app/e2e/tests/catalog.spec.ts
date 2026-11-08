@@ -61,6 +61,26 @@ test('searches, shows the no-result state and clears the search', async ({ page 
   await expect(resultCount(page)).toHaveText('56 certifications');
 });
 
+test('pages through the catalog and keeps the page in the link', async ({ page, context }) => {
+  await page.goto('/catalog');
+  await expect(resultCount(page)).toHaveText('56 certifications');
+  await expect(cards(page)).toHaveCount(12);
+
+  await page.getByRole('button', { name: 'Next page' }).click();
+  await expect(page).toHaveURL(/page=2/);
+  await expect(cards(page)).toHaveCount(12);
+
+  const shared = await context.newPage();
+  await shared.goto('/catalog?page=5');
+  await expect(cards(shared)).toHaveCount(8);
+  await expect(shared.getByRole('button', { name: 'Next page' })).toBeDisabled();
+
+  // A new search starts again at page 1.
+  await page.getByRole('searchbox', { name: 'Search the catalog' }).fill('aws');
+  await expect(page).toHaveURL(/q=aws/);
+  await expect(page).not.toHaveURL(/page=/);
+});
+
 test.describe('catalog on mobile', () => {
   test.skip(({ viewport }) => (viewport?.width ?? 0) >= 768, 'filter sheet is mobile only');
 

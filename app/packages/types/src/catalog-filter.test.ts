@@ -4,6 +4,8 @@ import {
   activeFilterCount,
   catalogFacets,
   filterCatalog,
+  paginateCatalog,
+  parseCatalogPage,
   parseCatalogQuery,
   serializeCatalogQuery,
 } from './catalog-filter.js';
@@ -194,5 +196,51 @@ describe('activeFilterCount', () => {
   it('counts each ticked option and a difficulty cap', () => {
     expect(activeFilterCount({ provider: ['AWS', 'AZURE'], maxDifficulty: 3, q: 'x' })).toBe(3);
     expect(activeFilterCount({ maxDifficulty: 5 })).toBe(0);
+  });
+});
+
+describe('paginateCatalog', () => {
+  const items = Array.from({ length: 30 }, (_, i) => i + 1);
+
+  it('returns the requested page and where it sits in the list', () => {
+    const second = paginateCatalog(items, 2);
+    expect(second.items).toEqual([13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]);
+    expect(second).toMatchObject({ page: 2, pageCount: 3, first: 13, last: 24 });
+  });
+
+  it('has a shorter last page', () => {
+    expect(paginateCatalog(items, 3)).toMatchObject({ first: 25, last: 30, pageCount: 3 });
+  });
+
+  it('falls back to the last page past the end, and the first below it', () => {
+    expect(paginateCatalog(items, 99).page).toBe(3);
+    expect(paginateCatalog(items, 0).page).toBe(1);
+  });
+
+  it('has one empty page when nothing matches', () => {
+    expect(paginateCatalog([], 4)).toEqual({ items: [], page: 1, pageCount: 1, first: 0, last: 0 });
+  });
+});
+
+describe('parseCatalogPage', () => {
+  it.each([
+    ['3', 3],
+    ['0', 1],
+    ['-2', 1],
+    ['1.5', 1],
+    ['abc', 1],
+    [undefined, 1],
+  ])('reads %s as page %i', (page, expected) => {
+    expect(parseCatalogPage({ page })).toBe(expected);
+  });
+
+  it('reads a URL', () => {
+    expect(parseCatalogPage(new URLSearchParams('q=aws&page=2'))).toBe(2);
+  });
+
+  it('is not part of the filters, and the first page stays out of the URL', () => {
+    expect(parseCatalogQuery(new URLSearchParams('page=2'))).toEqual({});
+    expect(serializeCatalogQuery({ q: 'aws' }, 2)).toBe('q=aws&page=2');
+    expect(serializeCatalogQuery({ q: 'aws' }, 1)).toBe('q=aws');
   });
 });

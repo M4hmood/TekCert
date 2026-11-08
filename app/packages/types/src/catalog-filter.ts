@@ -107,7 +107,47 @@ export function activeFilterCount(query: CertificationListQuery): number {
   );
 }
 
+/** 12 fills whole rows at both 3 and 2 columns. */
+export const CATALOG_PAGE_SIZE = 12;
+
+export interface CatalogPage<T> {
+  items: T[];
+  /** The page shown, 1-based: a page past the end falls back to the last one. */
+  page: number;
+  pageCount: number;
+  /** Position of the first and last item shown, 1-based; 0 when there are no items. */
+  first: number;
+  last: number;
+}
+
+/** One page of already filtered and sorted certifications. */
+export function paginateCatalog<T>(
+  items: T[],
+  requestedPage: number,
+  size = CATALOG_PAGE_SIZE,
+): CatalogPage<T> {
+  const pageCount = Math.max(1, Math.ceil(items.length / size));
+  const page = Math.min(Math.max(1, requestedPage), pageCount);
+  const start = (page - 1) * size;
+  const shown = items.slice(start, start + size);
+  return {
+    items: shown,
+    page,
+    pageCount,
+    first: shown.length ? start + 1 : 0,
+    last: start + shown.length,
+  };
+}
+
 type SearchParamsRecord = Record<string, string | string[] | undefined>;
+
+/** The ?page= of a /catalog URL; anything that isn't a page number means the first page. */
+export function parseCatalogPage(params: SearchParamsRecord | URLSearchParams): number {
+  const value = params instanceof URLSearchParams ? params.get('page') : params.page;
+  const raw = Array.isArray(value) ? value[0] : value;
+  const page = Number(raw);
+  return Number.isSafeInteger(page) && page >= 1 ? page : 1;
+}
 
 /**
  * Reads a /catalog URL leniently: each parameter is checked on its own and a bad one is
@@ -142,7 +182,7 @@ export function parseCatalogQuery(
 }
 
 /** The query string for a catalog URL, without empty or default values ("" when nothing is set). */
-export function serializeCatalogQuery(query: CertificationListQuery): string {
+export function serializeCatalogQuery(query: CertificationListQuery, page = 1): string {
   const params = new URLSearchParams();
   if (query.q?.trim()) params.set('q', query.q.trim());
   if (query.provider?.length) params.set('provider', query.provider.join(','));
@@ -158,6 +198,7 @@ export function serializeCatalogQuery(query: CertificationListQuery): string {
   if (query.sort && query.sort !== DEFAULT_CATALOG_SORT && CATALOG_SORTS.includes(query.sort)) {
     params.set('sort', query.sort);
   }
+  if (page > 1) params.set('page', String(page));
   // Commas stay readable in shared links.
   return params.toString().replaceAll('%2C', ',');
 }

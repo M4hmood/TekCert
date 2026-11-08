@@ -163,6 +163,7 @@ Where the build differs from the plan:
 - **Syllabus side note** explains that ticking chapters arrives in the next update, instead of the design's "Tick a chapter…".
 - **"Who to ask" cards** show "Unverified" instead of "Verified" (Release 1), a "started Oct 2026" date instead of a percentage (S04), and a mail button (decision 4). The subtitle no longer says "Only public profiles are shown", since every profile is visible.
 - **Not shown:** the design's free-text prerequisites ("Hands-on AWS console experience") and the "+500 points" panel (Release 2).
+- **Added after the build, on request:** catalog pagination, 12 per page with `?page=` in the URL. The designs have no pagination, so it reuses the difficulty stepper's shapes. Phones show Previous / "Page 2 of 5" / Next.
 - **Validation errors stay 400.** `?level=master` returns 400 with the error on `level.0`, since levels are now a comma list.
 
 ### Certification catalog (56 certs, 10 providers, as of 2026-10-29)

@@ -8,6 +8,7 @@ import {
   type CertificationSummary,
   filterCatalog,
   type MyCertificationStatus,
+  paginateCatalog,
   type Provider,
   serializeCatalogQuery,
   SPECIALTY_CODES,
@@ -18,6 +19,7 @@ import Link from 'next/link';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { DifficultyPicker, LevelToggles, toggle } from './controls';
 import { FilterSheet } from './FilterSheet';
+import { Pagination } from './Pagination';
 import styles from './catalog.module.css';
 import {
   CertBadge,
@@ -44,6 +46,7 @@ export interface CatalogViewProps {
   certifications: CertificationSummary[];
   /** Parsed from the URL on the server, so a shared link renders filtered on first paint. */
   initialQuery: CertificationListQuery;
+  initialPage: number;
   /** slug → my status; empty when it could not be loaded. */
   mine: Record<string, MyCertificationStatus>;
 }
@@ -51,10 +54,20 @@ export interface CatalogViewProps {
 const SEARCH_DEBOUNCE_MS = 250;
 
 /** Search, filters and results. Everything runs in the browser over the 56 certifications. */
-export function CatalogView({ certifications, initialQuery, mine }: CatalogViewProps) {
+export function CatalogView({ certifications, initialQuery, initialPage, mine }: CatalogViewProps) {
   const [query, setQuery] = useState<CertificationListQuery>(initialQuery);
   const [search, setSearch] = useState(initialQuery.q ?? '');
   const [sheetOpen, setSheetOpen] = useState(false);
+  // A page belongs to the filters it was picked under: any other filter starts again at page 1.
+  const queryKey = serializeCatalogQuery(query);
+  const [picked, setPicked] = useState({ page: initialPage, queryKey });
+  const content = useRef<HTMLDivElement>(null);
+  const grid = useRef<HTMLUListElement>(null);
+
+  const results = useMemo(() => filterCatalog(certifications, query), [certifications, query]);
+  const facets = useMemo(() => catalogFacets(certifications, query), [certifications, query]);
+  const providers = useMemo(() => uniqueProviders(certifications), [certifications]);
+  const current = paginateCatalog(results, picked.queryKey === queryKey ? picked.page : 1);
 
   // Keep the URL in step without a server round trip (Next syncs history.replaceState).
   const firstRender = useRef(true);
@@ -63,9 +76,9 @@ export function CatalogView({ certifications, initialQuery, mine }: CatalogViewP
       firstRender.current = false;
       return;
     }
-    const search = serializeCatalogQuery(query);
+    const search = serializeCatalogQuery(query, current.page);
     window.history.replaceState(null, '', search ? `?${search}` : window.location.pathname);
-  }, [query]);
+  }, [query, current.page]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -76,9 +89,12 @@ export function CatalogView({ certifications, initialQuery, mine }: CatalogViewP
     return () => clearTimeout(timer);
   }, [search]);
 
-  const results = useMemo(() => filterCatalog(certifications, query), [certifications, query]);
-  const facets = useMemo(() => catalogFacets(certifications, query), [certifications, query]);
-  const providers = useMemo(() => uniqueProviders(certifications), [certifications]);
+  const goToPage = (page: number) => {
+    setPicked({ page, queryKey });
+    // The button pressed can become disabled, so focus moves to the new results.
+    grid.current?.focus({ preventScroll: true });
+    content.current?.scrollIntoView({ block: 'start' });
+  };
 
   const update = (changes: Partial<CertificationListQuery>) =>
     setQuery((current) => clean({ ...current, ...changes }));
@@ -143,7 +159,7 @@ export function CatalogView({ certifications, initialQuery, mine }: CatalogViewP
         </fieldset>
       </section>
 
-      <div className={styles.content}>
+      <div ref={content} className={styles.content}>
         <div className={styles.toolbar}>
           <label className={styles.search}>
             <Icon name="search" className={styles.searchIcon} />
@@ -235,13 +251,23 @@ export function CatalogView({ certifications, initialQuery, mine }: CatalogViewP
         </div>
 
         {results.length > 0 ? (
-          <ul className={styles.grid}>
-            {results.map((cert) => (
-              <li key={cert.slug}>
-                <CertCard cert={cert} status={mine[cert.slug]} />
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul ref={grid} tabIndex={-1} className={styles.grid}>
+              {current.items.map((cert) => (
+                <li key={cert.slug}>
+                  <CertCard cert={cert} status={mine[cert.slug]} />
+                </li>
+              ))}
+            </ul>
+            <Pagination
+              page={current.page}
+              pageCount={current.pageCount}
+              first={current.first}
+              last={current.last}
+              total={results.length}
+              onChange={goToPage}
+            />
+          </>
         ) : searchOnly ? (
           <EmptyState
             icon="search_off"

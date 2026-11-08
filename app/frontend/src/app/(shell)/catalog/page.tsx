@@ -2,6 +2,7 @@ import {
   CertificationListSchema,
   type MyCertificationStatus,
   MyCertificationsSchema,
+  parseCatalogPage,
   parseCatalogQuery,
 } from '@tekcert/types';
 import { Alert } from '@tekcert/ui';
@@ -17,7 +18,8 @@ export const dynamic = 'force-dynamic';
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 export default async function CatalogPage({ searchParams }: Props) {
-  const query = parseCatalogQuery(await searchParams);
+  const params = await searchParams;
+  const query = parseCatalogQuery(params);
   const [catalog, mine] = await Promise.all([
     apiGet('/certifications', CertificationListSchema).catch(() => null),
     // The pills are a nice-to-have: the catalog still shows without them.
@@ -34,7 +36,12 @@ export default async function CatalogPage({ searchParams }: Props) {
         description="Every certification funded by TEK-UP this academic year."
       />
       {catalog ? (
-        <CatalogView certifications={catalog.items} initialQuery={query} mine={statuses} />
+        <CatalogView
+          certifications={catalog.items}
+          initialQuery={query}
+          initialPage={parseCatalogPage(params)}
+          mine={statuses}
+        />
       ) : (
         <Alert tone="error">
           The catalog could not be loaded right now. Reload the page to try again.
