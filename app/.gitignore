@@ -12,6 +12,8 @@ coverage/
 e2e/test-results/
 e2e/visual/__screenshots__/
 e2e/visual/.auth/
+# Sound clips kept on this machine only.
+frontend/public/sounds/
 e2e/playwright-report/
 e2e/blob-report/
 .DS_Store

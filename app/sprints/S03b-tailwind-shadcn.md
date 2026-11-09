@@ -157,8 +157,8 @@ CSS Modules are unlayered, so they beat Tailwind utilities. **A component is con
 
 ### Outcome (2026-11-09)
 Tests:
-- frontend: 86 (Vitest); backend: 54 unit + 69 API e2e (Jest)
-- Playwright: 60 passing at 1440 and 390 px (17 skipped by design: desktop-only or mobile-only tests), including 6 new keyboard tests
+- frontend: 88 (Vitest); backend: 54 unit + 69 API e2e (Jest)
+- Playwright: 62 passing at 1440 and 390 px (17 skipped by design: desktop-only or mobile-only tests), including 6 new keyboard tests and the theme animation
 - Screenshots: 215 at 1440 and 390, light and dark, plus widths between the breakpoints. All 50 test groups match the pre-migration build to within 25 pixels per screen.
 
 Format, lint, typecheck and build pass. GitHub Actions has not run this branch (the billing lock noted on S03).
@@ -184,5 +184,7 @@ Where the build differs from the plan:
 Behaviour changes, as expected in section 7:
 - **Select:** Tab no longer commits the highlighted option, focus moves through the options instead of `aria-activedescendant`, and the list closes when the window is resized.
 - **Sheet and dialog:** they render in a portal and slide or fade in. Radix returns focus to its own trigger, and these open from state, so `useReturnFocus` restores it.
+
+Added on request, outside the plan: changing the theme is now animated from the button (a circle spreads out going light and shrinks back in going dark), using a view transition. Browsers without them, and people who prefer reduced motion, get the instant switch. A more elaborate version is parked on the local branch `feat/deluminator-theme-transition`.
 
 Reset side effects found by the screenshots and fixed (useful for S04 onwards): Preflight's `img { max-width: 100% }` can squeeze an image in a flex row, and it removes the default padding of inputs and text-only buttons. A later `text-[…]` in `cn()` drops an earlier `leading-[…]`, so put the line height after the size.

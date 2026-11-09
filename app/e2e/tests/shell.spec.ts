@@ -89,6 +89,54 @@ test('theme toggle switches to dark and survives a reload', async ({ page }) => 
   await expect(html).toHaveAttribute('data-theme', 'dark');
 });
 
+test('the page shrinks into the theme button and spreads back out of it', async ({ page }) => {
+  // Signed out on purpose: the sign-in tab bar has its own view-transition layer otherwise.
+  await page.context().clearCookies();
+  await page.goto('/sign-in');
+  await expect(page.locator('[data-splash]')).not.toBeAttached({ timeout: 30_000 });
+  await page.getByRole('heading', { level: 1 }).waitFor();
+  const html = page.locator('html');
+  const box = await page.getByRole('button', { name: 'Change theme' }).boundingBox();
+
+  const pressAndWatch = () =>
+    page.evaluate(async () => {
+      document.querySelector<HTMLButtonElement>('[aria-label="Change theme"]')?.click();
+      for (let frame = 0; frame < 60; frame += 1) {
+        await new Promise(requestAnimationFrame);
+        const running = document
+          .getAnimations()
+          .map((animation) => animation.effect as KeyframeEffect)
+          .filter((effect) => /view-transition-(old|new)/.test(effect.pseudoElement ?? ''))
+          .map((effect) => ({
+            layer: effect.pseudoElement,
+            direction: effect.getTiming().direction,
+          }));
+        if (running.length) {
+          const style = document.documentElement.style;
+          return {
+            running,
+            x: Number.parseFloat(style.getPropertyValue('--theme-x')),
+            y: Number.parseFloat(style.getPropertyValue('--theme-y')),
+          };
+        }
+      }
+      return null;
+    });
+
+  // The browser starts in the light theme.
+  const toDark = await pressAndWatch();
+  expect(toDark?.running).toEqual([{ layer: '::view-transition-old(root)', direction: 'reverse' }]);
+  expect(toDark?.x).toBeCloseTo((box?.x ?? 0) + (box?.width ?? 0) / 2, 0);
+  expect(toDark?.y).toBeCloseTo((box?.y ?? 0) + (box?.height ?? 0) / 2, 0);
+  await expect(html).toHaveAttribute('data-theme', 'dark');
+  await expect(html).not.toHaveAttribute('data-theme-switching');
+
+  const toLight = await pressAndWatch();
+  expect(toLight?.running).toEqual([{ layer: '::view-transition-new(root)', direction: 'normal' }]);
+  await expect(html).toHaveAttribute('data-theme', 'light');
+  await expect(html).not.toHaveAttribute('data-theme-switching');
+});
+
 test('the sidebar shows the signed-in student', async ({ page, viewport }) => {
   test.skip((viewport?.width ?? 0) < 768, 'sidebar layout only');
   await page.goto('/dashboard');

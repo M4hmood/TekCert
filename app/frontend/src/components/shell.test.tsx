@@ -1,6 +1,6 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BottomNav } from './BottomNav';
 import { Sidebar } from './Sidebar';
 import { ThemeToggle } from './ThemeToggle';
@@ -135,5 +135,61 @@ describe('ThemeToggle', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Change theme' }));
 
     expect(document.documentElement.dataset.theme).toBe('light');
+  });
+
+  describe('with view transitions', () => {
+    const root = document.documentElement;
+
+    function stubViewTransition() {
+      let finish = () => {};
+      const finished = new Promise<void>((resolve) => {
+        finish = resolve;
+      });
+      const start = vi.fn((update: () => void) => {
+        update();
+        return { finished };
+      });
+      Object.defineProperty(document, 'startViewTransition', { value: start, configurable: true });
+      return { start, finish: () => finish() };
+    }
+
+    afterEach(() => {
+      Reflect.deleteProperty(document, 'startViewTransition');
+      delete root.dataset.themeSwitching;
+    });
+
+    it('animates from the centre of the button, then cleans up', async () => {
+      mockPrefersDark(false);
+      const { start, finish } = stubViewTransition();
+      render(<ThemeToggle />);
+      const button = screen.getByRole('button', { name: 'Change theme' });
+      button.getBoundingClientRect = () => new DOMRect(100, 20, 44, 44);
+      await userEvent.click(button);
+
+      expect(start).toHaveBeenCalledOnce();
+      expect(root.dataset.theme).toBe('dark');
+      expect(root.dataset.themeSwitching).toBe('to-dark');
+      expect(root.style.getPropertyValue('--theme-x')).toBe('122px');
+      expect(root.style.getPropertyValue('--theme-y')).toBe('42px');
+      expect(Number.parseFloat(root.style.getPropertyValue('--theme-radius'))).toBeGreaterThan(0);
+
+      await act(async () => finish());
+      expect(root.dataset.themeSwitching).toBeUndefined();
+      expect(root.style.getPropertyValue('--theme-x')).toBe('');
+    });
+
+    it('switches at once for people who prefer reduced motion', async () => {
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn((query: string) => ({ matches: query.includes('reduce'), media: query })),
+      );
+      const { start } = stubViewTransition();
+      render(<ThemeToggle />);
+      await userEvent.click(screen.getByRole('button', { name: 'Change theme' }));
+
+      expect(start).not.toHaveBeenCalled();
+      expect(root.dataset.theme).toBe('dark');
+      expect(root.dataset.themeSwitching).toBeUndefined();
+    });
   });
 });
