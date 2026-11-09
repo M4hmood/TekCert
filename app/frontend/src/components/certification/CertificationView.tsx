@@ -1,12 +1,11 @@
 'use client';
 
 import { type MyCertification, MyCertificationSchema } from '@tekcert/types';
-import { cx, Icon } from '@tekcert/ui';
-import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import { cn, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@tekcert/ui';
+import { type ReactNode, useEffect, useState } from 'react';
 import { putJson, withSessionRefresh } from '@/lib/client-api';
 import { dayMonth } from './format';
-import { type Tab, TABS } from './tabs';
-import styles from './certification.module.css';
+import { parseTab, type Tab, TABS } from './tabs';
 
 const TAB_LABELS: Record<Tab, { label: string; short: string }> = {
   overview: { label: 'Overview', short: 'Overview' },
@@ -52,26 +51,11 @@ export function CertificationView(props: CertificationViewProps) {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  const tabRefs = useRef<Record<Tab, HTMLButtonElement | null>>({
-    overview: null,
-    syllabus: null,
-    resources: null,
-    community: null,
-  });
-  // Arrow keys move between tabs (WAI-ARIA tabs pattern).
-  const onTabKey = (event: KeyboardEvent) => {
-    const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
-    if (!step) return;
-    const next = TABS[(TABS.indexOf(tab) + step + TABS.length) % TABS.length] ?? 'overview';
-    select(next);
-    tabRefs.current[next]?.focus();
-  };
-
   return (
-    <>
-      <section className={styles.band}>
+    <Tabs value={tab} onValueChange={(next) => select(parseTab(next))} className="contents">
+      <section className="flex flex-col gap-5.5 -mt-8 -mx-10 px-10 pt-7 border-b border-ln bg-sf max-md:gap-3.5 max-md:-mt-5 max-md:-mx-4 max-md:px-4 max-md:pt-3">
         {props.topBar}
-        <div className={styles.hero}>
+        <div className="grid grid-cols-[minmax(0,1fr)_380px] gap-12 items-start max-cert:grid-cols-[minmax(0,1fr)] max-cert:gap-7 max-md:gap-4">
           {props.header}
           <StatusCard
             slug={props.slug}
@@ -85,53 +69,56 @@ export function CertificationView(props: CertificationViewProps) {
             onContinue={() => select('syllabus')}
           />
         </div>
-        <div role="tablist" aria-label="Certification sections" className={styles.tabs}>
+        <TabsList
+          aria-label="Certification sections"
+          className="flex gap-1 mt-1 overflow-x-auto [scrollbar-width:none]"
+        >
           {TABS.map((t) => (
-            <button
+            <TabsTrigger
               key={t}
-              ref={(el) => {
-                tabRefs.current[t] = el;
-              }}
-              type="button"
-              role="tab"
-              id={`tab-${t}`}
-              aria-selected={tab === t}
-              aria-controls={`panel-${t}`}
-              tabIndex={tab === t ? 0 : -1}
-              className={cx(styles.tab, tab === t && styles.tabOn)}
-              onClick={() => select(t)}
-              onKeyDown={onTabKey}
+              value={t}
+              className="flex flex-none items-center gap-2 h-12 px-4 border-none bg-transparent text-ink2 text-[15px] font-medium cursor-pointer data-[state=active]:shadow-[inset_0_-2.5px_0_var(--pri)] data-[state=active]:text-pri data-[state=active]:font-semibold max-md:px-3 max-md:text-[14px]"
             >
-              <span className={styles.tabLong}>{TAB_LABELS[t].label}</span>
-              <span className={styles.tabShort}>{TAB_LABELS[t].short}</span>
+              <span className="max-md:hidden">{TAB_LABELS[t].label}</span>
+              <span className="hidden max-md:inline">{TAB_LABELS[t].short}</span>
               {props.counts[t] !== undefined && (
-                <span className={styles.tabCount}>{props.counts[t]}</span>
+                <span className="py-0.5 px-1.75 rounded-[9px] bg-sf2 text-ink2 text-[12px] font-semibold max-md:hidden">
+                  {props.counts[t]}
+                </span>
               )}
-            </button>
+            </TabsTrigger>
           ))}
-        </div>
+        </TabsList>
       </section>
       {TABS.map((t) => (
-        <section
-          key={t}
-          id={`panel-${t}`}
-          role="tabpanel"
-          aria-labelledby={`tab-${t}`}
-          hidden={tab !== t}
-          className={styles.panel}
-        >
+        // Kept mounted: the panels are rendered on the server and hold their own state.
+        <TabsContent key={t} value={t} forceMount hidden={tab !== t} className="pt-1 pb-2">
           {props.panels[t]}
-        </section>
+        </TabsContent>
       ))}
       {toast && (
-        <div role="status" className={styles.toast}>
+        <div
+          role="status"
+          className="fixed bottom-7 start-1/2 z-30 flex items-center gap-2 py-3 px-4.5 rounded-[10px] bg-ink text-bg text-[14.5px] font-semibold shadow-elevated -translate-x-1/2 max-md:bottom-[calc(var(--bottom-nav-height)+16px)] max-md:w-max max-md:max-w-[calc(100vw-32px)]"
+        >
           <Icon name="check_circle" size={20} />
           {toast}
         </div>
       )}
-    </>
+    </Tabs>
   );
 }
+
+const SEAL = {
+  available: '',
+  in_progress: 'border-6 border-pri-sf text-pri',
+  unverified: 'border-2 border-dashed border-gold-fill text-gold',
+};
+const CHIP = {
+  available: '',
+  in_progress: 'border-pri-sf bg-pri-sf text-pri',
+  unverified: 'border-dashed border-ln2 bg-transparent text-ink2',
+};
 
 function StatusCard({
   slug,
@@ -183,22 +170,37 @@ function StatusCard({
   }[state];
 
   return (
-    <section className={styles.statusCard} aria-label="My status">
-      <div className={styles.statusTop}>
-        <span className={cx(styles.seal, styles[`seal_${state}`])}>{view.seal}</span>
-        <div className={styles.statusText}>
-          <span className={styles.overline}>My status</span>
-          <span className={cx(styles.statusChip, styles[`chip_${state}`])}>
+    <section
+      className="flex flex-col gap-4 p-5.5 border border-ln rounded-[16px] bg-bg max-cert:max-w-120 max-md:max-w-none max-md:p-4 max-md:gap-3"
+      aria-label="My status"
+    >
+      <div className="flex items-center gap-3.5">
+        <span
+          className={cn(
+            'grid flex-none place-items-center size-16 border-[1.5px] border-ln2 rounded-full text-ink2 max-md:size-12',
+            SEAL[state],
+          )}
+        >
+          {view.seal}
+        </span>
+        <div className="flex flex-col gap-1.25">
+          <span className="text-ink3 type-overline">My status</span>
+          <span
+            className={cn(
+              'inline-flex items-center self-start gap-1.25 h-7 ps-2 pe-2.75 border-[1.5px] border-sf2 rounded-[14px] bg-sf2 text-ink text-[13px] font-semibold',
+              CHIP[state],
+            )}
+          >
             <Icon name={view.chip.icon} size={17} />
             {view.chip.label}
           </span>
-          <span className={styles.statusNote}>{view.note}</span>
+          <span className="text-ink2 text-[13px]">{view.note}</span>
         </div>
       </div>
       {state === 'available' && (
         <button
           type="button"
-          className={styles.primaryAction}
+          className="flex items-center justify-center gap-2 h-12 border-none rounded-[10px] bg-pri text-pri-ink text-[15px] font-semibold cursor-pointer disabled:opacity-70 disabled:cursor-progress"
           onClick={start}
           disabled={busy}
           aria-busy={busy}
@@ -208,18 +210,22 @@ function StatusCard({
         </button>
       )}
       {state === 'in_progress' && (
-        <button type="button" className={styles.primaryAction} onClick={onContinue}>
+        <button
+          type="button"
+          className="flex items-center justify-center gap-2 h-12 border-none rounded-[10px] bg-pri text-pri-ink text-[15px] font-semibold cursor-pointer disabled:opacity-70 disabled:cursor-progress"
+          onClick={onContinue}
+        >
           Go to the syllabus
           <Icon name="arrow_forward" size={20} />
         </button>
       )}
       {state === 'unverified' && (
-        <p className={styles.statusHint}>
+        <p className="text-ink3 text-[12.5px] leading-[1.45]">
           You declared it during onboarding. Proof upload and verification come in a later release.
         </p>
       )}
       {error && (
-        <p role="alert" className={styles.statusError}>
+        <p role="alert" className="text-err text-[13.5px]">
           {error}
         </p>
       )}

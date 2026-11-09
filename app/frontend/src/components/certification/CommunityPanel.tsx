@@ -11,12 +11,11 @@ import {
   SPECIALTY_CODES,
   YEARS,
 } from '@tekcert/types';
-import { cx, Icon, Select, type SelectOption } from '@tekcert/ui';
+import { cn, Icon, Select, type SelectOption, ToggleGroup, ToggleGroupItem } from '@tekcert/ui';
 import { useRef, useState } from 'react';
 import { Avatar } from '@/components/Avatar';
 import { StatusPill } from '@/components/catalog/parts';
 import { getJson, withSessionRefresh } from '@/lib/client-api';
-import styles from './certification.module.css';
 import { monthYear } from './format';
 import { communitySearch } from './tabs';
 
@@ -85,28 +84,35 @@ export function CommunityPanel({
   const filtered = query.scope !== 'institute' || !!query.specialty || !!query.year;
 
   return (
-    <div className={styles.column}>
-      <div className={styles.block}>
-        <h2 className={styles.h2}>Who to ask?</h2>
-        <p className={styles.lead}>
+    <div className="flex flex-col gap-5 min-w-0">
+      <div className="flex flex-col gap-3">
+        <h2 className="font-serif text-[28px] font-medium max-md:text-[23px]">Who to ask?</h2>
+        <p className="text-ink2 text-[14.5px]">
           Students who hold it or are preparing it. Write to them at their institute email.
         </p>
       </div>
-      <div className={styles.communityFilters}>
-        <div role="radiogroup" aria-label="Scope" className={styles.segmented}>
+      <div className="flex flex-wrap items-center gap-3">
+        <ToggleGroup
+          type="single"
+          role="radiogroup"
+          aria-label="Scope"
+          className="inline-flex gap-0.5 p-1 rounded-[10px] bg-sf2 max-md:w-full max-md:overflow-x-auto"
+          value={query.scope}
+          onValueChange={(value) => {
+            const scope = SCOPES.find((s) => s.value === value)?.value;
+            if (scope) load({ ...query, scope });
+          }}
+        >
           {SCOPES.map((s) => (
-            <button
+            <ToggleGroupItem
               key={s.value}
-              type="button"
-              role="radio"
-              aria-checked={query.scope === s.value}
-              className={cx(styles.segment, query.scope === s.value && styles.segmentOn)}
-              onClick={() => load({ ...query, scope: s.value })}
+              value={s.value}
+              className="h-9.5 px-3.5 border-none rounded-[7px] bg-transparent text-ink2 text-[13.5px] font-semibold whitespace-nowrap cursor-pointer data-[state=on]:bg-sf data-[state=on]:text-ink data-[state=on]:shadow-raised"
             >
               {s.label}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
         <Select
           label="Specialty"
           value={query.specialty ?? ''}
@@ -125,7 +131,7 @@ export function CommunityPanel({
         {filtered && (
           <button
             type="button"
-            className={styles.reset}
+            className="h-11 px-1.5 border-none bg-transparent text-pri text-[14px] font-semibold underline cursor-pointer"
             onClick={() => load({ scope: 'institute' })}
           >
             Reset
@@ -134,16 +140,26 @@ export function CommunityPanel({
       </div>
 
       {failed && (
-        <p role="alert" className={styles.statusError}>
+        <p role="alert" className="text-err text-[13.5px]">
           The list could not be loaded.{' '}
-          <button type="button" className={styles.inlineButton} onClick={() => load(query)}>
+          <button
+            type="button"
+            className="p-0 border-none bg-transparent text-pri font-semibold underline cursor-pointer"
+            onClick={() => load(query)}
+          >
             Try again
           </button>
         </p>
       )}
 
       {data && (
-        <div className={cx(styles.lists, loading && styles.loading)} aria-busy={loading}>
+        <div
+          className={cn(
+            'grid grid-cols-2 gap-6 items-start transition-opacity duration-150 max-md:grid-cols-[minmax(0,1fr)]',
+            loading && 'opacity-55',
+          )}
+          aria-busy={loading}
+        >
           <PeopleList title="Earned it" list={data.earned} kind="earned" />
           <PeopleList title="Preparing it" list={data.preparing} kind="preparing" />
         </div>
@@ -162,22 +178,25 @@ function PeopleList({
   kind: 'earned' | 'preparing';
 }) {
   return (
-    <section className={styles.people} aria-label={title}>
-      <div className={styles.peopleHead}>
-        <h3 className={styles.peopleTitle}>{title}</h3>
-        <span className={styles.peopleCount}>{list.total}</span>
+    <section
+      className="flex flex-col py-5 px-5.5 border border-ln rounded-[16px] bg-sf max-md:p-4"
+      aria-label={title}
+    >
+      <div className="flex items-baseline justify-between pb-3">
+        <h3 className="font-serif text-[21px] font-semibold">{title}</h3>
+        <span className="text-ink2 text-[14px]">{list.total}</span>
       </div>
       {list.items.length === 0 ? (
-        <p className={styles.nobody}>Nobody for this filter yet.</p>
+        <p className="py-5 border-t border-ln text-ink3 text-[14px]">Nobody for this filter yet.</p>
       ) : (
-        <ul className={styles.peopleList}>
+        <ul>
           {list.items.map((person) => (
             <PersonRow key={person.id} person={person} kind={kind} />
           ))}
         </ul>
       )}
       {list.total > list.items.length && (
-        <p className={styles.small}>
+        <p className="text-ink3 text-[13px]">
           Showing the {list.items.length} most recent of {list.total}.
         </p>
       )}
@@ -188,16 +207,16 @@ function PeopleList({
 function PersonRow({ person, kind }: { person: CommunityPerson; kind: 'earned' | 'preparing' }) {
   const name = `${person.firstName} ${person.lastName}`;
   return (
-    <li className={styles.person}>
+    <li className="flex items-center gap-3 min-h-15 border-t border-ln">
       <Avatar
         firstName={person.firstName}
         lastName={person.lastName}
         avatarPath={person.avatarPath}
-        className={styles.personAvatar}
+        className="size-10 text-[15px]"
       />
-      <span className={styles.personText}>
-        <span className={styles.personName}>{name}</span>
-        <span className={styles.small}>
+      <span className="flex flex-1 flex-col gap-0.5 min-w-0">
+        <span className="text-[14.5px] font-semibold">{name}</span>
+        <span className="text-ink3 text-[13px]">
           {person.classCode} ·{' '}
           {kind === 'earned' ? monthYear(person.since) : `started ${monthYear(person.since)}`}
         </span>
@@ -205,7 +224,7 @@ function PersonRow({ person, kind }: { person: CommunityPerson; kind: 'earned' |
       {kind === 'earned' && <StatusPill status="unverified" small />}
       <a
         href={`mailto:${person.email}`}
-        className={styles.mail}
+        className="grid flex-none place-items-center size-10 rounded-[8px] text-ink2 hover:bg-sf2 hover:text-pri"
         aria-label={`Email ${name}`}
         title={person.email}
       >
