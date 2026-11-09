@@ -5,12 +5,14 @@ import type {
   SpecialtyCode,
 } from '@tekcert/types';
 import { CERTIFICATION_LEVELS } from '@tekcert/types';
-import { cx, Icon } from '@tekcert/ui';
+import { cn, Icon } from '@tekcert/ui';
 import Image from 'next/image';
 import type { CSSProperties } from 'react';
-import styles from './parts.module.css';
 
 /** Small pieces shared by the catalog cards and the certification page. */
+
+const BAR_HEIGHT = ['h-1', 'h-1.75', 'h-2.5', 'h-3'];
+const BAR_HEIGHT_LARGE = ['h-1.25', 'h-2', 'h-2.75', 'h-3.5'];
 
 export const LEVEL_LABELS: Record<CertificationLevel, string> = {
   foundational: 'Foundational',
@@ -37,8 +39,8 @@ const BADGE_BASE_URL = (process.env.NEXT_PUBLIC_BADGE_BASE_URL ?? '/badges').rep
 
 export function ProviderTag({ provider, short = false }: { provider: Provider; short?: boolean }) {
   return (
-    <span className={styles.providerTag}>
-      <span className={styles.providerDot} style={{ background: providerColor(provider.hue) }} />
+    <span className="inline-flex flex-none items-center gap-1.75 h-6 px-2.25 border border-ln2 rounded-[6px] text-ink2 text-[12px] font-semibold whitespace-nowrap">
+      <span className="size-2 rounded-[2px]" style={{ background: providerColor(provider.hue) }} />
       {short ? shortProviderName(provider) : provider.name}
     </span>
   );
@@ -59,10 +61,20 @@ export function LevelBars({
 }) {
   const rank = CERTIFICATION_LEVELS.indexOf(level);
   return (
-    <span className={cx(styles.level, large && styles.large)}>
-      <span className={styles.bars} aria-hidden>
+    <span
+      className={cn('inline-flex items-center gap-1.75', large && 'gap-2 text-[14px] font-medium')}
+    >
+      <span className={cn('inline-flex items-end gap-0.5 h-3', large && 'h-3.5')} aria-hidden>
         {CERTIFICATION_LEVELS.map((l, i) => (
-          <span key={l} className={cx(styles.bar, i <= rank && styles.barOn)} />
+          <span
+            key={l}
+            className={cn(
+              'w-0.75 bg-ln2',
+              (large ? BAR_HEIGHT_LARGE : BAR_HEIGHT)[i],
+              large && 'w-1 rounded-[1px]',
+              i <= rank && 'bg-pri',
+            )}
+          />
         ))}
       </span>
       {LEVEL_LABELS[level]}
@@ -80,14 +92,23 @@ export function DifficultyDots({
   label?: string;
 }) {
   return (
-    <span className={cx(styles.difficulty, large && styles.large)}>
-      <span className={styles.dots} aria-hidden>
+    <span
+      className={cn('inline-flex items-center gap-1.75', large && 'gap-2 text-[14px] font-medium')}
+    >
+      <span className={cn('inline-flex gap-0.5', large && 'gap-0.75')} aria-hidden>
         {[1, 2, 3, 4, 5].map((n) => (
-          <span key={n} className={cx(styles.dot, n <= difficulty && styles.dotOn)} />
+          <span
+            key={n}
+            className={cn(
+              'size-1.75 border-[1.5px] border-ln2 rounded-full',
+              large && 'size-2.25',
+              n <= difficulty && 'border-ink bg-ink',
+            )}
+          />
         ))}
       </span>
       <span aria-hidden>{label}</span>
-      <span className="visually-hidden">Difficulty {difficulty} of 5</span>
+      <span className="sr-only">Difficulty {difficulty} of 5</span>
     </span>
   );
 }
@@ -103,23 +124,32 @@ export function SpecialtyTags({
 }) {
   if (forAll) {
     return (
-      <span className={styles.tags}>
-        <span className={cx(styles.tag, styles.tagAll, small && styles.tagSmall)}>
+      <span className="flex flex-wrap gap-1.5">
+        <span
+          className={cn(
+            'inline-flex items-center gap-1.5 h-6 ps-1.75 pe-2.25 rounded-[12px] bg-[color-mix(in_oklch,var(--tag)_16%,var(--sf))] text-ink text-[12px] font-bold',
+            'px-2.25 bg-sf2 text-ink3',
+            small && 'gap-1.25 h-5.5 ps-1.5 pe-2 rounded-[11px] text-[11.5px] [&>span]:size-1.75',
+          )}
+        >
           All specialties
         </span>
       </span>
     );
   }
   return (
-    <span className={styles.tags}>
+    <span className="flex flex-wrap gap-1.5">
       {specialties.map((code) => (
         <span
           key={code}
           title={SPECIALTY_NAMES[code]}
-          className={cx(styles.tag, small && styles.tagSmall)}
+          className={cn(
+            'inline-flex items-center gap-1.5 h-6 ps-1.75 pe-2.25 rounded-[12px] bg-[color-mix(in_oklch,var(--tag)_16%,var(--sf))] text-ink text-[12px] font-bold',
+            small && 'gap-1.25 h-5.5 ps-1.5 pe-2 rounded-[11px] text-[11.5px] [&>span]:size-1.75',
+          )}
           style={{ '--tag': specialtyColor(code) } as CSSProperties}
         >
-          <span className={styles.tagDot} />
+          <span className="size-2 rounded-full bg-(--tag)" />
           {code}
         </span>
       ))}
@@ -127,9 +157,9 @@ export function SpecialtyTags({
   );
 }
 
-const STATUS: Record<MyCertificationStatus, { label: string; icon: string }> = {
-  in_progress: { label: 'In progress', icon: 'clock_loader_40' },
-  unverified: { label: 'Unverified', icon: 'pending' },
+const STATUS: Record<MyCertificationStatus, { label: string; icon: string; tone: string }> = {
+  in_progress: { label: 'In progress', icon: 'clock_loader_40', tone: 'bg-pri-sf text-pri' },
+  unverified: { label: 'Unverified', icon: 'pending', tone: 'bg-sf2 text-ink2' },
 };
 
 export function StatusPill({
@@ -139,9 +169,15 @@ export function StatusPill({
   status: MyCertificationStatus;
   small?: boolean;
 }) {
-  const { label, icon } = STATUS[status];
+  const { label, icon, tone } = STATUS[status];
   return (
-    <span className={cx(styles.pill, styles[status], small && styles.pillSmall)}>
+    <span
+      className={cn(
+        'inline-flex flex-none items-center gap-1 h-6.5 ps-1.5 pe-2.25 rounded-[13px] text-[12px] font-semibold whitespace-nowrap',
+        tone,
+        small && 'h-6 ps-1.25 pe-2 rounded-[12px] text-[11.5px]',
+      )}
+    >
       <Icon name={icon} size={small ? 15 : 16} />
       {label}
     </span>
@@ -169,7 +205,7 @@ export function CertBadge({
   if (!badgeAsset) {
     return (
       <span
-        className={styles.badgeTile}
+        className="grid flex-none place-items-center overflow-hidden p-1 border-[1.5px] border-[color-mix(in_oklch,var(--tile)_55%,var(--ln))] rounded-[10px] bg-[color-mix(in_oklch,var(--tile)_14%,var(--sf))] text-ink font-mono font-semibold leading-[1.1] text-center break-all"
         style={
           {
             width: size,
@@ -190,7 +226,8 @@ export function CertBadge({
       alt=""
       width={size}
       height={size}
-      className={styles.badgeImage}
+      className="flex-none object-contain max-w-none"
+      style={{ width: size, height: size }}
       loading={eager ? 'eager' : 'lazy'}
       // The optimiser rejects SVG; those files are small and already vector.
       unoptimized={badgeAsset.endsWith('.svg')}
