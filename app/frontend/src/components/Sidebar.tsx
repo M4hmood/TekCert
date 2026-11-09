@@ -57,7 +57,7 @@ export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
           />
           <span className={styles.wordmark}>
             <span className={styles.name}>TekCert</span>
-            <span className={styles.school}>TEK-UP</span>
+            <span className={styles.school}>TEK-UP University</span>
           </span>
         </Link>
         <IconButton

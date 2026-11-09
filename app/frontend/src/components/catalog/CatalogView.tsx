@@ -14,7 +14,7 @@ import {
   SPECIALTY_CODES,
   type SpecialtyCode,
 } from '@tekcert/types';
-import { Button, cx, EmptyState, Icon } from '@tekcert/ui';
+import { Button, cx, EmptyState, Icon, Select } from '@tekcert/ui';
 import Link from 'next/link';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { DifficultyPicker, LevelToggles, toggle } from './controls';
@@ -41,6 +41,11 @@ export const SORT_LABELS: Record<CatalogSort, string> = {
   difficulty: 'Easiest first',
   level: 'Level',
 };
+
+const SORT_OPTIONS = (Object.keys(SORT_LABELS) as CatalogSort[]).map((value) => ({
+  value,
+  label: SORT_LABELS[value],
+}));
 
 export interface CatalogViewProps {
   certifications: CertificationSummary[];
@@ -183,21 +188,14 @@ export function CatalogView({ certifications, initialQuery, initialPage, mine }:
               </button>
             )}
           </label>
-          <label className={styles.sort}>
-            <span className={styles.sortLabel}>Sort:</span>
-            <select
+          <div className={styles.sort}>
+            <Select
+              label="Sort:"
               value={query.sort ?? 'earned'}
-              onChange={(e) => update({ sort: e.target.value as CatalogSort })}
-              className={styles.sortSelect}
-            >
-              {(Object.keys(SORT_LABELS) as CatalogSort[]).map((sort) => (
-                <option key={sort} value={sort}>
-                  {SORT_LABELS[sort]}
-                </option>
-              ))}
-            </select>
-            <Icon name="expand_more" size={20} className={styles.sortIcon} />
-          </label>
+              options={SORT_OPTIONS}
+              onChange={(sort) => update({ sort })}
+            />
+          </div>
         </div>
 
         <div className={styles.mobileFilters}>

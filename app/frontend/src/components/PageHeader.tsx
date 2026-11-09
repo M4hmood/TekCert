@@ -17,12 +17,12 @@ export function PageHeader({ title, overline, description, actions }: PageHeader
       <div className={styles.titles}>
         {overline && <span className={styles.overline}>{overline}</span>}
         <h1 className={styles.title}>{title}</h1>
-        {description && <p className={styles.description}>{description}</p>}
       </div>
       <div className={styles.actions}>
         {actions}
         <ThemeToggle />
       </div>
+      {description && <p className={styles.description}>{description}</p>}
     </header>
   );
 }

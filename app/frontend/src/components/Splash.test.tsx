@@ -1,11 +1,31 @@
-import { fireEvent, render } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { act, render, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SPLASH_COOKIE } from '@/lib/preferences';
 import { Splash } from './Splash';
 
 const splash = (container: HTMLElement) => container.querySelector('[data-splash]');
 
+/** jsdom has no Web Animations API. `animations` is what the backdrop reports as running. */
+function stubAnimations(animations: { finished: Promise<unknown> }[]) {
+  Element.prototype.getAnimations = vi.fn(() => animations as unknown as Animation[]);
+}
+
+function controlledAnimation() {
+  let finish = () => {};
+  let cancel = () => {};
+  const finished = new Promise<void>((resolve, reject) => {
+    finish = resolve;
+    cancel = () => reject(new DOMException('Cancelled', 'AbortError'));
+  });
+  stubAnimations([{ finished }]);
+  return { finish: () => finish(), cancel: () => cancel() };
+}
+
 describe('Splash', () => {
+  beforeEach(() => {
+    controlledAnimation();
+  });
+
   it('stays out of the way of keyboards and screen readers', () => {
     const { container } = render(<Splash />);
     expect(splash(container)).toHaveAttribute('aria-hidden', 'true');
@@ -17,18 +37,26 @@ describe('Splash', () => {
     expect(document.cookie).toContain(`${SPLASH_COOKIE}=1`);
   });
 
-  it('removes itself when the backdrop has finished opening', () => {
+  it('removes itself once the backdrop has finished opening', async () => {
+    const animation = controlledAnimation();
     const { container } = render(<Splash />);
-    const element = splash(container);
-    if (!element) throw new Error('no splash');
-
-    // An animation of something inside it doesn't count.
-    const tick = element.querySelector('line');
-    if (!tick) throw new Error('no tick');
-    fireEvent.animationEnd(tick);
     expect(splash(container)).not.toBeNull();
 
-    fireEvent.animationEnd(element);
+    await act(async () => animation.finish());
     expect(splash(container)).toBeNull();
+  });
+
+  it('removes itself if the animation is cancelled', async () => {
+    const animation = controlledAnimation();
+    const { container } = render(<Splash />);
+
+    await act(async () => animation.cancel());
+    expect(splash(container)).toBeNull();
+  });
+
+  it('removes itself when there is no animation, as with reduced motion', async () => {
+    stubAnimations([]);
+    const { container } = render(<Splash />);
+    await waitFor(() => expect(splash(container)).toBeNull());
   });
 });

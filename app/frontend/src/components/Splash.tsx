@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { type AnimationEvent, type CSSProperties, useEffect, useState } from 'react';
+import { type CSSProperties, useEffect, useRef, useState } from 'react';
 import { markSplashSeen } from '@/lib/preferences';
 import styles from './Splash.module.css';
 
@@ -20,18 +20,20 @@ const tickDelay = (index: number) => Math.round((index / (TICKS - 1)) ** 0.62 * 
  */
 export function Splash() {
   const [done, setDone] = useState(false);
+  const backdrop = useRef<HTMLDivElement>(null);
 
-  useEffect(markSplashSeen, []);
+  useEffect(() => {
+    markSplashSeen();
+    // Not onAnimationEnd: on a slow load the animation can end before this code has run, while
+    // `finished` still resolves. No animation (reduced motion) or a cancelled one also ends it.
+    const finished = backdrop.current?.getAnimations()[0]?.finished ?? Promise.resolve();
+    void finished.catch(() => undefined).then(() => setDone(true));
+  }, []);
 
   if (done) return null;
 
-  const finish = (event: AnimationEvent) => {
-    // Only the backdrop's own animation, not the ones bubbling up from the seal.
-    if (event.target === event.currentTarget) setDone(true);
-  };
-
   return (
-    <div data-splash aria-hidden className={styles.splash} onAnimationEnd={finish}>
+    <div ref={backdrop} data-splash aria-hidden className={styles.splash}>
       <div className={styles.stage}>
         <span className={styles.bloom} />
         <svg className={styles.ring} viewBox="-100 -100 200 200">
