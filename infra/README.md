@@ -1,12 +1,13 @@
 # TekCert — Infrastructure (Terraform)
 
-Step 1 of the IaC rollout: **VPC + network internals + EC2 Auto Scaling groups**,
-matching `AWS-Architecture-V1.drawio`. ALBs, RDS, CloudFront, S3 bucket and
-Secrets Manager come in later steps.
+Steps 1 and 2 of the IaC rollout: **VPC + network internals + EC2 Auto Scaling
+groups + load balancers**, matching `AWS-Architecture-V1.drawio`. RDS, CloudFront,
+S3 bucket and Secrets Manager come in later steps.
 
 ```
 modules/
   network/   VPC, 8 subnets, IGW, NAT, route tables, S3 gateway endpoint, 5 security groups
+  alb/       public + internal ALB, listeners, target groups
   compute/   IAM instance profile (SSM), launch templates, 2 ASGs (web, app)
 envs/dev/    root module wiring it together
 ```
@@ -15,9 +16,9 @@ envs/dev/    root module wiring it together
 
 | Tier   | AZ a          | AZ b          | Route            | Contains          |
 |--------|---------------|---------------|------------------|-------------------|
-| public | 10.0.0.0/27   | 10.0.0.32/27  | IGW              | NAT (AZ a only), public ALB later |
+| public | 10.0.0.0/27   | 10.0.0.32/27  | IGW              | NAT (AZ a only), public ALB |
 | web    | 10.0.0.64/27  | 10.0.0.96/27  | NAT              | Next.js ASG       |
-| app    | 10.0.0.128/27 | 10.0.0.160/27 | NAT + S3 endpoint| NestJS ASG, internal ALB later |
+| app    | 10.0.0.128/27 | 10.0.0.160/27 | NAT + S3 endpoint| NestJS ASG, internal ALB |
 | data   | 10.0.0.192/27 | 10.0.0.224/27 | local only       | RDS later         |
 
 Security group chain: public ALB → web → internal ALB → app → db.
@@ -41,7 +42,7 @@ Security group chain: public ALB → web → internal ALB → app → db.
 - `for_each = local.subnets` — one block, one copy of the resource per map entry. Eight subnets, one `aws_subnet` block.
 - `count = var.enable_nat_gateway ? 1 : 0` — the on/off switch for an optional resource. That's why you'll see `aws_nat_gateway.this[0]`.
 
-**Reading order:** `envs/dev/main.tf` → `modules/network/main.tf` → `security_groups.tf` → `modules/compute/main.tf` → `iam.tf`.
+**Reading order:** `envs/dev/main.tf` → `modules/network/main.tf` → `security_groups.tf` → `modules/alb/main.tf` → `modules/compute/main.tf` → `iam.tf`.
 
 **Do it in two applies the first time**, so you see each layer working on its own:
 
@@ -89,11 +90,26 @@ aws ssm describe-instance-information --query "InstanceInformationList[].[Instan
 
 # Shell into one (no SSH key, no bastion)
 aws ssm start-session --target <instance-id>
-curl localhost:3000     # placeholder page
+curl localhost:3000     # placeholder page on a web instance (use port 4000 on an app instance)
+```
+
+With `restrict_alb_to_cloudfront = false`, test the public ALB from your own machine.
+Reload a few times: the instance ID and AZ should change.
+
+```bash
+curl "http://$(terraform output -raw public_alb_dns_name)/"
+```
+
+To test the internal ALB, open a session on a **web** instance (the app security group
+only accepts it from there):
+
+```bash
+curl http://<internal_alb_dns_name>/   # value from: terraform output internal_alb_dns_name
 ```
 
 ## Saving money
 
 - Between sessions: `enable_nat_gateway = false` → apply. Instances keep running
-  but lose outbound internet and Session Manager.
-- Or tear everything down: `terraform destroy`. The state bucket survives.
+  but lose outbound internet and Session Manager. The two ALBs keep billing.
+- Or tear everything down: `terraform destroy`. This is the only way to stop the
+  ALB bill. The state bucket survives.

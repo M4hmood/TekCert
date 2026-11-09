@@ -22,3 +22,11 @@ output "asg_names" {
 output "nat_public_ip" {
   value = module.network.nat_public_ip
 }
+
+output "public_alb_dns_name" {
+  value = module.alb.public_alb_dns_name
+}
+
+output "internal_alb_dns_name" {
+  value = module.alb.internal_alb_dns_name
+}

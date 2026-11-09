@@ -45,5 +45,5 @@ variable "web_port" {
 variable "app_port" {
   description = "Port NestJS listens on"
   type        = number
-  default     = 3000
+  default     = 4000
 }

@@ -14,6 +14,19 @@ module "network" {
   app_port                   = var.app_port
 }
 
+module "alb" {
+  source = "../../modules/alb"
+
+  name               = local.name
+  vpc_id             = module.network.vpc_id
+  public_subnet_ids  = module.network.public_subnet_ids
+  app_subnet_ids     = module.network.app_subnet_ids
+  public_alb_sg_id   = module.network.security_group_ids["alb_public"]
+  internal_alb_sg_id = module.network.security_group_ids["alb_internal"]
+  web_port           = var.web_port
+  app_port           = var.app_port
+}
+
 module "compute" {
   source = "../../modules/compute"
 
@@ -28,6 +41,9 @@ module "compute" {
   app_sg_id      = module.network.security_group_ids["app"]
   web_port       = var.web_port
   app_port       = var.app_port
+
+  web_target_group_arns = [module.alb.web_target_group_arn]
+  app_target_group_arns = [module.alb.app_target_group_arn]
 
   existing_instance_profile_name = var.existing_instance_profile_name
 }
