@@ -1,7 +1,6 @@
 'use client';
 
 import { Button, EmptyState } from '@tekcert/ui';
-import styles from './(focus)/focus.module.css';
 
 export default function ErrorPage({
   reset,
@@ -10,7 +9,7 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   return (
-    <main id="main" className={styles.focus}>
+    <main id="main" className="flex flex-col min-h-dvh">
       <EmptyState
         icon="error"
         title="Something went wrong"

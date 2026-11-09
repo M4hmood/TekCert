@@ -74,6 +74,17 @@ describe('Sidebar', () => {
   });
 
   it('shows the profile photo through the API proxy when there is one', () => {
+    // The avatar waits for the photo to load, which never happens in jsdom.
+    vi.stubGlobal(
+      'Image',
+      class {
+        src = '';
+        complete = true;
+        naturalWidth = 100;
+        addEventListener() {}
+        removeEventListener() {}
+      },
+    );
     render(
       <Sidebar
         initiallyCollapsed={false}
@@ -83,6 +94,7 @@ describe('Sidebar', () => {
     const account = screen.getByRole('link', { name: /Yassine Ben Amor/ });
     expect(account.querySelector('img')).toHaveAttribute('src', '/api/users/u1/avatar?v=abc');
     expect(account).not.toHaveTextContent('YB');
+    vi.unstubAllGlobals();
   });
 
   it('keeps accessible link names when collapsed', () => {

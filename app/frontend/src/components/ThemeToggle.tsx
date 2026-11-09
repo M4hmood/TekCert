@@ -2,7 +2,6 @@
 
 import { Icon, IconButton } from '@tekcert/ui';
 import { THEME_COOKIE, writePreference } from '@/lib/preferences';
-import styles from './ThemeToggle.module.css';
 
 function resolvedTheme(): 'light' | 'dark' {
   const forced = document.documentElement.dataset.theme;
@@ -18,9 +17,13 @@ export function ThemeToggle() {
   };
 
   return (
-    <IconButton label="Change theme" onClick={toggle} className={styles.toggle}>
-      <Icon name="dark_mode" className={styles.toDark} />
-      <Icon name="light_mode" className={styles.toLight} />
+    <IconButton
+      label="Change theme"
+      onClick={toggle}
+      className="border-ln2 bg-sf max-md:border-transparent max-md:bg-transparent"
+    >
+      <Icon name="dark_mode" className="dark:hidden" />
+      <Icon name="light_mode" className="hidden dark:inline" />
     </IconButton>
   );
 }
