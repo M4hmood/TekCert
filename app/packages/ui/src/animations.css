@@ -234,6 +234,38 @@
     animation: none;
   }
 
+  /*
+   * Changing the theme (lib/deluminator.ts). The light page is the top layer, and a mask animated
+   * from script opens or closes patches of it. Everything else is flattened into the page, so
+   * only the orbs canvas sits above it.
+   */
+  :root[data-theme-switching] *:not([data-deluminator]) {
+    view-transition-name: none !important;
+  }
+
+  :root[data-theme-switching]::view-transition-old(root),
+  :root[data-theme-switching]::view-transition-new(root),
+  ::view-transition-new(theme-orbs) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  /* The page stays usable while the orbs fly. */
+  :root[data-theme-switching]::view-transition {
+    pointer-events: none;
+  }
+
+  :root[data-theme-switching='to-dark']::view-transition-old(root) {
+    z-index: 1;
+    mask-repeat: no-repeat;
+  }
+
+  /* Hidden until the script's mask takes over, or the light page would flash at the start. */
+  :root[data-theme-switching='to-light']::view-transition-new(root) {
+    mask-image: linear-gradient(transparent, transparent);
+    mask-repeat: no-repeat;
+  }
+
   @keyframes auth-fade-out {
     to {
       opacity: 0;

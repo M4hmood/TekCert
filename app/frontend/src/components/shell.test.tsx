@@ -1,6 +1,7 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { lightSources } from '@/lib/deluminator';
 import { BottomNav } from './BottomNav';
 import { Sidebar } from './Sidebar';
 import { ThemeToggle } from './ThemeToggle';
@@ -135,5 +136,96 @@ describe('ThemeToggle', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Change theme' }));
 
     expect(document.documentElement.dataset.theme).toBe('light');
+  });
+
+  describe('with view transitions', () => {
+    const root = document.documentElement;
+
+    function stubViewTransition() {
+      let finish = () => {};
+      const finished = new Promise<void>((resolve) => {
+        finish = resolve;
+      });
+      const start = vi.fn((update: () => void) => {
+        update();
+        return { ready: new Promise(() => undefined), finished };
+      });
+      Object.defineProperty(document, 'startViewTransition', { value: start, configurable: true });
+      return { start, finish: () => finish() };
+    }
+
+    beforeEach(() => {
+      HTMLCanvasElement.prototype.getContext = vi.fn(() => null);
+    });
+
+    afterEach(() => {
+      Reflect.deleteProperty(document, 'startViewTransition');
+      delete root.dataset.themeSwitching;
+    });
+
+    it('plays the effect with a canvas for the orbs, then cleans up', async () => {
+      mockPrefersDark(false);
+      const { start, finish } = stubViewTransition();
+      const play = vi.spyOn(HTMLMediaElement.prototype, 'play');
+      render(<ThemeToggle />);
+      await userEvent.click(screen.getByRole('button', { name: 'Change theme' }));
+
+      expect((play.mock.contexts[0] as HTMLAudioElement).src).toContain('light-in');
+
+      expect(start).toHaveBeenCalledOnce();
+      expect(root.dataset.theme).toBe('dark');
+      expect(root.dataset.themeSwitching).toBe('to-dark');
+      expect(document.querySelector('[data-deluminator]')).not.toBeNull();
+
+      await act(async () => finish());
+      expect(root.dataset.themeSwitching).toBeUndefined();
+      expect(document.querySelector('[data-deluminator]')).toBeNull();
+    });
+
+    it('ignores a second press while the effect plays', async () => {
+      mockPrefersDark(false);
+      const { start } = stubViewTransition();
+      render(<ThemeToggle />);
+      const button = screen.getByRole('button', { name: 'Change theme' });
+      await userEvent.click(button);
+      await userEvent.click(button);
+      expect(start).toHaveBeenCalledOnce();
+      expect(root.dataset.theme).toBe('dark');
+      document.querySelector('[data-deluminator]')?.remove();
+    });
+
+    it('switches at once for people who prefer reduced motion', async () => {
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn((query: string) => ({ matches: query.includes('reduce'), media: query })),
+      );
+      const { start } = stubViewTransition();
+      render(<ThemeToggle />);
+      await userEvent.click(screen.getByRole('button', { name: 'Change theme' }));
+
+      expect(start).not.toHaveBeenCalled();
+      expect(root.dataset.theme).toBe('dark');
+      expect(root.dataset.themeSwitching).toBeUndefined();
+    });
+  });
+});
+
+describe('lightSources', () => {
+  it('covers the screen, starting with the lights nearest the button', () => {
+    const button = { x: 1400, y: 40 };
+    const sources = lightSources(1440, 900, button);
+    expect(sources).toHaveLength(6);
+    for (const source of sources) {
+      expect(source.x).toBeGreaterThan(0);
+      expect(source.x).toBeLessThan(1440);
+      expect(source.y).toBeGreaterThan(0);
+      expect(source.y).toBeLessThan(900);
+    }
+    const distances = sources.map((s) => Math.hypot(s.x - button.x, s.y - button.y));
+    expect(distances).toEqual([...distances].sort((a, b) => a - b));
+  });
+
+  it('has six lights on a phone too', () => {
+    expect(lightSources(390, 844, { x: 350, y: 40 })).toHaveLength(6);
   });
 });

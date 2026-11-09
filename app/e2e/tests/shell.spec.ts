@@ -89,6 +89,50 @@ test('theme toggle switches to dark and survives a reload', async ({ page }) => 
   await expect(html).toHaveAttribute('data-theme', 'dark');
 });
 
+test('the light goes into the theme button and comes back out', async ({ page }) => {
+  // Signed out on purpose: the sign-in tab bar has its own view-transition layer otherwise.
+  await page.context().clearCookies();
+  await page.goto('/sign-in');
+  await expect(page.locator('[data-splash]')).not.toBeAttached({ timeout: 30_000 });
+  await page.getByRole('heading', { level: 1 }).waitFor();
+  const html = page.locator('html');
+  const orbs = page.locator('[data-deluminator]');
+
+  const pressAndWatch = () =>
+    page.evaluate(async () => {
+      document.querySelector<HTMLButtonElement>('[aria-label="Change theme"]')?.click();
+      for (let frame = 0; frame < 60; frame += 1) {
+        await new Promise(requestAnimationFrame);
+        const layers = document
+          .getAnimations()
+          .map((animation) => (animation.effect as KeyframeEffect).pseudoElement ?? '')
+          .filter((layer) => layer.includes('view-transition'));
+        if (layers.length) {
+          return { layers, canvas: !!document.querySelector('[data-deluminator]') };
+        }
+      }
+      return null;
+    });
+
+  // The browser starts in the light theme: patches of the light page close as the orbs leave.
+  expect(await pressAndWatch()).toEqual({
+    layers: ['::view-transition-old(root)'],
+    canvas: true,
+  });
+  await expect(html).toHaveAttribute('data-theme', 'dark');
+  await expect(html).not.toHaveAttribute('data-theme-switching');
+  await expect(orbs).not.toBeAttached();
+
+  // And they open again as the orbs land.
+  expect(await pressAndWatch()).toEqual({
+    layers: ['::view-transition-new(root)'],
+    canvas: true,
+  });
+  await expect(html).toHaveAttribute('data-theme', 'light');
+  await expect(html).not.toHaveAttribute('data-theme-switching');
+  await expect(orbs).not.toBeAttached();
+});
+
 test('the sidebar shows the signed-in student', async ({ page, viewport }) => {
   test.skip((viewport?.width ?? 0) < 768, 'sidebar layout only');
   await page.goto('/dashboard');

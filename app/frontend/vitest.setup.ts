@@ -7,6 +7,8 @@ Element.prototype.hasPointerCapture = () => false;
 Element.prototype.setPointerCapture = () => undefined;
 Element.prototype.releasePointerCapture = () => undefined;
 Element.prototype.scrollIntoView = vi.fn();
+HTMLMediaElement.prototype.play = () => Promise.resolve();
+HTMLMediaElement.prototype.pause = () => undefined;
 window.ResizeObserver = class {
   observe() {}
   unobserve() {}
