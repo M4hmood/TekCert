@@ -1,0 +1,263 @@
+/*
+ * The splash screen's timeline, in one place:
+ *   0 → 1000 ms   the ring of ticks fills (delays are set per tick in Splash.tsx)
+ *   840 ms        the crest starts to fall, and lands at --impact
+ *   --impact      the ring kicks, a ripple and a glow go out
+ *   1330 ms       a glint crosses the crest
+ *   --exit        the seal goes and the backdrop opens from the middle onto the app
+ * Inline, so var(--impact) and friends resolve on the splash element, which sets them.
+ */
+@theme inline {
+  --animate-splash-open: splash-open var(--opening) cubic-bezier(0.7, 0, 0.25, 1) var(--exit)
+    forwards;
+  --animate-splash-stage:
+    splash-shake 260ms linear var(--impact),
+    splash-leave 300ms ease-in-out calc(var(--exit) - 100ms) forwards;
+  --animate-splash-kick: splash-kick 380ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--impact);
+  --animate-splash-ignite: splash-ignite 280ms ease-out forwards;
+  --animate-splash-strike: splash-strike 420ms linear 840ms forwards;
+  --animate-splash-sweep: splash-sweep 520ms cubic-bezier(0.4, 0, 0.2, 1) 1330ms forwards;
+  --animate-splash-ripple: splash-ripple 680ms cubic-bezier(0.1, 0.7, 0.3, 1) var(--impact) forwards;
+  --animate-splash-bloom: splash-bloom 860ms ease-out var(--impact) forwards;
+
+  @keyframes splash-ignite {
+    0% {
+      stroke: var(--hero-ink);
+      stroke-width: 3.4;
+    }
+    100% {
+      stroke: var(--gold-fill);
+      stroke-width: 2.2;
+    }
+  }
+
+  @keyframes splash-strike {
+    0% {
+      opacity: 0;
+      filter: blur(10px);
+      transform: scale(2.7);
+      animation-timing-function: cubic-bezier(0.6, 0, 0.95, 0.5);
+    }
+    55% {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(0.92);
+      animation-timing-function: ease-out;
+    }
+    76% {
+      opacity: 1;
+      transform: scale(1.03);
+      animation-timing-function: ease-in-out;
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes splash-kick {
+    0% {
+      transform: scale(1);
+    }
+    28% {
+      transform: scale(1.075);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes splash-shake {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    20% {
+      translate: 0 5px;
+    }
+    45% {
+      translate: -3px -3px;
+    }
+    70% {
+      translate: 2px 1px;
+    }
+  }
+
+  @keyframes splash-ripple {
+    0% {
+      opacity: 0.9;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(2.9);
+    }
+  }
+
+  @keyframes splash-bloom {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.35;
+    }
+  }
+
+  @keyframes splash-sweep {
+    to {
+      background-position: -60% 0;
+    }
+  }
+
+  @keyframes splash-leave {
+    to {
+      opacity: 0;
+      transform: scale(1.14);
+    }
+  }
+
+  @keyframes splash-open {
+    from {
+      --iris: -6px;
+    }
+    to {
+      --iris: 150vmax;
+      visibility: hidden;
+    }
+  }
+}
+
+/* Registered so the opening of the backdrop can be animated. */
+@property --iris {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: -6px;
+}
+
+@utility splash-backdrop {
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent var(--iris),
+    var(--gold-fill) var(--iris) calc(var(--iris) + 5px),
+    var(--hero) calc(var(--iris) + 5px)
+  );
+}
+
+/* A band of light, cut to the crest's outline by its own transparency. */
+@utility splash-glint {
+  background: linear-gradient(
+      105deg,
+      transparent 42%,
+      color-mix(in oklch, var(--hero-ink) 85%, transparent) 50%,
+      transparent 58%
+    )
+    no-repeat;
+  background-position: 160% 0;
+  background-size: 260% 100%;
+  mask: url('/icons/tekcert.png') center / contain no-repeat;
+}
+
+@utility splash-bloom {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--focus) 42%, transparent),
+    transparent 62%
+  );
+}
+
+/* Sign-in hero: three slowly scrolling columns of badges. In-page auth steps fade in. */
+@theme static {
+  --animate-wall-up: wall-up 34s linear infinite;
+  --animate-wall-down: wall-down 40s linear infinite;
+  --animate-auth-enter: auth-enter 240ms cubic-bezier(0.2, 0, 0, 1) both;
+
+  @keyframes wall-up {
+    to {
+      transform: translateY(-50%);
+    }
+  }
+
+  @keyframes wall-down {
+    from {
+      transform: translateY(-50%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes auth-enter {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+}
+
+/*
+ * Page switches (see AuthContent): the old form fades out first, then the new one fades in (they
+ * never overlap). The form stays vertically centred, so when its height changes the box and the
+ * tab bar glide together to their new place. Nothing else on the page is cross-faded, and the tab
+ * bar stays live so its pill keeps sliding. Plain CSS: utilities can't reach these pseudo-elements.
+ */
+@layer base {
+  ::view-transition-group(.auth-swap),
+  ::view-transition-group(auth-tabs) {
+    animation-duration: 300ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  ::view-transition-image-pair(.auth-swap) {
+    isolation: auto;
+  }
+
+  ::view-transition-old(.auth-swap) {
+    animation: auth-fade-out 120ms ease-in both;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(.auth-swap) {
+    animation: auth-fade-in 200ms 120ms ease-out both;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
+  ::view-transition-old(auth-tabs) {
+    display: none;
+  }
+
+  ::view-transition-new(auth-tabs) {
+    animation: none;
+  }
+
+  @keyframes auth-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes auth-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+/* Loading skeletons: the whole screen shimmers as one. */
+@theme static {
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
+  @keyframes shimmer {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}

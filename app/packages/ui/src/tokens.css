@@ -3,11 +3,35 @@
  * Theme: no attribute or data-theme="system" follows the OS; data-theme="light|dark" forces it.
  */
 
-:root {
+/* Tokens that are also Tailwind utilities: font-serif, rounded-card, shadow-elevated, max-xs:… */
+@theme static {
   /* Typography: self-hosted fonts loaded by styles.css */
   --font-serif: 'Newsreader Variable', Georgia, serif;
   --font-sans: 'Instrument Sans Variable', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --tracking-overline: 0.1em;
+  --tracking-heading: -0.015em;
+
+  /* Shapes */
+  --radius-tag: 4px;
+  --radius-field: 8px;
+  --radius-card: 14px;
+  --radius-pill: 999px;
+
+  /* Elevation: flat = border only; elevated = modals, toasts */
+  --shadow-raised: 0 1px 2px rgba(19, 26, 44, 0.12);
+  --shadow-elevated: 0 1px 2px rgba(19, 26, 44, 0.06), 0 12px 32px -8px rgba(19, 26, 44, 0.18);
+
+  /* Added to Tailwind's md (768), lg (1024) and xl (1280), which ADR-010 already uses. */
+  --breakpoint-xs: 30rem;
+  --breakpoint-onboarding: 68.8125rem;
+  --breakpoint-cert: 75rem;
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+:root {
   --font-icons: 'Material Symbols Outlined';
 
   /* Type scale: size / line-height (Design-System › Typographie) */
@@ -20,21 +44,11 @@
   --text-small: 500 14px / 20px var(--font-sans);
   --text-overline: 600 12px / 16px var(--font-sans);
   --text-code: 500 13px / 18px var(--font-mono);
-  --tracking-overline: 0.1em;
-  --tracking-heading: -0.015em;
 
-  /* Shapes */
-  --radius-tag: 4px;
-  --radius-field: 8px;
-  --radius-card: 14px;
-  --radius-pill: 999px;
+  /* Controls */
   --control-height: 44px;
   --control-height-sm: 36px;
   --touch-target: 44px;
-
-  /* Elevation: flat = border only; elevated = modals, toasts */
-  --shadow-raised: 0 1px 2px rgba(19, 26, 44, 0.12);
-  --shadow-elevated: 0 1px 2px rgba(19, 26, 44, 0.06), 0 12px 32px -8px rgba(19, 26, 44, 0.18);
   --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus);
 
   /* Layout */

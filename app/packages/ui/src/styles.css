@@ -1,10 +1,19 @@
-/* Single entry point for apps: fonts, tokens, element defaults. */
+/* Single entry point for apps: fonts, Tailwind, tokens, element defaults. */
 /* Fonts are self-hosted from npm so builds never depend on Google Fonts being reachable. */
 @import '@fontsource-variable/newsreader/opsz.css';
 @import '@fontsource-variable/newsreader/opsz-italic.css';
 @import '@fontsource-variable/instrument-sans/index.css';
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/ibm-plex-mono/500.css';
-@import 'material-symbols/outlined.css';
+@import 'tailwindcss';
+@import 'tw-animate-css';
+/* In a layer, or its font-size would beat every text-* utility set on an icon. */
+@import 'material-symbols/outlined.css' layer(base);
 @import './tokens.css';
+@import './theme.css';
+@import './animations.css';
 @import './base.css';
+
+/* Tailwind only sees the classes in the folders it scans. */
+@source './';
+@source '../../../frontend/src';
