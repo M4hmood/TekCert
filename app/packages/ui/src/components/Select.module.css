@@ -1,0 +1,113 @@
+/* The closed control follows the designs' "Sort: Most earned" and "Specialty All" fields. */
+.root {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: var(--select-min-width, 0);
+  height: var(--select-height, 46px);
+  padding: 0 10px 0 14px;
+  border: 1.5px solid var(--ln2);
+  border-radius: 10px;
+  background: var(--sf);
+  font-size: 14.5px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.trigger:hover {
+  border-color: var(--ink3);
+}
+
+.trigger[aria-expanded='true'] {
+  border-color: var(--pri);
+}
+
+.label {
+  color: var(--ink3);
+}
+
+.value {
+  font-weight: 700;
+}
+
+.chevron {
+  margin-left: auto;
+  color: var(--ink3);
+  transition: rotate 0.15s;
+}
+
+.trigger[aria-expanded='true'] .chevron {
+  rotate: 180deg;
+}
+
+.list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  width: max-content;
+  min-width: 100%;
+  max-width: calc(100vw - 32px);
+  margin: 0;
+  padding: 5px;
+  border: 1px solid var(--ln);
+  border-radius: 12px;
+  background: var(--sf);
+  box-shadow: var(--shadow-elevated);
+  list-style: none;
+  animation: appear 0.12s ease-out;
+}
+
+.list[data-align-end] {
+  right: 0;
+  left: auto;
+}
+
+.list[data-above] {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 40px;
+  padding: 0 10px 0 12px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.active {
+  background: var(--sf2);
+}
+
+.selected {
+  color: var(--pri);
+  font-weight: 600;
+}
+
+@media (pointer: coarse) {
+  .option {
+    min-height: var(--touch-target);
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}

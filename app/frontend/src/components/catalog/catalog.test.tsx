@@ -196,7 +196,8 @@ describe('CatalogView', () => {
   it('sorts from the menu', async () => {
     const user = userEvent.setup();
     render(<CatalogView certifications={CERTS} initialQuery={{}} initialPage={1} mine={{}} />);
-    await user.selectOptions(screen.getByRole('combobox'), 'name');
+    await user.click(screen.getByRole('combobox', { name: 'Sort:' }));
+    await user.click(screen.getByRole('option', { name: 'Name A–Z' }));
     expect(cardNames()[0]).toBe('/catalog/clf-c02');
     expect(cardNames()[1]).toBe('/catalog/saa-c03');
     expect(window.location.search).toBe('?sort=name');
@@ -255,7 +256,8 @@ describe('pagination', () => {
   it('goes back to page 1 when a filter or the sort changes', async () => {
     const user = userEvent.setup();
     view(3);
-    await user.selectOptions(screen.getByRole('combobox'), 'name');
+    await user.click(screen.getByRole('combobox', { name: 'Sort:' }));
+    await user.click(screen.getByRole('option', { name: 'Name A–Z' }));
     expect(screen.getByRole('button', { name: 'Page 1' })).toHaveAttribute('aria-current', 'page');
     expect(window.location.search).toBe('?sort=name');
   });

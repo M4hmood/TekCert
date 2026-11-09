@@ -7,10 +7,11 @@ import {
   type CommunityPerson,
   type CommunityQuery,
   type CommunityScope,
+  type CommunitySpecialtyFilter,
   SPECIALTY_CODES,
   YEARS,
 } from '@tekcert/types';
-import { cx, Icon } from '@tekcert/ui';
+import { cx, Icon, Select, type SelectOption } from '@tekcert/ui';
 import { useRef, useState } from 'react';
 import { Avatar } from '@/components/Avatar';
 import { StatusPill } from '@/components/catalog/parts';
@@ -24,6 +25,19 @@ const SCOPES: { value: CommunityScope; label: string }[] = [
   { value: 'specialty', label: 'My specialty' },
   { value: 'year', label: 'My level' },
   { value: 'institute', label: 'Whole institute' },
+];
+
+const ALL = { value: '', label: 'All' } as const;
+
+const SPECIALTY_OPTIONS: SelectOption<CommunitySpecialtyFilter | ''>[] = [
+  ALL,
+  ...SPECIALTY_CODES.map((code) => ({ value: code, label: code })),
+  { value: 'none', label: 'Not yet (ING-1 to 3)' },
+];
+
+const LEVEL_OPTIONS: SelectOption<string>[] = [
+  ALL,
+  ...YEARS.map((year) => ({ value: String(year), label: `ING-${year}` })),
 ];
 
 /** "Who to ask?": students who hold the certification and students preparing it. */
@@ -93,41 +107,21 @@ export function CommunityPanel({
             </button>
           ))}
         </div>
-        <label className={styles.selectField}>
-          <span className={styles.muted}>Specialty</span>
-          <select
-            value={query.specialty ?? ''}
-            onChange={(e) => {
-              const value = e.target.value as CommunityQuery['specialty'] | '';
-              load({ ...query, specialty: value || undefined });
-            }}
-          >
-            <option value="">All</option>
-            {SPECIALTY_CODES.map((code) => (
-              <option key={code} value={code}>
-                {code}
-              </option>
-            ))}
-            <option value="none">Not yet (ING-1 to 3)</option>
-          </select>
-        </label>
-        <label className={styles.selectField}>
-          <span className={styles.muted}>Level</span>
-          <select
-            value={query.year ?? ''}
-            onChange={(e) => {
-              const year = YEARS.find((y) => String(y) === e.target.value);
-              load({ ...query, year });
-            }}
-          >
-            <option value="">All</option>
-            {YEARS.map((year) => (
-              <option key={year} value={year}>
-                ING-{year}
-              </option>
-            ))}
-          </select>
-        </label>
+        <Select
+          label="Specialty"
+          value={query.specialty ?? ''}
+          options={SPECIALTY_OPTIONS}
+          onChange={(specialty) => load({ ...query, specialty: specialty || undefined })}
+        />
+        <Select
+          label="Level"
+          value={query.year ? String(query.year) : ''}
+          options={LEVEL_OPTIONS}
+          onChange={(level) => {
+            const year = YEARS.find((y) => String(y) === level);
+            load({ ...query, year });
+          }}
+        />
         {filtered && (
           <button
             type="button"

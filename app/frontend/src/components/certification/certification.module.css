@@ -700,33 +700,6 @@
   box-shadow: var(--shadow-raised);
 }
 
-.selectField {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 46px;
-  padding: 0 6px 0 14px;
-  border: 1.5px solid var(--ln2);
-  border-radius: 10px;
-  background: var(--sf);
-  font-size: 14px;
-}
-
-.selectField select {
-  height: 40px;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.selectField:focus-within {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
 .reset {
   height: 44px;
   border: none;
