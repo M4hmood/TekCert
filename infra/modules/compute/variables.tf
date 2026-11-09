@@ -41,17 +41,17 @@ variable "web_port" {
 
 variable "app_port" {
   type    = number
-  default = 3000
+  default = 4000
 }
 
 variable "web_target_group_arns" {
-  description = "Filled in by the ALB step later"
+  description = "Target groups the web ASG registers its instances in"
   type        = list(string)
   default     = []
 }
 
 variable "app_target_group_arns" {
-  description = "Filled in by the ALB step later"
+  description = "Target groups the app ASG registers its instances in"
   type        = list(string)
   default     = []
 }

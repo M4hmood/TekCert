@@ -2,8 +2,7 @@
 # Security groups — chained exactly like the diagram legend:
 #   public ALB -> web (Next.js) -> internal ALB -> app (NestJS) -> RDS
 #
-# The ALB groups are created now (they're free) so the chain is complete from
-# day one; the ALBs themselves come in the next step.
+# The ALBs that use the two ALB groups are in modules/alb.
 #
 # Uses the standalone aws_vpc_security_group_*_rule resources so groups can
 # reference each other without dependency cycles.

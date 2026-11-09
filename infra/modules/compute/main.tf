@@ -101,8 +101,8 @@ resource "aws_autoscaling_group" "this" {
     version = aws_launch_template.this[each.key].latest_version
   }
 
-  # Empty until the ALB step. Once target groups are attached, switch
-  # health_check_type to "ELB" so the ASG replaces instances the ALB marks unhealthy.
+  # New instances register in these target groups automatically. With a target
+  # group attached, "ELB" makes the ASG replace instances the ALB marks unhealthy.
   target_group_arns         = each.value.tg_arns
   health_check_type         = length(each.value.tg_arns) > 0 ? "ELB" : "EC2"
   health_check_grace_period = 120

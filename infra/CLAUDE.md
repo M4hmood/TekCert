@@ -33,6 +33,7 @@ diagram disagree, say so. Don't silently pick one.
 
 ```
 modules/network/   VPC, 8 subnets, IGW, NAT, route tables, S3 gateway endpoint, security groups
+modules/alb/       public + internal ALB, HTTP listeners, target groups
 modules/compute/   instance profile (optional), launch templates, ASGs web + app
 envs/dev/          root module, S3 backend (use_lockfile), tfvars
 ```
@@ -53,9 +54,9 @@ envs/dev/          root module, S3 backend (use_lockfile), tfvars
 
 ## Status
 
-- ✅ Network module, compute module (ASGs run a placeholder HTTP server on port 3000)
-- ⏭️ Next steps, in order: public + internal ALB with target groups → RDS (Multi-AZ, data subnets,
-  Secrets Manager password) → private S3 bucket → CloudFront + WAF + ACM → CloudWatch logs/alarms + SNS
+- ✅ Network module, compute module (ASGs run a placeholder HTTP server: web on 3000, app on 4000)
+- ✅ ALB module (public + internal, target groups attached to the ASGs)
+- ⏭️ Next steps, in order: RDS (Multi-AZ, data subnets, Secrets Manager password) → private S3 bucket → CloudFront + WAF + ACM → CloudWatch logs/alarms + SNS
 
 ## Commands
 

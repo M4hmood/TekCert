@@ -10,6 +10,10 @@ AZ=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest
 ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
 echo "TekCert ${tier} (${label} placeholder) - $ID in $AZ" > /opt/placeholder/index.html
 
+# Same health check paths as the real apps: /healthz (Next.js), /health (NestJS)
+echo ok > /opt/placeholder/healthz
+echo ok > /opt/placeholder/health
+
 cat > /etc/systemd/system/placeholder.service <<'UNIT'
 [Unit]
 Description=Placeholder HTTP server

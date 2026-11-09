@@ -30,7 +30,7 @@ variable "web_port" {
 
 variable "app_port" {
   type    = number
-  default = 3000
+  default = 4000
 }
 
 variable "existing_instance_profile_name" {
