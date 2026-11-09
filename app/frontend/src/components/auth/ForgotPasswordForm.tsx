@@ -5,7 +5,6 @@ import { Button, Field, Icon } from '@tekcert/ui';
 import Link from 'next/link';
 import { type FormEvent, useState } from 'react';
 import { postJson } from '@/lib/client-api';
-import styles from './auth.module.css';
 import { CheckInbox } from './CheckInbox';
 
 export function ForgotPasswordForm() {
@@ -42,14 +41,19 @@ export function ForgotPasswordForm() {
   };
 
   return (
-    <form className={styles.form} onSubmit={submit} noValidate>
-      <Link href="/sign-in" className={styles.back}>
+    <form className="flex flex-col gap-5" onSubmit={submit} noValidate>
+      <Link
+        href="/sign-in"
+        className="inline-flex items-center self-start gap-1.5 min-h-11 text-pri text-[14.5px] font-semibold no-underline"
+      >
         <Icon name="arrow_back" size={20} />
         Back to sign in
       </Link>
-      <div className={styles.heading}>
-        <h1 className={styles.title}>Forgot password</h1>
-        <p className={styles.subtitle}>
+      <div className="flex flex-col gap-2">
+        <h1 className="font-serif text-[38px] font-medium tracking-heading leading-[1.1] max-lg:text-[30px]">
+          Forgot password
+        </h1>
+        <p className="text-ink2 text-[15.5px] leading-[1.55]">
           We&apos;ll send you a reset link that&apos;s valid for 30 minutes.
         </p>
       </div>
@@ -67,7 +71,7 @@ export function ForgotPasswordForm() {
         }}
         required
       />
-      <Button type="submit" className={styles.submit} disabled={submitting}>
+      <Button type="submit" className="h-13 rounded-[10px] text-[16px]" disabled={submitting}>
         {submitting ? 'Sending…' : 'Send link'}
       </Button>
     </form>

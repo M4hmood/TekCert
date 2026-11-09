@@ -4,7 +4,6 @@ import { RESEND_COOLDOWN_SECONDS } from '@tekcert/types';
 import { Button, buttonClass, Icon } from '@tekcert/ui';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import styles from './auth.module.css';
 
 export interface CheckInboxProps {
   email: string;
@@ -33,16 +32,18 @@ export function CheckInbox({ email, onResend, validity }: CheckInboxProps) {
   };
 
   return (
-    <div className={styles.result}>
-      <span className={styles.resultIcon}>
+    <div className="flex flex-col items-start gap-5 animate-auth-enter">
+      <span className="grid place-items-center size-16 rounded-full bg-ok-sf text-ok data-[tone=error]:bg-err-sf data-[tone=error]:text-err">
         <Icon name="mark_email_read" size={32} />
       </span>
-      <h1 className={styles.title}>Check your inbox</h1>
-      <p className={styles.resultText} role="status">
+      <h1 className="font-serif text-[38px] font-medium tracking-heading leading-[1.1] max-lg:text-[30px]">
+        Check your inbox
+      </h1>
+      <p className="text-ink2 text-[15.5px] leading-[1.6] [&_strong]:text-ink" role="status">
         A link{validity ? ` ${validity}` : ''} was sent to <strong>{email}</strong>. Remember to
         check your spam folder.
       </p>
-      <div className={styles.actions}>
+      <div className="flex flex-wrap gap-2.5">
         <Link href="/sign-in" className={buttonClass('secondary')}>
           Back to sign in
         </Link>

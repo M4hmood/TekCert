@@ -5,7 +5,6 @@ import { Button, Field, Icon } from '@tekcert/ui';
 import { useRouter } from 'next/navigation';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { postJson } from '@/lib/client-api';
-import styles from './auth.module.css';
 import { CheckInbox } from './CheckInbox';
 
 type State = 'verifying' | 'verified' | 'invalid';
@@ -37,14 +36,14 @@ export function VerifyEmail({ token }: { token: string | null }) {
   if (state === 'invalid') return <ExpiredLink />;
 
   return (
-    <div className={styles.result} role="status">
-      <span className={styles.resultIcon}>
+    <div className="flex flex-col items-start gap-5 animate-auth-enter" role="status">
+      <span className="grid place-items-center size-16 rounded-full bg-ok-sf text-ok data-[tone=error]:bg-err-sf data-[tone=error]:text-err">
         <Icon name={state === 'verified' ? 'verified' : 'hourglass_top'} size={32} />
       </span>
-      <h1 className={styles.title}>
+      <h1 className="font-serif text-[38px] font-medium tracking-heading leading-[1.1] max-lg:text-[30px]">
         {state === 'verified' ? 'Address confirmed' : 'Confirming your address…'}
       </h1>
-      <p className={styles.resultText}>
+      <p className="text-ink2 text-[15.5px] leading-[1.6] [&_strong]:text-ink">
         {state === 'verified' ? 'Opening TekCert…' : 'This only takes a moment.'}
       </p>
     </div>
@@ -83,13 +82,18 @@ function ExpiredLink() {
   };
 
   return (
-    <form className={styles.form} onSubmit={submit} noValidate>
-      <span className={styles.resultIcon} data-tone="error">
+    <form className="flex flex-col gap-5" onSubmit={submit} noValidate>
+      <span
+        className="grid place-items-center size-16 rounded-full bg-ok-sf text-ok data-[tone=error]:bg-err-sf data-[tone=error]:text-err"
+        data-tone="error"
+      >
         <Icon name="link_off" size={32} />
       </span>
-      <div className={styles.heading}>
-        <h1 className={styles.title}>This link has expired</h1>
-        <p className={styles.subtitle}>
+      <div className="flex flex-col gap-2">
+        <h1 className="font-serif text-[38px] font-medium tracking-heading leading-[1.1] max-lg:text-[30px]">
+          This link has expired
+        </h1>
+        <p className="text-ink2 text-[15.5px] leading-[1.55]">
           Confirmation links are valid for 24 hours and work once. Enter your institute email to get
           a new one.
         </p>
@@ -108,7 +112,7 @@ function ExpiredLink() {
         }}
         required
       />
-      <Button type="submit" className={styles.submit}>
+      <Button type="submit" className="h-13 rounded-[10px] text-[16px]">
         Send a new link
       </Button>
     </form>

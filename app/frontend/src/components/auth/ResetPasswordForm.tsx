@@ -5,7 +5,6 @@ import { Alert, Button, buttonClass, Icon, PasswordField } from '@tekcert/ui';
 import Link from 'next/link';
 import { type FormEvent, useId, useState } from 'react';
 import { postJson } from '@/lib/client-api';
-import styles from './auth.module.css';
 import { PasswordChecklist } from './PasswordChecklist';
 
 type State = 'form' | 'done' | 'invalid';
@@ -20,12 +19,14 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
 
   if (state === 'done') {
     return (
-      <div className={styles.result}>
-        <span className={styles.resultIcon}>
+      <div className="flex flex-col items-start gap-5 animate-auth-enter">
+        <span className="grid place-items-center size-16 rounded-full bg-ok-sf text-ok data-[tone=error]:bg-err-sf data-[tone=error]:text-err">
           <Icon name="lock_reset" size={32} />
         </span>
-        <h1 className={styles.title}>Password changed</h1>
-        <p className={styles.resultText} role="status">
+        <h1 className="font-serif text-[38px] font-medium tracking-heading leading-[1.1] max-lg:text-[30px]">
+          Password changed
+        </h1>
+        <p className="text-ink2 text-[15.5px] leading-[1.6] [&_strong]:text-ink" role="status">
           Your new password is saved, and you were signed out on every device.
         </p>
         <Link href="/sign-in" className={buttonClass('primary')}>
@@ -37,12 +38,17 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
 
   if (state === 'invalid') {
     return (
-      <div className={styles.result}>
-        <span className={styles.resultIcon} data-tone="error">
+      <div className="flex flex-col items-start gap-5 animate-auth-enter">
+        <span
+          className="grid place-items-center size-16 rounded-full bg-ok-sf text-ok data-[tone=error]:bg-err-sf data-[tone=error]:text-err"
+          data-tone="error"
+        >
           <Icon name="link_off" size={32} />
         </span>
-        <h1 className={styles.title}>This link has expired</h1>
-        <p className={styles.resultText}>
+        <h1 className="font-serif text-[38px] font-medium tracking-heading leading-[1.1] max-lg:text-[30px]">
+          This link has expired
+        </h1>
+        <p className="text-ink2 text-[15.5px] leading-[1.6] [&_strong]:text-ink">
           Reset links are valid for 30 minutes and work once. Ask for a new one.
         </p>
         <Link href="/forgot-password" className={buttonClass('primary')}>
@@ -69,10 +75,14 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
   };
 
   return (
-    <form className={styles.form} onSubmit={submit} noValidate>
-      <div className={styles.heading}>
-        <h1 className={styles.title}>Choose a new password</h1>
-        <p className={styles.subtitle}>You will be signed out on every device.</p>
+    <form className="flex flex-col gap-5" onSubmit={submit} noValidate>
+      <div className="flex flex-col gap-2">
+        <h1 className="font-serif text-[38px] font-medium tracking-heading leading-[1.1] max-lg:text-[30px]">
+          Choose a new password
+        </h1>
+        <p className="text-ink2 text-[15.5px] leading-[1.55]">
+          You will be signed out on every device.
+        </p>
       </div>
       {failure && <Alert tone="error">{failure}</Alert>}
       <PasswordField
@@ -90,7 +100,7 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
       >
         <PasswordChecklist id={checklistId} password={password} />
       </PasswordField>
-      <Button type="submit" className={styles.submit} disabled={submitting}>
+      <Button type="submit" className="h-13 rounded-[10px] text-[16px]" disabled={submitting}>
         {submitting ? 'Saving…' : 'Save new password'}
       </Button>
     </form>
