@@ -19,6 +19,11 @@ export const base = tseslint.config(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+      // Styling is Tailwind utilities on the design tokens (ADR-019).
+      'no-restricted-imports': [
+        'error',
+        { patterns: [{ group: ['*.module.css'], message: 'Use Tailwind utilities instead.' }] },
+      ],
     },
   },
   prettier,

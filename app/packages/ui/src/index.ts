@@ -21,7 +21,6 @@ export {
 } from './components/Form';
 export { Icon, type IconProps } from './components/Icon';
 export { Select, type SelectOption, type SelectProps } from './components/Select';
-export { cx } from './cx';
 export { cn } from './lib/utils';
 
 // shadcn/ui primitives used directly by screens.
