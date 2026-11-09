@@ -9,7 +9,6 @@ import {
 import { Alert, Button, Checkbox, Field, PasswordField } from '@tekcert/ui';
 import { type FormEvent, useId, useState } from 'react';
 import { postJson } from '@/lib/client-api';
-import styles from './auth.module.css';
 import { CheckInbox } from './CheckInbox';
 import { PasswordChecklist } from './PasswordChecklist';
 
@@ -65,10 +64,14 @@ export function SignUpForm() {
   const emailRecognised = !errors.email && InstituteEmailSchema.safeParse(form.email).success;
 
   return (
-    <form className={styles.form} onSubmit={submit} noValidate>
-      <div className={styles.heading}>
-        <h1 className={styles.title}>Create your account</h1>
-        <p className={styles.subtitle}>For students enrolled at TEK-UP only.</p>
+    <form className="flex flex-col gap-5" onSubmit={submit} noValidate>
+      <div className="flex flex-col gap-2">
+        <h1 className="font-serif text-[38px] font-medium tracking-heading leading-[1.1] max-lg:text-[30px]">
+          Create your account
+        </h1>
+        <p className="text-ink2 text-[15.5px] leading-[1.55]">
+          For students enrolled at TEK-UP only.
+        </p>
       </div>
 
       {problem && (
@@ -77,7 +80,7 @@ export function SignUpForm() {
         </Alert>
       )}
 
-      <div className={styles.names}>
+      <div className="grid grid-cols-2 gap-3.5 max-xs:grid-cols-1">
         <Field
           label="First name"
           name="firstName"
@@ -123,11 +126,11 @@ export function SignUpForm() {
       </PasswordField>
       {/* Required: every profile is visible to signed-in students (PLAN.md, 2026-10-29). */}
       <Checkbox
-        className={styles.consent}
+        className="text-ink2 text-[14px]"
         checked={acceptVisibility}
         error={errors.acceptVisibility}
-        onChange={(e) => {
-          setAcceptVisibility(e.target.checked);
+        onCheckedChange={(checked) => {
+          setAcceptVisibility(checked);
           setErrors((current) => ({ ...current, acceptVisibility: undefined }));
         }}
         required
@@ -135,10 +138,12 @@ export function SignUpForm() {
         I understand that my name, class, certifications and institute email are visible to TEK-UP
         students.
       </Checkbox>
-      <Button type="submit" className={styles.submit} disabled={submitting}>
+      <Button type="submit" className="h-13 rounded-[10px] text-[16px]" disabled={submitting}>
         {submitting ? 'Creating your account…' : 'Create my account'}
       </Button>
-      <p className={styles.footnote}>A confirmation link will be sent to your institute address.</p>
+      <p className="text-ink3 text-[13.5px] text-center">
+        A confirmation link will be sent to your institute address.
+      </p>
     </form>
   );
 }

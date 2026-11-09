@@ -1,5 +1,5 @@
 import { Select } from '@tekcert/ui';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -62,17 +62,16 @@ describe('Select', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it('works from the keyboard and points assistive tech at the active option', async () => {
+  it('works from the keyboard, moving focus through the options', async () => {
     const { user, trigger, onChange } = setup();
     trigger.focus();
     await user.keyboard('{ArrowDown}');
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
     await user.keyboard('{ArrowDown}');
-    expect(trigger).toHaveAttribute(
-      'aria-activedescendant',
-      screen.getByRole('option', { name: 'Name A–Z' }).id,
-    );
-    await user.keyboard('{End}{Enter}');
+    await waitFor(() => expect(screen.getByRole('option', { name: 'Name A–Z' })).toHaveFocus());
+    await user.keyboard('{End}');
+    await waitFor(() => expect(screen.getByRole('option', { name: 'Level' })).toHaveFocus());
+    await user.keyboard('{Enter}');
     expect(onChange).toHaveBeenCalledWith('level');
   });
 
@@ -87,17 +86,18 @@ describe('Select', () => {
   it('jumps to an option by typing its first letters', async () => {
     const { user, trigger } = setup();
     trigger.focus();
+    await user.keyboard('{ArrowDown}');
     await user.keyboard('le');
-    expect(trigger).toHaveAttribute(
-      'aria-activedescendant',
-      screen.getByRole('option', { name: 'Level' }).id,
-    );
+    await waitFor(() => expect(screen.getByRole('option', { name: 'Level' })).toHaveFocus());
   });
 
   it('closes when clicking elsewhere', async () => {
-    const { user, trigger } = setup();
+    const { trigger } = setup();
+    // While the list is open, Radix makes the rest of the page ignore the pointer.
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
     await user.click(trigger);
-    await user.click(screen.getByRole('button', { name: 'Elsewhere' }));
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+    await user.click(document.body);
     expect(screen.queryByRole('listbox')).toBeNull();
   });
 });

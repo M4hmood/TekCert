@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import styles from './EmptyState.module.css';
 import { Icon } from './Icon';
 
 export interface EmptyStateProps {
@@ -12,13 +11,13 @@ export interface EmptyStateProps {
 /** Dashed card used when a screen or list has nothing to show (Catalogue "No certification matches"). */
 export function EmptyState({ icon, title, children, action }: EmptyStateProps) {
   return (
-    <div className={styles.empty}>
-      <span className={styles.icon}>
+    <div className="flex flex-col items-center gap-3 py-14 px-6 border border-dashed border-ln2 rounded-card bg-sf text-center">
+      <span className="grid place-items-center size-16 border-[1.5px] border-dashed border-ln2 rounded-full text-ink3">
         <Icon name={icon} size={30} />
       </span>
-      <h2 className={styles.title}>{title}</h2>
-      {children && <p className={styles.body}>{children}</p>}
-      {action && <div className={styles.action}>{action}</div>}
+      <h2 className="font-serif text-[24px] font-semibold leading-[1.25]">{title}</h2>
+      {children && <p className="max-w-95 text-ink2 text-[14.5px] leading-[1.55]">{children}</p>}
+      {action && <div className="mt-1.5">{action}</div>}
     </div>
   );
 }

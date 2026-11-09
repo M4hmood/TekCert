@@ -1,4 +1,4 @@
-import styles from './Badge.module.css';
+import { Badge as BadgeBase } from './ui/badge';
 
 export interface BadgeProps {
   count: number;
@@ -8,9 +8,9 @@ export interface BadgeProps {
 
 export function Badge({ count, label }: BadgeProps) {
   return (
-    <span className={styles.badge}>
+    <BadgeBase>
       <span aria-hidden>{count}</span>
-      <span className="visually-hidden">{label}</span>
-    </span>
+      <span className="sr-only">{label}</span>
+    </BadgeBase>
   );
 }
