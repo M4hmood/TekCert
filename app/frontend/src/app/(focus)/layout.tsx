@@ -1,9 +1,8 @@
 import type { ReactNode } from 'react';
-import styles from './focus.module.css';
 
 export default function FocusLayout({ children }: { children: ReactNode }) {
   return (
-    <main id="main" className={styles.focus}>
+    <main id="main" className="flex flex-col min-h-dvh">
       {children}
     </main>
   );

@@ -1,4 +1,4 @@
-import styles from './onboarding.module.css';
+import { Switch as SwitchControl } from '@tekcert/ui';
 
 export interface SwitchProps {
   label: string;
@@ -7,26 +7,15 @@ export interface SwitchProps {
   onChange: (checked: boolean) => void;
 }
 
-/** A settings row with an on/off switch (role="switch", as in the design). */
+/** A settings row with an on/off switch. */
 export function Switch({ label, description, checked, onChange }: SwitchProps) {
   return (
-    <div className={styles.settingRow}>
-      <span className={styles.settingText}>
-        <span className={styles.settingLabel}>{label}</span>
-        <span className={styles.settingDescription}>{description}</span>
+    <div className="flex items-center justify-between gap-5 py-4 border-b border-ln">
+      <span className="flex flex-col gap-0.75">
+        <span className="text-[15px] font-semibold">{label}</span>
+        <span className="text-ink2 text-[13.5px]">{description}</span>
       </span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        aria-label={label}
-        className={styles.switch}
-        onClick={() => onChange(!checked)}
-      >
-        <span className={styles.switchTrack}>
-          <span className={styles.switchKnob} />
-        </span>
-      </button>
+      <SwitchControl aria-label={label} checked={checked} onCheckedChange={onChange} />
     </div>
   );
 }

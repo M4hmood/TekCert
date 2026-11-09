@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { cx } from '../cx';
+import { cn } from '../lib/utils';
 
 export interface IconProps {
   /** Material Symbols ligature, e.g. "menu_book". */
@@ -19,7 +19,7 @@ export function Icon({ name, filled = false, size, className, label }: IconProps
   };
   return (
     <span
-      className={cx('material-symbols-outlined', className)}
+      className={cn('material-symbols-outlined', className)}
       style={style}
       {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true })}
     >

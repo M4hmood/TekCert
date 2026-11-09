@@ -1,0 +1,128 @@
+/*
+ * Connects Tailwind and shadcn/ui to the TekCert tokens (tokens.css stays the source of truth).
+ * shadcn's variables are defined from our palette, so its components follow both themes.
+ */
+
+:root {
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--sf);
+  --card-foreground: var(--ink);
+  --popover: var(--sf);
+  --popover-foreground: var(--ink);
+  --primary: var(--pri);
+  --primary-foreground: var(--pri-ink);
+  --secondary: var(--sf2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--sf2);
+  --muted-foreground: var(--ink3);
+  --accent: var(--pri-sf);
+  --accent-foreground: var(--pri);
+  --destructive: var(--err);
+  --border: var(--ln);
+  --input: var(--ln2);
+  --ring: var(--focus);
+}
+
+/* The same rule as tokens.css: a forced theme wins, otherwise the OS decides. */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme='light']), :root:not([data-theme='light']) *) {
+      @slot;
+    }
+  }
+}
+
+@theme inline {
+  /* Only design tokens exist as colours: there is no bg-blue-500 to reach for. */
+  --color-*: initial;
+  --color-white: #fff;
+  --color-black: #000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* shadcn */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* TekCert */
+  --color-bg: var(--bg);
+  --color-sf: var(--sf);
+  --color-sf2: var(--sf2);
+  --color-ln: var(--ln);
+  --color-ln2: var(--ln2);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-ink3: var(--ink3);
+  --color-pri: var(--pri);
+  --color-pri-ink: var(--pri-ink);
+  --color-pri-sf: var(--pri-sf);
+  --color-gold: var(--gold);
+  --color-gold-fill: var(--gold-fill);
+  --color-gold-sf: var(--gold-sf);
+  --color-ok: var(--ok);
+  --color-ok-sf: var(--ok-sf);
+  --color-warn: var(--warn);
+  --color-warn-sf: var(--warn-sf);
+  --color-err: var(--err);
+  --color-err-sf: var(--err-sf);
+  --color-hero: var(--hero);
+  --color-hero-ink: var(--hero-ink);
+  --color-focus: var(--focus);
+  --color-spec-sdia: var(--spec-sdia);
+  --color-spec-cim: var(--spec-cim);
+  --color-spec-glops: var(--spec-glops);
+  --color-spec-ssir: var(--spec-ssir);
+  --color-spec-aiot: var(--spec-aiot);
+  --color-spec-dmwm: var(--spec-dmwm);
+}
+
+/* The design's type styles. Named type-*, because text-* utilities take a size or a colour. */
+@utility type-display {
+  font: var(--text-display);
+}
+@utility type-h1 {
+  font: var(--text-h1);
+}
+@utility type-h2 {
+  font: var(--text-h2);
+}
+@utility type-h3 {
+  font: var(--text-h3);
+}
+@utility type-title {
+  font: var(--text-title);
+}
+@utility type-body {
+  font: var(--text-body);
+}
+@utility type-small {
+  font: var(--text-small);
+}
+@utility type-overline {
+  font: var(--text-overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+@utility type-code {
+  font: var(--text-code);
+}

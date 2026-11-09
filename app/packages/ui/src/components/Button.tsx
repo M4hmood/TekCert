@@ -1,14 +1,14 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { cx } from '../cx';
-import styles from './Button.module.css';
+import { cn } from '../lib/utils';
 import { Icon } from './Icon';
+import { Button as ButtonBase, buttonVariants, iconButtonVariants } from './ui/button';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 export type ButtonSize = 'md' | 'sm';
 
 /** Class names for anything styled as a button, including links (e.g. next/link). */
 export function buttonClass(variant: ButtonVariant = 'primary', size: ButtonSize = 'md'): string {
-  return cx(styles.button, styles[variant], size === 'sm' && styles.sm);
+  return cn(buttonVariants({ variant, size }));
 }
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -18,20 +18,12 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
 }
 
-export function Button({
-  variant = 'primary',
-  size = 'md',
-  icon,
-  className,
-  type = 'button',
-  children,
-  ...rest
-}: ButtonProps) {
+export function Button({ icon, type = 'button', children, ...rest }: ButtonProps) {
   return (
-    <button type={type} className={cx(buttonClass(variant, size), className)} {...rest}>
+    <ButtonBase type={type} {...rest}>
       {icon && <Icon name={icon} size={19} />}
       {children}
-    </button>
+    </ButtonBase>
   );
 }
 
@@ -61,7 +53,7 @@ export function IconButton({
       type={type}
       aria-label={label}
       title={label}
-      className={cx(styles.iconButton, variant === 'outlined' && styles.outlined, className)}
+      className={cn(iconButtonVariants({ variant }), className)}
       {...rest}
     >
       {icon && <Icon name={icon} />}

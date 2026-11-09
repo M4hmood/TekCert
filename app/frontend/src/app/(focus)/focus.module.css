@@ -1,6 +1,0 @@
-/* Screens outside the app shell (onboarding): full height, no navigation. The screen lays itself out. */
-.focus {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-}

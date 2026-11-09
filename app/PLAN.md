@@ -15,6 +15,7 @@ Solo developer + Claude Code · 1-week sprints · English only at launch · emai
 | S01 | Authentication | Students can create an account and sign in with their @tek-up.de email. |
 | S02 | Onboarding + profile basics | A new student finishes onboarding and lands on a recommended path. |
 | S03 | Catalog + certification page | Students browse every funded certification and open its page. |
+| S03b | Tailwind + shadcn migration | The frontend is styled with Tailwind and shadcn/ui, and still matches /design. |
 | S04 | Progress, points + dashboard | Ticking chapters earns points and the dashboard reflects it. |
 | S05 | Community directory + profiles | Students find classmates who hold or are preparing a certification. |
 | S06 | Leaderboard | Ranked views by scope and period. |

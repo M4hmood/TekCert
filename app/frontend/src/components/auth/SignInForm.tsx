@@ -8,12 +8,11 @@ import {
   LOCKOUT_MINUTES,
   type ProblemDetails,
 } from '@tekcert/types';
-import { Alert, Button, Checkbox, cx, Field, PasswordField } from '@tekcert/ui';
+import { Alert, Button, Checkbox, Field, PasswordField } from '@tekcert/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { type FormEvent, useState } from 'react';
 import { postJson, safeNextPath } from '@/lib/client-api';
-import styles from './auth.module.css';
 import { CheckInbox } from './CheckInbox';
 
 export function SignInForm({ next }: { next?: string }) {
@@ -58,10 +57,14 @@ export function SignInForm({ next }: { next?: string }) {
   const wrongCredentials = problem?.type === AUTH_PROBLEM.invalidCredentials;
 
   return (
-    <form className={styles.form} onSubmit={submit} noValidate>
-      <div className={styles.heading}>
-        <h1 className={styles.title}>Welcome back</h1>
-        <p className={styles.subtitle}>Sign in with your institute account.</p>
+    <form className="flex flex-col gap-5" onSubmit={submit} noValidate>
+      <div className="flex flex-col gap-2">
+        <h1 className="font-serif text-[38px] font-medium tracking-heading leading-[1.1] max-lg:text-[30px]">
+          Welcome back
+        </h1>
+        <p className="text-ink2 text-[15.5px] leading-[1.55]">
+          Sign in with your institute account.
+        </p>
       </div>
 
       {problem && (
@@ -96,16 +99,19 @@ export function SignInForm({ next }: { next?: string }) {
         onChange={(e) => setPassword(e.target.value)}
         aria-invalid={wrongCredentials || undefined}
         labelAction={
-          <Link href="/forgot-password" className={styles.textLink}>
+          <Link
+            href="/forgot-password"
+            className="min-h-6 p-0 border-none bg-transparent text-pri text-[13.5px] font-semibold no-underline cursor-pointer"
+          >
             Forgot password?
           </Link>
         }
         required
       />
-      <Checkbox checked={remember} onChange={(e) => setRemember(e.target.checked)}>
+      <Checkbox checked={remember} onCheckedChange={setRemember}>
         Stay signed in on this device
       </Checkbox>
-      <Button type="submit" className={cx(styles.submit)} disabled={submitting}>
+      <Button type="submit" className="h-13 rounded-[10px] text-[16px]" disabled={submitting}>
         {submitting ? 'Signing in…' : 'Sign in'}
       </Button>
     </form>
@@ -143,7 +149,11 @@ function SignInProblem({
         <Alert tone="info">
           <strong>Confirm your email first.</strong> Open the link we sent to your institute
           address.{' '}
-          <button type="button" className={styles.textLink} onClick={() => void onResend()}>
+          <button
+            type="button"
+            className="min-h-6 p-0 border-none bg-transparent text-pri text-[13.5px] font-semibold no-underline cursor-pointer"
+            onClick={() => void onResend()}
+          >
             Resend link
           </button>
         </Alert>

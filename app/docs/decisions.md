@@ -74,7 +74,7 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
 
 ## ADR-010 Styling and theming (S00)
 - **Decision:**
-  - The design tokens are CSS variables in `@tekcert/ui` (`tokens.css`, with light and dark palettes). Components use CSS Modules; there is no Tailwind.
+  - The design tokens are CSS variables in `@tekcert/ui` (`tokens.css`, with light and dark palettes). Components use CSS Modules; there is no Tailwind. *Replaced by ADR-019: components use Tailwind and shadcn/ui.*
   - Fonts are self-hosted from npm: `@fontsource` for Newsreader, Instrument Sans and IBM Plex Mono, and `material-symbols` for the icons. S01 replaced `next/font/google`, because every page returned 500 whenever Google Fonts was slow to answer.
   - The theme and the sidebar state live in cookies that the server reads, so the first paint is already correct with no flash. With no cookie, the theme follows the OS.
   - Breakpoints: expanded sidebar at ≥ 1280 px, collapsed rail at 768–1279 px, BottomNav below 768 px.
@@ -209,6 +209,22 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - Counts on the public catalog (`earnedCount`) name nobody, so the catalog endpoints stay public for the landing page.
   - The facet counts ignore their own filter, which is what makes "tick a second provider" predictable.
   - Resource links can rot; staff review owns them (PLAN.md backlog).
+
+## ADR-019 Tailwind CSS and shadcn/ui (S03b)
+- **Context:** Styling was hand-written CSS Modules (ADR-010). The app moves to Tailwind CSS and shadcn/ui, and every screen must still match /design.
+- **Decision:**
+  - **The tokens stay the source of truth.** `tokens.css` keeps the palette and both themes. `theme.css` maps shadcn's variables onto them and exposes them to Tailwind (`bg-sf`, `text-ink2`, `rounded-card`). Tailwind's default colours are switched off, so only design tokens exist as colours.
+  - **The look is unchanged.** shadcn components are source we own, edited to the design's sizes and focus treatment. Values off Tailwind's scale stay exact (`text-[14.5px]`) rather than being rounded.
+  - **Layers matter.** Element defaults live in `@layer base`, because CSS outside a layer beats every Tailwind utility.
+  - **Type styles are `type-h1` and so on, not `text-h1`:** our `--text-*` tokens are `font` shorthands, and `tailwind-merge` reads `text-*` as a size or a colour.
+  - **shadcn lives in `packages/ui/src/components/ui`** on Radix. `Button`, `Field`, `Select` and the others stay the exports of `@tekcert/ui` and are built on those primitives.
+  - **Icons stay Material Symbols** through `Icon`; `lucide-react` isn't installed.
+  - **Stays custom:** `Sidebar`, `BottomNav` (shadcn's `sidebar` has its own cookie and layout), `Pagination`, `EmptyState`, cards and the toast.
+  - **The only hand-written CSS left** is tokens, theme, element defaults, animation keyframes and the auth `::view-transition-*` rules, which utilities can't reach.
+- **Consequences:**
+  - Lint rejects `*.module.css` imports.
+  - Radix adds client JavaScript on screens that use these widgets, and the avatar photo appears once loaded, with the initials until then.
+  - A strict `style-src` CSP (S08) would have to allow Radix's inline positioning styles.
 
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).

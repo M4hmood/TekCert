@@ -1,10 +1,9 @@
 import { buttonClass, EmptyState } from '@tekcert/ui';
 import Link from 'next/link';
-import styles from './(focus)/focus.module.css';
 
 export default function NotFound() {
   return (
-    <main id="main" className={styles.focus}>
+    <main id="main" className="flex flex-col min-h-dvh">
       <EmptyState
         icon="search_off"
         title="Page not found"

@@ -1,5 +1,4 @@
-import { cx } from '@tekcert/ui';
-import styles from './Avatar.module.css';
+import { Avatar as AvatarRoot, AvatarFallback, AvatarImage, cn } from '@tekcert/ui';
 
 export interface AvatarProps {
   firstName: string;
@@ -12,15 +11,14 @@ export interface AvatarProps {
 /** Profile photo, or the student's initials when there is none. Decorative: the name is nearby. */
 export function Avatar({ firstName, lastName, avatarPath, className }: AvatarProps) {
   return (
-    <span className={cx(styles.avatar, className)} aria-hidden>
-      {avatarPath ? (
-        // Not next/image: the optimiser would fetch the photo without the student's session.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={`/api${avatarPath}`} alt="" className={styles.photo} />
-      ) : (
-        initials(firstName, lastName)
-      )}
-    </span>
+    <AvatarRoot
+      className={cn('bg-pri-sf text-pri font-serif font-semibold', className)}
+      aria-hidden
+    >
+      {/* Not next/image: the optimiser would fetch the photo without the student's session. */}
+      {avatarPath && <AvatarImage src={`/api${avatarPath}`} alt="" />}
+      <AvatarFallback>{initials(firstName, lastName)}</AvatarFallback>
+    </AvatarRoot>
   );
 }
 

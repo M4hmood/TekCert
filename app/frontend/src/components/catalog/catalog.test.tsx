@@ -59,10 +59,6 @@ const cardNames = () =>
 beforeAll(() => {
   // jsdom has no layout, so no scrolling.
   Element.prototype.scrollIntoView = vi.fn();
-  // jsdom has no <dialog> modal support.
-  HTMLDialogElement.prototype.showModal = function showModal(this: HTMLDialogElement) {
-    this.setAttribute('open', '');
-  };
 });
 
 beforeEach(() => {

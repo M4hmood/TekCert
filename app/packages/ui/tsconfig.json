@@ -2,7 +2,8 @@
   "extends": "@tekcert/config/tsconfig/nextjs.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "plugins": []
+    "plugins": [],
+    "paths": { "@tekcert/ui/*": ["./src/*"] }
   },
   "include": ["src"]
 }

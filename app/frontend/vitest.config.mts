@@ -14,6 +14,5 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
-    css: { modules: { classNameStrategy: 'non-scoped' } },
   },
 });

@@ -13,14 +13,13 @@ import {
   type SpecialtyCode,
   type Year,
 } from '@tekcert/types';
-import { Alert, Button, cx, Icon, IconButton } from '@tekcert/ui';
+import { Alert, Button, cn, Icon, IconButton, Progress } from '@tekcert/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { type ApiResult, getJson, postJson, putJson, withSessionRefresh } from '@/lib/client-api';
 import { groupLabel, stepLabel } from './copy';
-import styles from './onboarding.module.css';
 import { PhotoStep } from './PhotoStep';
 import { ResultStep } from './ResultStep';
 import { CertificationsStep, EnrolmentStep, type Target, YearStep } from './steps';
@@ -187,51 +186,64 @@ export function OnboardingWizard({
       : { full: 'Continue', mobile: 'Continue' };
 
   return (
-    <div className={styles.wizard}>
-      <header className={styles.header}>
-        <span className={styles.brand}>
-          <Image src="/icons/tekcert.png" alt="" width={32} height={32} className={styles.logo} />
-          <span className={styles.brandName}>TekCert</span>
+    <div className="flex flex-1 flex-col min-h-dvh">
+      <header className="grid grid-cols-[240px_1fr_240px] items-center py-5 px-12 border-b border-ln max-onboarding:grid-cols-[auto_1fr_auto] max-onboarding:gap-6 max-onboarding:py-4 max-onboarding:px-6 max-md:flex max-md:pt-3.5 max-md:px-3 max-md:pb-3 max-md:border-b-0">
+        <span className="flex items-center gap-2.75 max-md:hidden">
+          <Image
+            src="/icons/tekcert.png"
+            alt=""
+            width={32}
+            height={32}
+            className="size-8 object-contain"
+          />
+          <span className="font-serif text-[22px] font-semibold">TekCert</span>
         </span>
-        <div className={styles.progress}>
+        <div className="flex flex-col items-center gap-2 max-md:flex-1 max-md:flex-row max-md:min-h-(--touch-target) max-md:ps-3">
           {step > 1 && (
             <IconButton
               icon="arrow_back"
               label="Back"
-              className={styles.mobileBack}
+              className="hidden max-md:inline-grid max-md:-ms-3"
               onClick={() => goTo(step - 1)}
               disabled={saving}
             />
           )}
-          <span className={styles.stepLabel}>{stepLabel(step, specialtyYear)}</span>
-          <span
-            className={styles.segments}
-            role="progressbar"
+          <span className="text-ink2 text-[13px] font-semibold max-md:hidden">
+            {stepLabel(step, specialtyYear)}
+          </span>
+          <Progress
+            className="flex gap-1.5 max-md:flex-1 max-md:gap-1.25"
             aria-label="Onboarding progress"
-            aria-valuemin={0}
-            aria-valuemax={4}
-            aria-valuenow={Math.min(step, 4)}
+            value={Math.min(step, 4)}
+            max={4}
           >
             {[1, 2, 3, 4].map((i) => (
               <span
                 key={i}
-                className={cx(
-                  styles.segment,
-                  i <= step && styles.segmentOn,
-                  step === LAST_STEP && styles.segmentDone,
+                className={cn(
+                  'w-18 h-1.25 rounded-[3px] bg-ln transition-[background] duration-300 max-onboarding:w-14 max-md:flex-1 max-md:w-auto',
+                  i <= step && 'bg-pri',
+                  step === LAST_STEP && 'bg-gold-fill',
                 )}
               />
             ))}
-          </span>
-          {step < LAST_STEP && <span className={styles.stepCount}>{step}/4</span>}
+          </Progress>
+          {step < LAST_STEP && (
+            <span className="hidden max-md:inline max-md:px-2 max-md:text-ink2 max-md:text-[13px] max-md:font-semibold">
+              {step}/4
+            </span>
+          )}
         </div>
-        <div className={styles.headerEnd}>
+        <div className="flex justify-end max-md:hidden">
           <ThemeToggle />
         </div>
       </header>
 
-      <div className={styles.body} ref={main}>
-        <div className={styles.content}>
+      <div
+        className="flex flex-1 justify-center pt-12 px-12 pb-6 max-onboarding:pt-10 max-onboarding:px-6 max-md:pt-2 max-md:px-5"
+        ref={main}
+      >
+        <div className="flex flex-col gap-8 w-[min(100%,920px)] max-md:gap-4">
           {problem && (
             <Alert tone="error">
               <strong>{problem.title}.</strong> {problem.detail ?? 'Please try again.'}
@@ -282,12 +294,12 @@ export function OnboardingWizard({
         </div>
       </div>
 
-      <footer className={styles.footer}>
+      <footer className="sticky bottom-0 flex items-center justify-between py-4.5 px-12 border-t border-ln bg-sf max-onboarding:py-4 max-onboarding:px-6 max-md:flex-col-reverse max-md:gap-1.5 max-md:pt-3.5 max-md:px-5 max-md:pb-7 max-md:[&>span:first-child]:hidden">
         {step > 1 ? (
           <Button
             variant="ghost"
             icon="arrow_back"
-            className={styles.back}
+            className="max-md:hidden"
             onClick={() => goTo(step - 1)}
             disabled={saving}
           >
@@ -296,11 +308,11 @@ export function OnboardingWizard({
         ) : (
           <span />
         )}
-        <div className={styles.footerEnd}>
+        <div className="flex items-center gap-3 max-md:flex-col-reverse max-md:gap-1.5 max-md:w-full">
           {step === ONBOARDING_STEP.certifications && (
             <Button
               variant="ghost"
-              className={styles.skip}
+              className="max-md:w-full"
               onClick={() => {
                 setSlugs(new Set());
                 void saveCertifications([]);
@@ -312,18 +324,24 @@ export function OnboardingWizard({
           )}
           {step < LAST_STEP ? (
             <Button
-              className={styles.primary}
+              className="h-12 px-6 max-md:w-full max-md:h-13 max-md:text-[16px]"
               onClick={() => void next()}
               disabled={!canContinue || saving}
             >
-              <span className={styles.wide}>{saving ? 'Saving…' : continueLabel.full}</span>
-              <span className={styles.narrow}>{saving ? 'Saving…' : continueLabel.mobile}</span>
-              <Icon name="arrow_forward" size={20} className={styles.wide} />
+              <span className="max-md:hidden">{saving ? 'Saving…' : continueLabel.full}</span>
+              <span className="hidden max-md:inline">
+                {saving ? 'Saving…' : continueLabel.mobile}
+              </span>
+              <Icon name="arrow_forward" size={20} className="max-md:hidden" />
             </Button>
           ) : (
-            <Button className={styles.primary} onClick={() => void finish()} disabled={saving}>
+            <Button
+              className="h-12 px-6 max-md:w-full max-md:h-13 max-md:text-[16px]"
+              onClick={() => void finish()}
+              disabled={saving}
+            >
               Go to my dashboard
-              <Icon name="arrow_forward" size={20} className={styles.wide} />
+              <Icon name="arrow_forward" size={20} className="max-md:hidden" />
             </Button>
           )}
         </div>
