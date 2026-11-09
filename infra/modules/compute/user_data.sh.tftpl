@@ -1,0 +1,29 @@
+#!/bin/bash
+# Placeholder boot script — replace with the real ${label} deployment later.
+# Serves a tiny page on port ${port} so ALB health checks pass and you can
+# verify the network path (CloudFront -> ALB -> web -> internal ALB -> app).
+set -euxo pipefail
+
+mkdir -p /opt/placeholder
+TOKEN=$(curl -sX PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 60")
+AZ=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/availability-zone)
+ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
+echo "TekCert ${tier} (${label} placeholder) - $ID in $AZ" > /opt/placeholder/index.html
+
+cat > /etc/systemd/system/placeholder.service <<'UNIT'
+[Unit]
+Description=Placeholder HTTP server
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/placeholder
+ExecStart=/usr/bin/python3 -m http.server ${port}
+Restart=always
+DynamicUser=yes
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+systemctl daemon-reload
+systemctl enable --now placeholder.service

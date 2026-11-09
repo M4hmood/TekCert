@@ -1,0 +1,15 @@
+# Copy to terraform.tfvars (gitignored) and adjust.
+
+region      = "us-east-1"
+environment = "dev"
+azs         = ["us-east-1a", "us-east-1b"]
+
+# Flip to false at the end of a work session to stop the NAT bill,
+# then back to true before the next one.
+enable_nat_gateway = true
+
+# false only while testing the ALB directly, before CloudFront exists
+restrict_alb_to_cloudfront = true
+
+# AWS Academy Learner Lab only:
+# existing_instance_profile_name = "LabInstanceProfile"
