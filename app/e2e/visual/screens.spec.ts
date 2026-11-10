@@ -120,11 +120,9 @@ test.describe('signed in', () => {
 
   test('placeholder screens', async ({ page }) => {
     for (const route of [
-      'dashboard',
       'paths',
       'community',
       'leaderboard',
-      'profile',
       'requests',
       'notifications',
       'settings',
@@ -132,6 +130,13 @@ test.describe('signed in', () => {
       await page.goto(`/${route}`);
       await shot(page, route);
     }
+  });
+
+  test('dashboard and profile', async ({ page }) => {
+    await page.goto('/dashboard');
+    await shot(page, 'dashboard');
+    await page.goto('/profile');
+    await shot(page, 'profile');
   });
 
   test('not found', async ({ page }) => {
@@ -183,6 +188,16 @@ test.describe('signed in', () => {
     await nav.getByRole('link', { name: 'Catalog', exact: true }).click();
     await expect(page.getByRole('status', { name: 'Loading' })).toBeVisible();
     await expect.soft(page).toHaveScreenshot('catalog-skeleton.png', { fullPage: true });
+
+    await page.unroute(/\/catalog(\/[^?]*)?\?_rsc=/);
+    await page.goto('/catalog');
+    await page.waitForLoadState('networkidle');
+    await page.route(/\/dashboard\?_rsc=/, () => undefined);
+    await nav
+      .getByRole('link', { name: isPhone(page) ? 'Home' : 'Dashboard', exact: true })
+      .click();
+    await expect(page.getByRole('status', { name: 'Loading your dashboard' })).toBeVisible();
+    await expect.soft(page).toHaveScreenshot('dashboard-skeleton.png', { fullPage: true });
   });
 
   test('certification page', async ({ page }) => {
@@ -232,6 +247,15 @@ test.describe('signed in', () => {
       await page.goto('/catalog/saa-c03');
       await shot(page, `width-${width}-certification`);
     }
+  });
+});
+
+test.describe('new student', () => {
+  test.use({ storageState: STUDENT_FILE('fresh') });
+
+  test('empty dashboard', async ({ page }) => {
+    await page.goto('/dashboard');
+    await shot(page, 'dashboard-empty');
   });
 });
 
