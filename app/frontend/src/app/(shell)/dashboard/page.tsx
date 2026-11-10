@@ -1,12 +1,16 @@
+import { ActivityFeedSchema, DashboardSchema } from '@tekcert/types';
 import type { Metadata } from 'next';
-import { Placeholder } from '@/components/Placeholder';
+import { DashboardView } from '@/components/dashboard/DashboardView';
+import { getAsStudent } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'Dashboard' };
+export const dynamic = 'force-dynamic';
 
-export default function Page() {
-  return (
-    <Placeholder title="Dashboard" icon="space_dashboard" arrives="Sprint 4">
-      Your current certification, level and path will appear here. This screen is built in Sprint 4.
-    </Placeholder>
-  );
+export default async function DashboardPage() {
+  // A failing dashboard shows error.tsx; a failing feed only shows an error in its card.
+  const [dashboard, activity] = await Promise.all([
+    getAsStudent('/me/dashboard', DashboardSchema),
+    getAsStudent('/activity?scope=specialty', ActivityFeedSchema).catch(() => null),
+  ]);
+  return <DashboardView dashboard={dashboard} activity={activity} now={new Date().toISOString()} />;
 }

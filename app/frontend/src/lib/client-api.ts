@@ -68,6 +68,10 @@ export function deleteRequest(path: string) {
   return call('DELETE', path, undefined);
 }
 
+export function deleteJson<S extends z.ZodType>(path: string, schema: S) {
+  return call('DELETE', path, undefined, schema);
+}
+
 /**
  * For signed-in calls: when the 15-minute access token has expired, refresh the session once and
  * retry. A second 401 means the session is gone and the caller should send the user to sign in.

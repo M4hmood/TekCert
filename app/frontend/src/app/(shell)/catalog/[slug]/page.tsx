@@ -2,6 +2,7 @@ import {
   CertificationCommunitySchema,
   CertificationDetailSchema,
   CommunityQuerySchema,
+  MyCertificationProgressSchema,
   type MyCertificationStatus,
   MyCertificationsSchema,
   SlugSchema,
@@ -12,8 +13,9 @@ import { cache } from 'react';
 import { CertificationView } from '@/components/certification/CertificationView';
 import { CommunityPanel } from '@/components/certification/CommunityPanel';
 import { CertHeader, CertTopBar } from '@/components/certification/header';
-import { OverviewPanel, SyllabusPanel } from '@/components/certification/panels';
+import { OverviewPanel } from '@/components/certification/panels';
 import { ResourcesPanel } from '@/components/certification/ResourcesPanel';
+import { SyllabusPanel } from '@/components/certification/SyllabusPanel';
 import { communitySearch, parseTab } from '@/components/certification/tabs';
 import { ApiError, apiGet } from '@/lib/api';
 import { getAsStudent } from '@/lib/session';
@@ -50,9 +52,10 @@ export default async function CertificationPage({ params, searchParams }: Props)
   const communityQuery = parsedQuery.success ? parsedQuery.data : { scope: 'institute' as const };
   const communityPath = `/certifications/${slug}/community?${communitySearch(communityQuery)}`;
 
-  const [cert, mine, community] = await Promise.all([
+  const [cert, mine, progress, community] = await Promise.all([
     loadCertification(slug),
     getAsStudent('/me/certifications', MyCertificationsSchema).catch(() => null),
+    getAsStudent(`/me/certifications/${slug}`, MyCertificationProgressSchema).catch(() => null),
     getAsStudent(communityPath, CertificationCommunitySchema).catch(() => null),
   ]);
   const statuses: Record<string, MyCertificationStatus> = Object.fromEntries(
@@ -67,6 +70,8 @@ export default async function CertificationPage({ params, searchParams }: Props)
       header={<CertHeader cert={cert} />}
       initialTab={parseTab(search.tab)}
       initialStatus={mine?.items.find((item) => item.slug === cert.slug) ?? null}
+      initialDoneChapterIds={progress?.doneChapterIds ?? []}
+      chapterTotal={cert.chapterCount}
       preparingCount={cert.preparingCount}
       counts={{
         syllabus: cert.chapterCount,
@@ -75,7 +80,7 @@ export default async function CertificationPage({ params, searchParams }: Props)
       }}
       panels={{
         overview: <OverviewPanel cert={cert} mine={statuses} />,
-        syllabus: <SyllabusPanel cert={cert} />,
+        syllabus: <SyllabusPanel domains={cert.domains} chapterCount={cert.chapterCount} />,
         resources: <ResourcesPanel resources={cert.resources} />,
         community: (
           <CommunityPanel slug={cert.slug} initialQuery={communityQuery} initialData={community} />

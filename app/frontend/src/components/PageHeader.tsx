@@ -4,7 +4,7 @@ import { ThemeToggle } from './ThemeToggle';
 export interface PageHeaderProps {
   title: string;
   /** Small line above the title, e.g. the date or a section name. */
-  overline?: string;
+  overline?: ReactNode;
   /** Line under the title, e.g. "Every certification funded by TEK-UP…". Hidden on phones. */
   description?: string;
   actions?: ReactNode;
