@@ -105,6 +105,8 @@ export const CertificationListSchema = z.object({
 export type CertificationList = z.infer<typeof CertificationListSchema>;
 
 export const ChapterSchema = z.object({
+  /** Stable across seed runs while the chapter keeps its place; students tick chapters by id. */
+  id: z.uuid(),
   order: z.number().int().positive(),
   title: z.string(),
   estimatedMinutes: z.number().int().positive(),

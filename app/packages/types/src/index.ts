@@ -4,3 +4,4 @@ export * from './catalog-filter.js';
 export * from './community.js';
 export * from './onboarding.js';
 export * from './problem.js';
+export * from './progress.js';
