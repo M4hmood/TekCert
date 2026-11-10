@@ -1,39 +1,35 @@
-import { Controller, Get, HttpStatus, Param, Put, Res } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { Response } from 'express';
 import { ZodResponse } from 'nestjs-zod';
 import type { AccessClaims } from '../auth/access-token.service';
 import { CurrentAuth } from '../auth/decorators/auth.decorators';
 import {
   CertificationParamsDto,
-  MyCertificationDto,
+  MyCertificationProgressDto,
   MyCertificationsDto,
 } from './dto/certifications.dto';
 import { CertificationsService } from './certifications.service';
 
-/** The signed-in student's own certifications. */
+/**
+ * The signed-in student's own certifications. "Start" (`PUT /me/preparations/:slug`) lives in
+ * the progress module, which also announces it in the classmates feed.
+ */
 @ApiTags('certifications')
-@Controller('me')
+@Controller('me/certifications')
 export class MyCertificationsController {
   constructor(private readonly certifications: CertificationsService) {}
 
-  @Get('certifications')
+  @Get()
   @ApiOperation({ summary: 'My certifications: held (unverified) or in progress' })
   @ZodResponse({ type: MyCertificationsDto })
   mine(@CurrentAuth() auth: AccessClaims) {
     return this.certifications.mine(auth.userId);
   }
 
-  @Put('preparations/:slug')
-  @ApiOperation({ summary: 'Start preparing a certification (201 the first time, then 200)' })
-  @ZodResponse({ type: MyCertificationDto, status: HttpStatus.OK })
-  async start(
-    @CurrentAuth() auth: AccessClaims,
-    @Param() params: CertificationParamsDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const { created, ...status } = await this.certifications.start(auth.userId, params.slug);
-    res.status(created ? HttpStatus.CREATED : HttpStatus.OK);
-    return status;
+  @Get(':slug')
+  @ApiOperation({ summary: 'My status on one certification and the chapters I ticked' })
+  @ZodResponse({ type: MyCertificationProgressDto })
+  one(@CurrentAuth() auth: AccessClaims, @Param() params: CertificationParamsDto) {
+    return this.certifications.myProgress(auth.userId, params.slug);
   }
 }

@@ -30,8 +30,9 @@ export class UserCertificationsService {
     return rows.map((row) => ({ certificationId: row.certificationId, since: row.createdAt }));
   }
 
-  async holds(userId: string, certificationId: string): Promise<boolean> {
-    return this.userCertifications.existsBy({ userId, certificationId });
+  async holds(userId: string, certificationId: string, manager?: EntityManager): Promise<boolean> {
+    const repository = manager?.getRepository(UserCertification) ?? this.userCertifications;
+    return repository.existsBy({ userId, certificationId });
   }
 
   /** How many students hold each certification. Certifications nobody holds are absent. */
@@ -43,6 +44,15 @@ export class UserCertificationsService {
       .groupBy('uc.certificationId')
       .getRawMany<{ certificationId: string; count: number }>();
     return new Map(rows.map((row) => [row.certificationId, row.count]));
+  }
+
+  /** Every student who holds at least one certification. */
+  async userIds(): Promise<string[]> {
+    const rows = await this.userCertifications
+      .createQueryBuilder('uc')
+      .select('DISTINCT uc.userId', 'userId')
+      .getRawMany<{ userId: string }>();
+    return rows.map((row) => row.userId);
   }
 
   countFor(certificationId: string): Promise<number> {

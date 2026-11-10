@@ -5,6 +5,7 @@ import {
   CertificationListSchema,
   CommunityQuerySchema,
   MyCertificationSchema,
+  MyCertificationProgressSchema,
   MyCertificationsSchema,
   SlugSchema,
 } from '@tekcert/types';
@@ -19,3 +20,4 @@ export class CommunityQueryDto extends createZodDto(CommunityQuerySchema) {}
 export class CertificationCommunityDto extends createZodDto(CertificationCommunitySchema) {}
 export class MyCertificationDto extends createZodDto(MyCertificationSchema) {}
 export class MyCertificationsDto extends createZodDto(MyCertificationsSchema) {}
+export class MyCertificationProgressDto extends createZodDto(MyCertificationProgressSchema) {}
