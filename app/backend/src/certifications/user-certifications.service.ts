@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { EntityManager, Repository } from 'typeorm';
+import { type EntityManager, In, type Repository } from 'typeorm';
 import { UserCertification } from './entities/user-certification.entity';
 
 /** The certifications students hold. Unverified ones earn no points (PLAN.md). */
@@ -28,6 +28,34 @@ export class UserCertificationsService {
       select: { certificationId: true, createdAt: true },
     });
     return rows.map((row) => ({ certificationId: row.certificationId, since: row.createdAt }));
+  }
+
+  /** What each of `userIds` holds, oldest first. */
+  async listForUsers(
+    userIds: string[],
+  ): Promise<{ userId: string; certificationId: string; since: Date }[]> {
+    if (!userIds.length) return [];
+    const rows = await this.userCertifications.find({
+      where: { userId: In(userIds) },
+      select: { userId: true, certificationId: true, createdAt: true },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
+    return rows.map((row) => ({
+      userId: row.userId,
+      certificationId: row.certificationId,
+      since: row.createdAt,
+    }));
+  }
+
+  /** Students who hold at least one of `certificationIds`. */
+  async holdersOfAny(certificationIds: string[]): Promise<string[]> {
+    if (!certificationIds.length) return [];
+    const rows = await this.userCertifications
+      .createQueryBuilder('uc')
+      .select('DISTINCT uc.userId', 'userId')
+      .where('uc.certificationId IN (:...certificationIds)', { certificationIds })
+      .getRawMany<{ userId: string }>();
+    return rows.map((row) => row.userId);
   }
 
   async holds(userId: string, certificationId: string, manager?: EntityManager): Promise<boolean> {

@@ -7,6 +7,7 @@ import {
   type ActivityKind,
   type BadgeKey,
   type CommunityScope,
+  type ProfileActivity,
 } from '@tekcert/types';
 import type { EntityManager, Repository } from 'typeorm';
 import { CertificationsService } from '../certifications/certifications.service';
@@ -92,6 +93,30 @@ export class ActivityService {
        )`,
       [userId, certificationId],
     );
+  }
+
+  /** One student's newest events, for their profile. */
+  async recentOf(userId: string, limit: number): Promise<ProfileActivity[]> {
+    const rows = await this.events
+      .createQueryBuilder('a')
+      .where('a.userId = :userId', { userId })
+      .andWhere(`(a.kind <> 'chapters_done' OR a.count > 0)`)
+      .orderBy('a.updatedAt', 'DESC')
+      .addOrderBy('a.id', 'ASC')
+      .take(limit)
+      .getMany();
+    const refs = await this.certifications.refs([
+      ...new Set(rows.flatMap((event) => event.certificationId ?? [])),
+    ]);
+    return rows.map((event) => ({
+      id: event.id,
+      kind: event.kind,
+      at: event.updatedAt.toISOString(),
+      certification: (event.certificationId && refs.get(event.certificationId)) || null,
+      count: event.kind === 'chapters_done' ? event.count : null,
+      level: event.level,
+      badge: event.badge,
+    }));
   }
 
   /**

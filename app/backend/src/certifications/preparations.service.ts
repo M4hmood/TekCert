@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { EntityManager, Repository } from 'typeorm';
+import { type EntityManager, In, type Repository } from 'typeorm';
 import { Preparation } from './entities/preparation.entity';
 
 /** Certifications students have started ("in progress"). */
@@ -37,6 +37,34 @@ export class PreparationsService {
       select: { certificationId: true, startedAt: true },
     });
     return rows.map((row) => ({ certificationId: row.certificationId, since: row.startedAt }));
+  }
+
+  /** What each of `userIds` has started, oldest first. */
+  async listForUsers(
+    userIds: string[],
+  ): Promise<{ userId: string; certificationId: string; since: Date }[]> {
+    if (!userIds.length) return [];
+    const rows = await this.preparations.find({
+      where: { userId: In(userIds) },
+      select: { userId: true, certificationId: true, startedAt: true },
+      order: { startedAt: 'ASC', certificationId: 'ASC' },
+    });
+    return rows.map((row) => ({
+      userId: row.userId,
+      certificationId: row.certificationId,
+      since: row.startedAt,
+    }));
+  }
+
+  /** Students who have started at least one of `certificationIds`. */
+  async preparersOfAny(certificationIds: string[]): Promise<string[]> {
+    if (!certificationIds.length) return [];
+    const rows = await this.preparations
+      .createQueryBuilder('p')
+      .select('DISTINCT p.userId', 'userId')
+      .where('p.certificationId IN (:...certificationIds)', { certificationIds })
+      .getRawMany<{ userId: string }>();
+    return rows.map((row) => row.userId);
   }
 
   isPreparing(userId: string, certificationId: string, manager?: EntityManager): Promise<boolean> {

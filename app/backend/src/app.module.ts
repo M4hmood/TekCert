@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { AvatarsModule } from './avatars/avatars.module';
 import { CertificationsModule } from './certifications/certifications.module';
 import { CommonModule } from './common/common.module';
+import { CommunityModule } from './community/community.module';
 import { ProblemDetailsFilter } from './common/filters/problem-details.filter';
 import { type Env, validateEnv } from './config/env';
 import { DatabaseModule } from './database/database.module';
@@ -53,6 +54,7 @@ export const REQUEST_ID_HEADER = 'x-request-id';
     OnboardingModule,
     AvatarsModule,
     ProgressModule,
+    CommunityModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },
