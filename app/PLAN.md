@@ -40,6 +40,10 @@ Solo developer + Claude Code · 1-week sprints · English only at launch · emai
 - Staff review of the drafted certification page content (S03): summaries, exam facts and resource links in `backend/src/database/seed/data/certification-details.ts`. Most summaries and exam facts were written from general knowledge, so check them against each vendor's page. These links block automated checks or weren't confirmed and need a manual look: the Oracle exam pages and Live SQL, the Huawei Talent portal, edube.org, the Cisco certifications hub, docs.ansible.com, and the Red Hat developer, EX294 and certifications hub pages.
 - "Stop preparing" a certification (S03 only has Start; S04 didn't add it). Decide what happens to the ticked chapters and their points first. Fits with S07 settings.
 - A tick still in flight is lost if the student leaves the page at once (the request is cancelled). Consider `keepalive` on the tick request, or a "Saving…" hint (S08).
+- Header search across the app (design/Tableau-de-bord). S05 built the directory's own search instead; decide what a global search covers first.
+- A trigram index for the directory's name search if it gets slow (ADR-021).
+- Hidden points can still be estimated from the "Preparing" percentages while chapters are the only source of points (ADR-021). Decide whether a student who hides their name also hides their percentages.
+- The profile's back link always goes to the directory. The design returns to where the student came from ("Community · SAA-C03").
 - Clean up expired rows in `sessions`, `email_tokens` and `login_attempts` (a scheduled job).
 - Move the per-IP auth rate limit to a shared store (e.g. Redis) once the API runs on several instances.
 - Subset the Material Symbols font to the icons actually used (it is about 3 MB today). Fits with the S08 performance pass.

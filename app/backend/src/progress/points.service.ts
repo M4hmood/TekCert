@@ -43,6 +43,19 @@ export class PointsService {
     return row?.total ?? 0;
   }
 
+  /** `SUM(delta)` for each of `userIds`; a student without ledger rows is absent. */
+  async totals(userIds: string[]): Promise<Map<string, number>> {
+    if (!userIds.length) return new Map();
+    const rows = await this.events
+      .createQueryBuilder('e')
+      .select('e.userId', 'userId')
+      .addSelect('SUM(e.delta)::int', 'total')
+      .where('e.userId IN (:...userIds)', { userIds })
+      .groupBy('e.userId')
+      .getRawMany<{ userId: string; total: number }>();
+    return new Map(rows.map((row) => [row.userId, row.total]));
+  }
+
   /** Grants the badges the student doesn't have yet; returns the ones granted now. */
   async award(manager: EntityManager, userId: string, keys: BadgeKey[]): Promise<BadgeKey[]> {
     if (!keys.length) return [];

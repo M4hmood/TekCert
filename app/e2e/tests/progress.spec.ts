@@ -113,10 +113,15 @@ test('ticks on the certification page show on the dashboard, and classmates see 
 test('the profile shows the level and the badges', async ({ page }) => {
   await signInOnboardedStudent(page);
   await page.goto('/profile');
-  const level = page.getByRole('region', { name: 'My level' });
-  await expect(level).toContainText('Level I');
-  await expect(level).toContainText('Novice');
-  await expect(level).toContainText('250 points to Bachelor');
+  if (isPhone(page)) {
+    // Phones show the level in the header line instead of the level card.
+    await expect(page.getByText('Novice · 0 pts')).toBeVisible();
+  } else {
+    const level = page.getByRole('region', { name: 'My level' });
+    await expect(level).toContainText('Level I');
+    await expect(level).toContainText('Novice');
+    await expect(level).toContainText('250 points to Bachelor');
+  }
   await expect(page.getByRole('heading', { name: 'Badges' })).toBeVisible();
   await expect(page.getByText('0 of 5')).toBeVisible();
   if (!isPhone(page)) await expect(page.getByText('Dedicated', { exact: false })).toBeVisible();

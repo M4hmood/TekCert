@@ -21,10 +21,10 @@ import {
   type SpecialtyCode,
   type Year,
 } from '@tekcert/types';
-import { type EntityManager, In, type Repository } from 'typeorm';
+import { type EntityManager, ILike, In, type Repository } from 'typeorm';
 import { ProblemException } from '../common/exceptions/problem.exception';
 import { PathsService } from '../paths/paths.service';
-import { UsersService } from '../users/users.service';
+import { likePattern, UsersService } from '../users/users.service';
 import { avatarPath } from '../users/utils/avatar-path';
 import { ChapterProgressService } from './chapter-progress.service';
 import { Certification } from './entities/certification.entity';
@@ -379,6 +379,79 @@ export class CertificationsService {
     return (await this.userCertifications.listForUser(userId)).map((h) => h.certificationId);
   }
 
+  /** The certifications the student holds, oldest first, with the day each was declared. */
+  async held(userId: string): Promise<(CertificationCard & { since: Date })[]> {
+    const entries = await this.userCertifications.listForUsers([userId]);
+    const cards = await this.cards(entries.map((entry) => entry.certificationId));
+    return entries.flatMap(({ certificationId, since }) => {
+      const card = cards.get(certificationId);
+      return card ? [{ ...card, since }] : [];
+    });
+  }
+
+  /**
+   * What each student holds and is still preparing (a certification both started and held
+   * counts as held), oldest first. Retired certifications are left out.
+   */
+  async portfolios(userIds: string[]): Promise<Map<string, Portfolio>> {
+    const [held, preparing] = await Promise.all([
+      this.userCertifications.listForUsers(userIds),
+      this.preparations.listForUsers(userIds),
+    ]);
+    const ids = [...new Set([...held, ...preparing].map((entry) => entry.certificationId))];
+    const rows = ids.length
+      ? await this.certifications.find({
+          where: { id: In(ids), isActive: true },
+          select: { id: true, code: true, slug: true },
+        })
+      : [];
+    const refs = new Map(rows.map((row) => [row.id, { code: row.code, slug: row.slug }]));
+    const portfolios = new Map<string, Portfolio>(
+      userIds.map((id) => [id, { held: [], preparing: [] }]),
+    );
+    const heldByUser = new Map<string, Set<string>>();
+    for (const { userId, certificationId } of held) {
+      const ref = refs.get(certificationId);
+      if (!ref) continue;
+      portfolios.get(userId)?.held.push(ref);
+      const set = heldByUser.get(userId) ?? new Set<string>();
+      heldByUser.set(userId, set.add(certificationId));
+    }
+    for (const { userId, certificationId } of preparing) {
+      const ref = refs.get(certificationId);
+      if (!ref || heldByUser.get(userId)?.has(certificationId)) continue;
+      portfolios.get(userId)?.preparing.push(ref);
+    }
+    return portfolios;
+  }
+
+  /** Students who hold or prepare a certification whose code or name contains `term`. */
+  async userIdsMatching(term: string): Promise<string[]> {
+    const pattern = ILike(likePattern(term));
+    const rows = await this.certifications.find({
+      where: [
+        { isActive: true, code: pattern },
+        { isActive: true, name: pattern },
+      ],
+      select: { id: true },
+    });
+    const ids = rows.map((row) => row.id);
+    const [holders, preparers] = await Promise.all([
+      this.userCertifications.holdersOfAny(ids),
+      this.preparations.preparersOfAny(ids),
+    ]);
+    return [...new Set([...holders, ...preparers])];
+  }
+
+  /** Who holds the certification with this slug; nobody for an unknown or retired one. */
+  async holderIdsBySlug(slug: string): Promise<string[]> {
+    const cert = await this.certifications.findOne({
+      where: { slug, isActive: true },
+      select: { id: true },
+    });
+    return cert ? this.holderIds(cert.id) : [];
+  }
+
   /** Students who hold or prepare at least one certification. */
   async engagedUserIds(): Promise<string[]> {
     const [holders, preparers] = await Promise.all([
@@ -424,6 +497,11 @@ export interface CertificationCard {
   badgeAsset: string | null;
   chapterCount: number;
   studyMinutes: number;
+}
+
+export interface Portfolio {
+  held: { code: string; slug: string }[];
+  preparing: { code: string; slug: string }[];
 }
 
 export type InProgressCertification = CertificationCard & {

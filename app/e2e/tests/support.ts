@@ -46,11 +46,15 @@ export async function linkFromEmail(
  * Creates a verified account through the API and leaves the browser signed in
  * (page.request shares cookies with the page).
  */
-export async function signInNewStudent(page: Page, email = uniqueEmail()): Promise<string> {
+export async function signInNewStudent(
+  page: Page,
+  email = uniqueEmail(),
+  names: { firstName?: string; lastName?: string } = {},
+): Promise<string> {
   await page.request.post('/api/auth/sign-up', {
     data: {
-      firstName: 'Test',
-      lastName: 'Student',
+      firstName: names.firstName ?? 'Test',
+      lastName: names.lastName ?? 'Student',
       email,
       password: PASSWORD,
       acceptVisibility: true,
@@ -67,11 +71,20 @@ export async function signInNewStudent(page: Page, email = uniqueEmail()): Promi
  * Finishes onboarding through the API (ING-4 CIM, group A), as the app screens require.
  * The browser must already be signed in.
  */
-export async function completeOnboarding(request: APIRequestContext): Promise<void> {
+export async function completeOnboarding(
+  request: APIRequestContext,
+  certifications: string[] = [],
+): Promise<void> {
   const enrolment = await request.put('/api/onboarding/enrolment', {
     data: { year: 4, specialty: 'CIM', group: 'A' },
   });
   expect(enrolment.ok()).toBe(true);
+  if (certifications.length) {
+    const declared = await request.put('/api/onboarding/certifications', {
+      data: { slugs: certifications },
+    });
+    expect(declared.ok()).toBe(true);
+  }
   const done = await request.post('/api/onboarding/complete');
   expect(done.ok()).toBe(true);
 }

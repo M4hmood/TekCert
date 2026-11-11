@@ -119,14 +119,7 @@ test.describe('signed in', () => {
   test.use({ storageState: STUDENT_FILE('main') });
 
   test('placeholder screens', async ({ page }) => {
-    for (const route of [
-      'paths',
-      'community',
-      'leaderboard',
-      'requests',
-      'notifications',
-      'settings',
-    ]) {
+    for (const route of ['paths', 'leaderboard', 'requests', 'notifications', 'settings']) {
       await page.goto(`/${route}`);
       await shot(page, route);
     }
@@ -137,6 +130,36 @@ test.describe('signed in', () => {
     await shot(page, 'dashboard');
     await page.goto('/profile');
     await shot(page, 'profile');
+  });
+
+  test('community and profiles', async ({ page }) => {
+    const routes = {
+      community: '',
+      'community-institute': '?scope=institute',
+      'community-help': '?scope=class&help=true',
+      'community-no-results': '?q=zzzz',
+    };
+    for (const [name, search] of Object.entries(routes)) {
+      await page.goto(`/community${search}`);
+      await shot(page, name);
+    }
+
+    // The peer from the setup: another student's profile.
+    const list = (await page.request
+      .get('/api/community/students?scope=class&help=true')
+      .then((r) => r.json())) as { items: { id: string }[] };
+    await page.goto(`/community/${list.items[0]?.id}`);
+    await shot(page, 'profile-other');
+    await page.goto('/community/00000000-0000-4000-8000-000000000000');
+    await shot(page, 'profile-not-found');
+  });
+
+  test('community filter sheet', async ({ page }) => {
+    test.skip(!isPhone(page), 'phones only');
+    await page.goto('/community?scope=institute');
+    await page.getByRole('button', { name: /^Filters/ }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await shot(page, 'community-filter-sheet');
   });
 
   test('not found', async ({ page }) => {

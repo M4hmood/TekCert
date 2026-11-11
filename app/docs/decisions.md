@@ -160,7 +160,7 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
     | `auth/` | `Session`, `EmailToken`, `LoginAttempt` | nothing (global guards) |
     | `onboarding/`, `avatars/`, `health/` | nothing | nothing |
 
-    S04 kept `UserCertification` in `certifications/` and added `ChapterProgress` there; points, badges and the feed live in `progress/` (ADR-020).
+    S04 kept `UserCertification` in `certifications/` and added `ChapterProgress` there; points, badges and the feed live in `progress/` (ADR-020). S05 added `community/`, which owns nothing and reads through `users`, `certifications`, `progress` and `paths` (ADR-021).
   - **Dependency direction:** `auth`, `onboarding` and `avatars` depend on `users`, `school`, `certifications` and `paths`. Those four depend only on infrastructure: config, database, mail, storage and common. A cycle means an entity has the wrong owner. Fix the ownership instead of using `forwardRef`.
   - **Module layout:** `*.module.ts`, `*.controller.ts` and `*.service.ts`, plus their specs, sit at the module root. Everything else goes in subfolders, and each module only has the ones it needs: `dto/`, `entities/`, `guards/`, `decorators/`, `utils/` (pure functions, specs alongside), `templates/`, `indicators/`, `interfaces/`, `adapters/`.
   - **Infrastructure:** a global `CommonModule` provides `CLOCK` once. `common/` is split into `filters/`, `exceptions/`, `middleware/` (origin check) and `utils/` (clock). Mail and storage keep only their port in `interfaces/`, and storage keeps the S3 implementation in `adapters/`. The auth email templates move to `auth/templates/`, so `mail/` is transport only. `database/` keeps the connection, `data-source.ts`, the naming strategy, the `Timestamped` base, migrations and seed. It also keeps one `entities.ts` registry that imports every module's entities, because the TypeORM CLI needs the full list.
@@ -242,6 +242,24 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - A chapter removed from the seed drops its `chapter_progress` rows, but the points it earned stay in the ledger (`point_events.chapter_id` has no foreign key).
   - Release 2 adds ledger reasons (verified certification, practice test) without touching existing rows.
   - S06 leaderboards can sum `point_events` by period (index on user, created_at).
+
+## ADR-021 Student directory and profiles (S05)
+- **Context:** Students need to find classmates who hold or prepare a certification and write to them. Every profile is visible to signed-in students (decision 2026-10-29), so there is no "private profile" state. The search spans tables owned by three modules (`users`, `certifications`, `progress`), which ADR-017 keeps apart.
+- **Decision:**
+  - **A `community/` module with no entities.** It depends on `users`, `certifications`, `progress` and `paths`, and nothing depends on it. `progress/` now exports `PointsService` and `ActivityService` for it.
+  - **Search without a cross-module join.** `certifications` first resolves two id lists: students who hold or prepare a certification matching the search, and holders of the "Holds" filter. `UsersService.findDirectoryPage` then runs one query on `users` with the scope, the name search (`ILIKE`, either name order, `%` and `_` escaped), those lists (`= ANY`), the help flag and the paging. Certifications and points for the 24 students of the page come from two batched calls.
+  - **Who is shown.** Signed-in students only (401 otherwise). A student appears in the directory or opens as a profile only with a verified email and finished onboarding. Anyone else answers 404, the same as an unknown id.
+  - **What is never sent:** which chapters someone ticked, consent dates, roles, session data. Another student's syllabus is a percentage; chapter counts are on the student's own profile only.
+  - **Points of students who hide their name on the leaderboard** (decision 2026-11-11): other students get their level but `points: null` and `chaptersDone: null`, in the directory and on the profile. Shown, the points would give away their "Anonymous" row in S06.
+  - **"Available to help"** is `users.available_to_help` (default off), switched from the student's own profile with `PATCH /me/profile`. S07 also shows it in Settings.
+  - **The directory lists the student asking**, first, marked "you" (design/Communaute). "Who to ask" still never does.
+  - **Scopes:** class, specialty, year and institute, as in "Who to ask" (the design draws three). The specialty chips appear on the year and institute scopes; their counts apply every filter except the chip itself.
+  - **Release 1 content of a profile:** every held certification is unverified; the stats are Unverified, Preparing, Chapters done and Badges; "Followed paths" is the student's own path (specialty, target specialty or Fundamentals).
+  - **The filters live in the URL** (`/community?scope=&q=&holds=&help=&specialty=`); "Show more" adds pages of 24 without changing it. The search waits 300 ms and starts at two characters.
+- **Consequences:**
+  - The id lists grow with the number of students holding a certification. At a few thousand students that is fine; past that, the search should move to one SQL query or a search index.
+  - Name search is a sequential `ILIKE`. A trigram index is in the backlog if it gets slow.
+  - In Release 1 points only come from chapters, so the percentages shown under "Preparing" still let someone estimate hidden points. Release 2 adds other sources of points.
 
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).

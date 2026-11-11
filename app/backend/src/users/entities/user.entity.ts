@@ -41,6 +41,10 @@ export class User extends Timestamped {
   @Column({ type: 'boolean', default: true })
   leaderboardVisible!: boolean;
 
+  /** Shows a badge in the directory, which can filter on it. Off until the student opts in. */
+  @Column({ type: 'boolean', default: false })
+  availableToHelp!: boolean;
+
   /** Set in onboarding step 2. ING-4/5 classes also carry the specialty. */
   @Index()
   @Column({ type: 'uuid', nullable: true })

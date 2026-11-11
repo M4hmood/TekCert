@@ -49,6 +49,10 @@ setup('students', async ({ browser }) => {
     peer: async (page: Page) => {
       await walkToResult(page);
       await finishAndStart(page, 4);
+      const help = await page.request.patch('/api/me/profile', {
+        data: { availableToHelp: true },
+      });
+      expect(help.ok()).toBe(true);
     },
     main: async (page: Page) => {
       await walkToResult(page);

@@ -8,7 +8,7 @@ const SIDEBAR_ROUTES = [
   { link: 'Paths', path: '/paths', heading: 'Paths' },
   { link: 'Community', path: '/community', heading: 'Community' },
   { link: 'Leaderboard', path: '/leaderboard', heading: 'Leaderboard' },
-  { link: 'My profile', path: '/profile', heading: 'My profile' },
+  { link: 'My profile', path: '/profile', heading: 'Test Student' },
   { link: 'My requests', path: '/requests', heading: 'My requests' },
   { link: 'Notifications', path: '/notifications', heading: 'Notifications' },
   { link: 'Settings', path: '/settings', heading: 'Settings' },
@@ -19,7 +19,7 @@ const BOTTOM_TABS = [
   { link: 'Catalog', path: '/catalog', heading: 'Catalog' },
   { link: 'Paths', path: '/paths', heading: 'Paths' },
   { link: 'Community', path: '/community', heading: 'Community' },
-  { link: 'Profile', path: '/profile', heading: 'My profile' },
+  { link: 'Profile', path: '/profile', heading: 'Test Student' },
 ];
 
 const heading = (page: Page) => page.getByRole('heading', { level: 1 });

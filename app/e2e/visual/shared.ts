@@ -3,9 +3,12 @@ import { expect, type Page } from '@playwright/test';
 
 export const STUDENT_FILE = (name: string) => path.join(__dirname, '.auth', `${name}.json`);
 
-/** Feed times ("ING-4 CIM · 2 h ago") and the dashboard's date change from run to run. */
+/**
+ * Feed times ("ING-4 CIM · 2 h ago", or "2 h ago" alone on a profile) and the dashboard's date
+ * change from run to run.
+ */
 const MOVING_TEXT =
-  /( · (just now|\d+ min ago|\d+ h ago|yesterday|\d+ days ago|[A-Z][a-z]{2} \d+)$)|(^[A-Z][a-z]+day, [A-Z][a-z]+ \d+)/;
+  /((^| · )(just now|\d+ min ago|\d+ h ago|yesterday|\d+ days ago|[A-Z][a-z]{2} \d+)$)|(^[A-Z][a-z]+day, [A-Z][a-z]+ \d+)/;
 
 /** Scrolls through the page so lazy images load, then compares it with the baseline. */
 export async function shot(page: Page, name: string) {
@@ -19,7 +22,13 @@ export async function shot(page: Page, name: string) {
   await page.waitForLoadState('networkidle');
   await expect.soft(page).toHaveScreenshot(`${name}.png`, {
     fullPage: true,
-    // Dates change from one day to the next.
-    mask: [page.getByText(/^(Started|Declared|started) /), page.getByText(MOVING_TEXT)],
+    // Dates change from one day to the next, and every run signs up with new addresses.
+    mask: [
+      page.getByText(/^(Started|Declared|started) /),
+      page.getByText(MOVING_TEXT),
+      page.getByText(/^e2e\.[0-9a-f]+@tek-up\.de$/),
+      // The phone's mail button shows the address in a proportional font: mask the whole button.
+      page.locator('main a[href^="mailto:"]'),
+    ],
   });
 }
