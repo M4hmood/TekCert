@@ -12,6 +12,7 @@ import {
   YEARS,
 } from '@tekcert/types';
 import { cn, Icon, Select, type SelectOption, ToggleGroup, ToggleGroupItem } from '@tekcert/ui';
+import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { Avatar } from '@/components/Avatar';
 import { StatusPill } from '@/components/catalog/parts';
@@ -215,7 +216,12 @@ function PersonRow({ person, kind }: { person: CommunityPerson; kind: 'earned' |
         className="size-10 text-[15px]"
       />
       <span className="flex flex-1 flex-col gap-0.5 min-w-0">
-        <span className="text-[14.5px] font-semibold">{name}</span>
+        <Link
+          href={`/community/${person.id}`}
+          className="self-start text-ink text-[14.5px] font-semibold no-underline hover:underline"
+        >
+          {name}
+        </Link>
         <span className="text-ink3 text-[13px]">
           {person.classCode} ·{' '}
           {kind === 'earned' ? monthYear(person.since) : `started ${monthYear(person.since)}`}

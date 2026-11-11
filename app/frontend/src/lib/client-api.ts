@@ -13,7 +13,7 @@ const NETWORK_PROBLEM: ProblemDetails = {
 };
 
 async function call<S extends z.ZodType>(
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   path: string,
   body: unknown,
   schema?: S,
@@ -57,6 +57,10 @@ export function getJson<S extends z.ZodType>(path: string, schema: S) {
 
 export function putJson<S extends z.ZodType>(path: string, body: unknown, schema?: S) {
   return call('PUT', path, body, schema);
+}
+
+export function patchJson<S extends z.ZodType>(path: string, body: unknown, schema?: S) {
+  return call('PATCH', path, body, schema);
 }
 
 /** Multipart upload, e.g. the profile photo. */

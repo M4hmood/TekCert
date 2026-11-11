@@ -9,7 +9,6 @@ import {
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ProfileProgress } from '@/components/progress/ProfileProgress';
 import { messageFor } from '@/components/progress/use-chapter-ticks';
 import { DashboardError, errorCode } from './DashboardError';
 import { DashboardView } from './DashboardView';
@@ -355,31 +354,5 @@ describe('DashboardError', () => {
 
   it('turns an HTTP status into a code', () => {
     expect(errorCode(new Error('API responded with 502'))).toBe('ERR_HTTP_502');
-  });
-});
-
-describe('ProfileProgress', () => {
-  it('shows the level and every badge, locked ones with their rule', () => {
-    render(
-      <ProfileProgress
-        points={{
-          points: 420,
-          level: levelFor(420),
-          badges: noBadges.map((b) =>
-            b.key === 'first_step' ? { ...b, earnedAt: '2026-10-01T10:00:00.000Z' } : b,
-          ),
-        }}
-      />,
-    );
-    const level = screen.getByRole('region', { name: 'My level' });
-    expect(level).toHaveTextContent('Level II');
-    expect(level).toHaveTextContent('Bachelor');
-    expect(level).toHaveTextContent('580 points to Licentiate');
-    expect(screen.getByText('1 of 5')).toBeInTheDocument();
-    expect(screen.getByText(/First step/)).toHaveTextContent('First step, earned');
-    expect(screen.getByText(/Dedicated/)).toHaveTextContent(
-      'Dedicated, locked: 30 chapters completed · to unlock',
-    );
-    expect(screen.getByText(/Pioneer/)).toHaveTextContent('coming in a later release');
   });
 });

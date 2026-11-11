@@ -80,7 +80,9 @@ const PRI = 'bg-pri-sf text-pri';
 const OK = 'bg-ok-sf text-ok';
 
 /** The sentence and icon of one feed line, as in the design. */
-export function activityLine(item: ActivityItem): ActivityLine {
+export function activityLine(
+  item: Pick<ActivityItem, 'kind' | 'certification' | 'count' | 'badge' | 'level'>,
+): ActivityLine {
   const code = item.certification?.code ?? 'a certification';
   switch (item.kind) {
     case 'certification_started':

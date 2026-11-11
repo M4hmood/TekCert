@@ -7,6 +7,7 @@ import {
   type CommunityScope,
 } from '@tekcert/types';
 import { Button, cn, Icon } from '@tekcert/ui';
+import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { getJson, withSessionRefresh } from '@/lib/client-api';
 import { CARD } from './cards';
@@ -132,7 +133,13 @@ export function ActivityCard({ initial, now, limit = 5 }: ActivityCardProps) {
                   </span>
                   <span className="flex flex-col gap-0.5">
                     <span className="text-[14px] leading-[1.4]">
-                      <strong>{item.person.firstName}</strong> {line.what}
+                      <Link
+                        href={`/community/${item.person.id}`}
+                        className="text-ink font-bold no-underline hover:underline"
+                      >
+                        {item.person.firstName}
+                      </Link>{' '}
+                      {line.what}
                     </span>
                     <span className="text-ink3 text-[12.5px]">
                       {item.person.group} · {timeAgo(item.at, nowDate)}
