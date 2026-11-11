@@ -24,6 +24,7 @@ function view(overrides: Partial<CertificationViewProps> = {}) {
       counts={{ syllabus: 11, resources: 7 }}
       initialTab="overview"
       initialStatus={null}
+      chapterTotal={11}
       preparingCount={23}
       {...overrides}
     />,
@@ -147,6 +148,7 @@ describe('CommunityPanel', () => {
     specialty: 'CIM' as const,
     email: 'ons.bensalah@tek-up.de',
     since: '2026-06-01T10:00:00.000Z',
+    pct: null,
   };
   const data: CertificationCommunity = {
     earned: { total: 1, items: [person] },

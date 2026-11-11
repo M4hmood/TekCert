@@ -293,3 +293,15 @@
     }
   }
 }
+
+/* Toasts rise in from the bottom (Toast.tsx). `translate` centres them, so `transform` is free. */
+@theme static {
+  --animate-toast-in: toast-in 300ms ease-out;
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+}

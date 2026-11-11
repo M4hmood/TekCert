@@ -40,7 +40,7 @@ export function CertTopBar({ cert }: { cert: CertificationDetail }) {
   );
 }
 
-/** Provider, level, difficulty, specialties, name, summary and the key exam facts. */
+/** Name (with the badge), then provider, level, difficulty, specialties, summary and exam facts. */
 export function CertHeader({ cert }: { cert: CertificationDetail }) {
   const facts: { icon: string; text: string }[] = [
     ...(cert.facts.minutes ? [{ icon: 'timer', text: examDuration(cert.facts.minutes) }] : []),
@@ -55,6 +55,29 @@ export function CertHeader({ cert }: { cert: CertificationDetail }) {
 
   return (
     <div className="flex flex-col gap-4 min-w-0 max-md:gap-2.5">
+      <div className="flex items-start justify-between gap-6">
+        <h1 className="font-serif text-[52px] font-medium tracking-[-0.02em] leading-[1.05] max-md:text-[30px] max-md:leading-[1.12]">
+          {cert.name}
+        </h1>
+        <span className="contents max-md:hidden">
+          <CertBadge
+            code={cert.code}
+            badgeAsset={cert.badgeAsset}
+            provider={cert.provider}
+            size={88}
+            eager
+          />
+        </span>
+        <span className="hidden max-md:inline">
+          <CertBadge
+            code={cert.code}
+            badgeAsset={cert.badgeAsset}
+            provider={cert.provider}
+            size={56}
+            eager
+          />
+        </span>
+      </div>
       <div className="flex flex-wrap items-center gap-3.5 max-md:gap-2.5 max-md:text-[13px] max-md:text-ink2">
         <ProviderTag provider={cert.provider} />
         <span className="text-ink3 type-code">{cert.code}</span>
@@ -77,29 +100,6 @@ export function CertHeader({ cert }: { cert: CertificationDetail }) {
         <span className="inline-flex flex-wrap items-center gap-1.5 max-md:basis-full">
           <span className="text-ink3 text-[13px] max-md:hidden">Useful in</span>
           <SpecialtyTags specialties={cert.specialties} forAll={cert.forAllSpecialties} />
-        </span>
-      </div>
-      <div className="flex items-start justify-between gap-6">
-        <h1 className="font-serif text-[52px] font-medium tracking-[-0.02em] leading-[1.05] max-md:text-[30px] max-md:leading-[1.12]">
-          {cert.name}
-        </h1>
-        <span className="contents max-md:hidden">
-          <CertBadge
-            code={cert.code}
-            badgeAsset={cert.badgeAsset}
-            provider={cert.provider}
-            size={88}
-            eager
-          />
-        </span>
-        <span className="hidden max-md:inline">
-          <CertBadge
-            code={cert.code}
-            badgeAsset={cert.badgeAsset}
-            provider={cert.provider}
-            size={56}
-            eager
-          />
         </span>
       </div>
       <p className="max-w-170 text-ink2 text-[16.5px] leading-[1.6] max-md:hidden">

@@ -50,6 +50,8 @@ export const CommunityPersonSchema = z.object({
   email: z.email(),
   /** Declared (Earned it) or started (Preparing it). */
   since: z.iso.datetime({ offset: true }),
+  /** Preparing it: share of the syllabus done. Never which chapters. Null under Earned it. */
+  pct: z.number().int().min(0).max(100).nullable(),
 });
 export type CommunityPerson = z.infer<typeof CommunityPersonSchema>;
 

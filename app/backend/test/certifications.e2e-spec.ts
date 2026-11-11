@@ -116,6 +116,7 @@ describe('Certification page (e2e)', () => {
         specialty: 'CIM',
         email: holder.email,
         since: expect.any(String),
+        pct: null,
       });
     });
 

@@ -18,11 +18,26 @@ async function walkToResult(page: Page) {
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Here’s your recommended path');
 }
 
-async function finishAndStart(page: Page) {
+async function finish(page: Page) {
   await page.getByRole('button', { name: 'Go to my dashboard' }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
+}
+
+/** Starts SAA-C03 and ticks its first `chapters` chapters (in syllabus order). */
+async function finishAndStart(page: Page, chapters: number) {
+  await finish(page);
   const started = await page.request.put('/api/me/preparations/saa-c03');
   expect(started.ok()).toBe(true);
+  const detail = (await page.request.get('/api/certifications/saa-c03').then((r) => r.json())) as {
+    domains: { chapters: { id: string; order: number }[] }[];
+  };
+  const ids = detail.domains
+    .flatMap((d) => d.chapters)
+    .sort((a, b) => a.order - b.order)
+    .map((c) => c.id);
+  for (const id of ids.slice(0, chapters)) {
+    expect((await page.request.put(`/api/me/chapters/${id}`)).ok()).toBe(true);
+  }
 }
 
 setup('students', async ({ browser }) => {
@@ -30,14 +45,19 @@ setup('students', async ({ browser }) => {
   const students = {
     // Stays on the recommended path screen, with a certification declared.
     result: async (page: Page) => walkToResult(page),
-    // Shown in the main student's "Who to ask" lists.
+    // Shown in the main student's "Who to ask" lists, "Also preparing" and the feed.
     peer: async (page: Page) => {
       await walkToResult(page);
-      await finishAndStart(page);
+      await finishAndStart(page, 4);
     },
     main: async (page: Page) => {
       await walkToResult(page);
-      await finishAndStart(page);
+      await finishAndStart(page, 5);
+    },
+    // Onboarded, nothing started: the empty dashboard.
+    fresh: async (page: Page) => {
+      await walkToResult(page);
+      await finish(page);
     },
   };
 

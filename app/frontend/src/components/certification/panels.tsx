@@ -1,9 +1,9 @@
 import type { CertificationDetail, MyCertificationStatus } from '@tekcert/types';
 import { Icon } from '@tekcert/ui';
 import Link from 'next/link';
-import { examDuration, studyTime } from './format';
+import { examDuration } from './format';
 
-/** Server-rendered tab panels: Overview and Syllabus. */
+/** Server-rendered tab panel: Overview. The Syllabus tab is SyllabusPanel (client: ticks). */
 
 export function OverviewPanel({
   cert,
@@ -120,65 +120,6 @@ export function OverviewPanel({
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-export function SyllabusPanel({ cert }: { cert: CertificationDetail }) {
-  return (
-    <div className="grid grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-10 items-start [&>div]:gap-6 max-cert:grid-cols-[minmax(0,1fr)] max-cert:gap-7">
-      <div className="flex flex-col gap-5 min-w-0">
-        <div className="flex items-baseline justify-between">
-          <h2 className="font-serif text-[28px] font-medium max-md:text-[23px]">
-            Official syllabus
-          </h2>
-          <span className="text-ink2 text-[15px] [&_strong]:text-ink [&_strong]:font-serif [&_strong]:text-[22px]">
-            <strong>{cert.chapterCount}</strong> chapters
-          </span>
-        </div>
-        {cert.domains.map((d) => (
-          <section
-            key={d.order}
-            className="overflow-hidden border border-ln rounded-card bg-sf"
-            aria-label={d.title}
-          >
-            <div className="flex items-center justify-between gap-3 py-3.5 px-4.5 bg-sf2">
-              <span className="text-[14.5px] font-semibold">
-                <span className="max-md:hidden">
-                  Domain {d.order} · {d.title}
-                </span>
-                <span className="hidden max-md:inline">{d.shortTitle}</span>
-              </span>
-              <span className="text-ink3 text-[13px]">
-                {d.chapters.length} {d.chapters.length === 1 ? 'chapter' : 'chapters'}
-                {d.weightPct !== null && ` · ${d.weightPct}%`}
-              </span>
-            </div>
-            <ol>
-              {d.chapters.map((c) => (
-                <li
-                  key={c.order}
-                  className="flex items-center gap-3.5 min-h-14 py-2 px-4.5 border-t border-ln max-md:gap-2.5 max-md:px-3.5"
-                >
-                  <span className="w-5.5 text-ink3 font-mono font-medium text-[12.5px] leading-4.5">
-                    {String(c.order).padStart(2, '0')}
-                  </span>
-                  <span className="flex-1 text-[15px] font-medium">{c.title}</span>
-                  <span className="text-ink3 text-[13px]">{studyTime(c.estimatedMinutes)}</span>
-                </li>
-              ))}
-            </ol>
-          </section>
-        ))}
-      </div>
-      <aside className="flex flex-col gap-3 p-5.5 border border-ln rounded-[16px] bg-sf">
-        <span className="text-[14.5px] font-semibold">How it works</span>
-        <span className="text-ink2 text-[14px] leading-[1.6]">
-          This is the official exam outline, split into chapters with a rough study time. Revise
-          each one with the recommended resources. Ticking chapters and earning points arrive in the
-          next update.
-        </span>
-      </aside>
     </div>
   );
 }

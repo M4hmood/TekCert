@@ -160,7 +160,7 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
     | `auth/` | `Session`, `EmailToken`, `LoginAttempt` | nothing (global guards) |
     | `onboarding/`, `avatars/`, `health/` | nothing | nothing |
 
-    S04 decides whether `UserCertification` moves to a progress module.
+    S04 kept `UserCertification` in `certifications/` and added `ChapterProgress` there; points, badges and the feed live in `progress/` (ADR-020).
   - **Dependency direction:** `auth`, `onboarding` and `avatars` depend on `users`, `school`, `certifications` and `paths`. Those four depend only on infrastructure: config, database, mail, storage and common. A cycle means an entity has the wrong owner. Fix the ownership instead of using `forwardRef`.
   - **Module layout:** `*.module.ts`, `*.controller.ts` and `*.service.ts`, plus their specs, sit at the module root. Everything else goes in subfolders, and each module only has the ones it needs: `dto/`, `entities/`, `guards/`, `decorators/`, `utils/` (pure functions, specs alongside), `templates/`, `indicators/`, `interfaces/`, `adapters/`.
   - **Infrastructure:** a global `CommonModule` provides `CLOCK` once. `common/` is split into `filters/`, `exceptions/`, `middleware/` (origin check) and `utils/` (clock). Mail and storage keep only their port in `interfaces/`, and storage keeps the S3 implementation in `adapters/`. The auth email templates move to `auth/templates/`, so `mail/` is transport only. `database/` keeps the connection, `data-source.ts`, the naming strategy, the `Timestamped` base, migrations and seed. It also keeps one `entities.ts` registry that imports every module's entities, because the TypeORM CLI needs the full list.
@@ -225,6 +225,23 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - Lint rejects `*.module.css` imports.
   - Radix adds client JavaScript on screens that use these widgets, and the avatar photo appears once loaded, with the initials until then.
   - A strict `style-src` CSP (S08) would have to allow Radix's inline positioning styles.
+
+## ADR-020 Points ledger, levels, badges and the classmates feed (S04)
+- **Context:** Ticking a chapter earns 10 points, and the totals have to stay right whatever happens: double clicks, retries, unticks, concurrent requests. Points must always be recomputable (CLAUDE.md). The dashboard also needs a level, badges and a feed of what classmates do.
+- **Decision:**
+  - **Two tables, one transaction.** `chapter_progress` (primary key: user, chapter) is the current state. `point_events` is the ledger: one row per change, +10 `chapter_done` or −10 `chapter_undone`. A tick inserts the state row with `ON CONFLICT DO NOTHING` and an untick deletes it with `RETURNING`. A ledger row is written only when that changed something, in the same transaction. Ticking twice, or ten requests at once, records one row.
+  - **The ledger is append-only in the database.** A trigger rejects `UPDATE`, `TRUNCATE` and any `DELETE` that isn't the foreign-key cascade from deleting a user (it allows deletes only at `pg_trigger_depth() > 1`).
+  - **No total is stored.** Points are `SUM(delta)`; the level is computed from that sum. Levels follow Design-System › Recognition: Novice 0, Bachelor 250, Licentiate 1,000, Master 2,500, Emeritus 5,000. The rules (`levelFor`, `badgesForChapters`, `percentDone`, `chapterWindowStart`) are pure functions in `@tekcert/types`, shared by the API and the web app.
+  - **Badges** are rows in `user_badges`, kept once earned even if the count drops (decision 2026-11-10). First step (1 chapter) and Dedicated (30 chapters ticked at once) unlock in Release 1. Pioneer, Flawless and Multi-cloud are defined and shown locked until Release 2.
+  - **The feed** is `activity_events`: started a certification, finished N chapters, completed a syllabus, earned a badge, reached a level. Chapters roll up per student, certification and day (Tunis time); the count follows ticks and unticks, and a line at 0 is hidden. Partial unique indexes keep the one-off events to one row each, so ticking around a level threshold announces it once. `GET /activity?scope=` uses the "who to ask" rules: signed-in students only, verified email, onboarding finished, never the viewer. It scans up to 1,000 newest events to find 10 in scope, which is plenty for the pilot.
+  - **Classmates see a percentage, never which chapters**, in "Who to ask" and on the dashboard.
+  - **Ownership (ADR-017):** `ChapterProgress` belongs to `certifications/`, next to `Preparation`, so the certification page and "Who to ask" read it without a cycle. A new `progress/` module owns `PointEvent`, `UserBadge` and `ActivityEvent` and runs the tick transaction. It depends on `certifications`, `paths` and `users`; nothing depends on it. `PUT /me/preparations/:slug` moved to its controller (same URL) so a start reaches the feed. `UserCertification` stays in `certifications/`.
+  - **One connection per transaction.** Reads inside the tick go through the transaction's `EntityManager`. Reading through the default repositories took a second pool connection, and ten concurrent ticks exhausted the pool.
+  - **Optimistic ticks in the UI** with a toast and Undo. A refused tick puts the box back and shows the API's reason.
+- **Consequences:**
+  - A chapter removed from the seed drops its `chapter_progress` rows, but the points it earned stay in the ledger (`point_events.chapter_id` has no foreign key).
+  - Release 2 adds ledger reasons (verified certification, practice test) without touching existing rows.
+  - S06 leaderboards can sum `point_events` by period (index on user, created_at).
 
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).

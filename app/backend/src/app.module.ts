@@ -14,6 +14,7 @@ import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { MailModule } from './mail/mail.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
+import { ProgressModule } from './progress/progress.module';
 import { StorageModule } from './storage/storage.module';
 
 export const REQUEST_ID_HEADER = 'x-request-id';
@@ -51,6 +52,7 @@ export const REQUEST_ID_HEADER = 'x-request-id';
     CertificationsModule,
     OnboardingModule,
     AvatarsModule,
+    ProgressModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },

@@ -222,6 +222,20 @@ function PersonRow({ person, kind }: { person: CommunityPerson; kind: 'earned' |
         </span>
       </span>
       {kind === 'earned' && <StatusPill status="unverified" small />}
+      {kind === 'preparing' && person.pct !== null && (
+        // A percentage only, never which chapters (design: "Classmates see your percentage").
+        <span className="flex flex-none items-center gap-2">
+          <span className="w-14 h-1.25 rounded-[3px] bg-sf2 max-md:hidden" aria-hidden>
+            <span
+              className="block h-full rounded-[3px] bg-pri"
+              style={{ width: `${person.pct}%` }}
+            />
+          </span>
+          <span className="w-9 text-end text-[13px] font-semibold">
+            {person.pct}%<span className="sr-only"> of the syllabus done</span>
+          </span>
+        </span>
+      )}
       <a
         href={`mailto:${person.email}`}
         className="grid flex-none place-items-center size-10 rounded-[8px] text-ink2 hover:bg-sf2 hover:text-pri"

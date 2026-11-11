@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { Repository } from 'typeorm';
+import type { EntityManager, Repository } from 'typeorm';
 import { Preparation } from './entities/preparation.entity';
 
 /** Certifications students have started ("in progress"). */
@@ -37,6 +37,20 @@ export class PreparationsService {
       select: { certificationId: true, startedAt: true },
     });
     return rows.map((row) => ({ certificationId: row.certificationId, since: row.startedAt }));
+  }
+
+  isPreparing(userId: string, certificationId: string, manager?: EntityManager): Promise<boolean> {
+    const repository = manager?.getRepository(Preparation) ?? this.preparations;
+    return repository.existsBy({ userId, certificationId });
+  }
+
+  /** Every student who has started at least one certification. */
+  async userIds(): Promise<string[]> {
+    const rows = await this.preparations
+      .createQueryBuilder('p')
+      .select('DISTINCT p.userId', 'userId')
+      .getRawMany<{ userId: string }>();
+    return rows.map((row) => row.userId);
   }
 
   countFor(certificationId: string): Promise<number> {
