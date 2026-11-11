@@ -22,7 +22,13 @@ export async function shot(page: Page, name: string) {
   await page.waitForLoadState('networkidle');
   await expect.soft(page).toHaveScreenshot(`${name}.png`, {
     fullPage: true,
-    // Dates change from one day to the next.
-    mask: [page.getByText(/^(Started|Declared|started) /), page.getByText(MOVING_TEXT)],
+    // Dates change from one day to the next, and every run signs up with new addresses.
+    mask: [
+      page.getByText(/^(Started|Declared|started) /),
+      page.getByText(MOVING_TEXT),
+      page.getByText(/^e2e\.[0-9a-f]+@tek-up\.de$/),
+      // The phone's mail button shows the address in a proportional font: mask the whole button.
+      page.locator('main a[href^="mailto:"]'),
+    ],
   });
 }
