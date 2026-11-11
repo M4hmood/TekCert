@@ -37,11 +37,16 @@ test.describe('catalog on desktop', () => {
   });
 
   test('keeps the theme button on the title line, as on other pages', async ({ page }) => {
-    const buttonTop = async (path: string) => {
+    // The button sits level with the page title, whether or not a line (the date) sits above it.
+    const offset = async (path: string) => {
       await page.goto(path);
-      return (await page.getByRole('button', { name: 'Change theme' }).boundingBox())?.y;
+      const button = await page.getByRole('button', { name: 'Change theme' }).boundingBox();
+      const title = await page.getByRole('heading', { level: 1 }).boundingBox();
+      if (!button || !title) throw new Error(`No title or theme button on ${path}`);
+      return button.y + button.height - (title.y + title.height);
     };
-    expect(await buttonTop('/catalog')).toBe(await buttonTop('/dashboard'));
+    const onCatalog = await offset('/catalog');
+    expect(Math.abs(onCatalog - (await offset('/dashboard')))).toBeLessThanOrEqual(2);
   });
 
   test('clears every filter at once', async ({ page }) => {

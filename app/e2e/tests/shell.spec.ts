@@ -3,7 +3,7 @@ import { signInOnboardedStudent } from './support';
 
 /** Every MVP screen reachable from the navigation, with the heading it should show. */
 const SIDEBAR_ROUTES = [
-  { link: 'Dashboard', path: '/dashboard', heading: 'Dashboard' },
+  { link: 'Dashboard', path: '/dashboard', heading: 'Hello Test' },
   { link: 'Catalog', path: '/catalog', heading: 'Catalog' },
   { link: 'Paths', path: '/paths', heading: 'Paths' },
   { link: 'Community', path: '/community', heading: 'Community' },
@@ -15,7 +15,7 @@ const SIDEBAR_ROUTES = [
 ];
 
 const BOTTOM_TABS = [
-  { link: 'Home', path: '/dashboard', heading: 'Dashboard' },
+  { link: 'Home', path: '/dashboard', heading: 'Hello Test' },
   { link: 'Catalog', path: '/catalog', heading: 'Catalog' },
   { link: 'Paths', path: '/paths', heading: 'Paths' },
   { link: 'Community', path: '/community', heading: 'Community' },
@@ -35,7 +35,8 @@ test.describe('desktop shell', () => {
   test('opens the dashboard from the root URL', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(heading(page)).toHaveText('Dashboard');
+    // The dashboard greets the student (signed up as "Test Student").
+    await expect(heading(page)).toHaveText('Hello Test');
   });
 
   test('reaches every screen through the sidebar', async ({ page }) => {

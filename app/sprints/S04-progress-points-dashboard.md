@@ -10,15 +10,15 @@
 3. Stop and wait for approval.
 
 ## Scope
-- [ ] Chapter tick / untick on the certification page (+10 / −10 points)
-- [ ] Points ledger table (append-only events) + level computation (Novice → Emeritus)
-- [ ] Badge engine for MVP badges: First step, Dedicated (30 chapters); others defined but locked
-- [ ] Activity events table feeding the classmates feed
-- [ ] Dashboard: current certification ring, level card, next recommended cert, my path summary, classmates activity, empty / loading / error states
+- [x] Chapter tick / untick on the certification page (+10 / −10 points)
+- [x] Points ledger table (append-only events) + level computation (Novice → Emeritus)
+- [x] Badge engine for MVP badges: First step, Dedicated (30 chapters); others defined but locked
+- [x] Activity events table feeding the classmates feed
+- [x] Dashboard: current certification ring, level card, next recommended cert, my path summary, classmates activity, empty / loading / error states
 
 ## Done when
-- [ ] Points are always recomputable from the ledger
-- [ ] Dashboard states match the design (filled, empty, loading, error)
+- [x] Points are always recomputable from the ledger
+- [x] Dashboard states match the design (filled, empty, loading, error)
 
 ## Out of scope
 - Points from verified certifications and practice tests (Release 2)
@@ -130,3 +130,24 @@ Status: **approved 2026-11-10 with the recommended answers.** Branch `sprint/S04
 2. A badge, once earned, is kept; points still drop on untick.
 3. "Also preparing {code}" is built now, reusing the community query and the new `pct`.
 4. The level and badges blocks go on `/profile` now; the rest of the profile stays in S05.
+
+### Outcome (2026-11-10)
+Tests:
+- types: 93 (Vitest)
+- backend: 63 unit + 83 API e2e (Jest)
+- frontend: 101 (Vitest)
+- Playwright: 68 passing at 1440 and 390 px, 17 skipped by design (desktop-only or mobile-only tests). The shell tests now expect the dashboard's "Hello Test" heading, and the theme-button test compares the button with the title line instead of an absolute position (the dashboard has a date line above its title).
+- Once, with other heavy jobs running, 3 older auth and catalog Vitest tests hit the 5 s timeout; they pass alone and in a clean full run.
+
+Lint, typecheck and build pass. `migration:generate --check` finds no drift, and the migration reverts and re-applies cleanly. Screens checked at 1440 and 390 px, light and dark, against design/Tableau-de-bord and the Profil level and badges blocks.
+
+Where the build differs from the plan:
+- **Concurrency bug found by the API tests.** Reads inside the tick transaction first went through the default repositories, which takes a second pool connection; ten concurrent ticks exhausted the pool and hung. Every read in the tick now uses the transaction's manager (ADR-020).
+- **The error screen's code** is `ERR_HTTP_<status>` when the message carries one, else a short digest or `ERR_NETWORK`: production builds hide server error messages, so the digest is what support can match in the logs.
+- **The empty dashboard on phones** shows level, Start and "Your class has already started", as in the design; the feed only appears once the student has started. Desktop has no empty design, so it shows the same cards plus the path strip and the feed.
+- **"Nothing in progress"** (points earned, nothing started) isn't in the design: an empty card links to the catalog.
+- **Toast** moved to `packages/ui` with an optional action (Undo). The certification page's own toast uses it too; its Start message now reads "SAA-C03 started · tick chapters as you revise them".
+- **Chapter windows follow the chapter number**, not the domain order: SAA-C03's domains list 01, 02, 06, 07… so the dashboard can show 02–05 while 06–08 are ticked.
+- **Not built:** "My requests", the practice-test button and verified counts (Release 2), the header search (S05) and the notifications bell (S07), as planned.
+- **Certification header, changed on request (2026-11-11):** the title (with the badge beside it) now comes first, and the provider, code, level, difficulty and "Useful in" chips sit underneath it.
+- **Backlog:** "Stop preparing" (still out), and a tick in flight is lost if the student leaves the page at once (seen in Playwright when reloading right after a click).
