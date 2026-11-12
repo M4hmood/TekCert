@@ -146,8 +146,8 @@ export const LeaderboardRowSchema = z.object({
   /** Place in the list, 1-based: a jump between two rows means rows were left out. */
   position: z.number().int().positive(),
   /**
-   * Places gained (positive) or lost over the last 7 days; null when the period is younger
-   * than that.
+   * Places gained (positive) or lost over the last 7 days. Null when there is nothing to
+   * compare with: the period is younger than that, or the student had no points a week ago.
    */
   change: z.number().int().nullable(),
   /** `SUM(delta)` of the ledger over the period. Negative when unticks outweigh ticks. */

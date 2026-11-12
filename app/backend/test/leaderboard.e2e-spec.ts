@@ -173,14 +173,19 @@ describe('Leaderboard (e2e)', () => {
     const klass = { year: 4, specialty: 'DMWM', group: 'C' };
     const early = await onboardedStudent(t, klass);
     const late = await onboardedStudent(t, klass);
+    const newcomer = await onboardedStudent(t, klass);
     await earnedAt(early.id, 30, new Date(Date.now() - 10 * DAY));
+    await earnedAt(late.id, 10, new Date(Date.now() - 10 * DAY));
     await earnedAt(late.id, 50, new Date(Date.now() - DAY));
+    await earnedAt(newcomer.id, 10, new Date(Date.now() - DAY));
 
     const seen = await board(late.agent, { scope: 'class', period: 'all' });
     // A week ago "early" led; "late" has passed them since.
     expect(seen.rows.map((r) => [r.person?.id, r.rank, r.change])).toEqual([
       [late.id, 1, 1],
       [early.id, 2, -1],
+      // No points a week ago: nothing to compare with.
+      [newcomer.id, 3, null],
     ]);
     expect(seen.me?.change).toBe(1);
   });
@@ -205,7 +210,7 @@ describe('Leaderboard (e2e)', () => {
     expect(seen.rows[0]).toEqual({
       rank: 1,
       position: 1,
-      change: 0,
+      change: null,
       points: 20,
       chapters: 2,
       isMe: false,

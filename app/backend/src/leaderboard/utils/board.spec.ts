@@ -61,11 +61,23 @@ describe('buildStudentBoard', () => {
       members: [member('a'), member('b'), member('c')],
       viewerId: 'c',
       current: totals({ a: 10, b: 20, c: 30 }),
-      previous: totals({ a: 10, b: 5 }),
+      previous: totals({ a: 10, b: 5, c: 1 }),
     });
     const changes = Object.fromEntries(board.rows.map((r) => [r.person?.id, r.change]));
     expect(changes).toEqual({ c: 2, b: 0, a: -2 });
     expect(board.me?.change).toBe(2);
+  });
+
+  it('has no change for a student who had no points a week ago', () => {
+    const board = buildStudentBoard({
+      members: [member('a'), member('b'), member('c')],
+      viewerId: 'b',
+      current: totals({ a: 30, b: 20 }),
+      previous: totals({ a: 30 }),
+    });
+    // Everyone at zero tied for first a week ago: that isn't a rank to fall from.
+    const changes = Object.fromEntries(board.rows.map((r) => [r.person?.id, r.change]));
+    expect(changes).toEqual({ a: 0, b: null, c: null });
   });
 
   it('has no change while the period is younger than a week', () => {

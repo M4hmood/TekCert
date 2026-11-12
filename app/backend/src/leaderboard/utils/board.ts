@@ -30,7 +30,8 @@ const NOTHING: Total = { points: 0, chapters: 0 };
 /**
  * Ranks every member of a scope on the points of the period and keeps the rows a board shows:
  * the top, and the viewer with their neighbours. `previous` holds the same period's totals a
- * week ago (null when the period is younger than that): the change is the places gained since.
+ * week ago (null when the period is younger than that): the change is the places gained since,
+ * for students who had points then.
  *
  * A member who hides their name stays ranked, without their `person`, except on their own row.
  */
@@ -57,7 +58,10 @@ export function buildStudentBoard(input: {
     : null;
   const change = (id: string, rank: number) => {
     const before = rankBefore?.get(id);
-    return before === undefined ? null : before - rank;
+    // Without points a week ago the student wasn't really ranked: everyone at zero ties for
+    // first, and comparing with that would show a fall for anyone who has started since.
+    if (before === undefined || (previous?.get(id)?.points ?? 0) <= 0) return null;
+    return before - rank;
   };
 
   const mine = ranked.find((entry) => entry.id === viewerId) ?? null;
