@@ -17,6 +17,9 @@ import {
 } from './format';
 import { ProfileView } from './ProfileView';
 
+const router = { refresh: vi.fn(), push: vi.fn(), replace: vi.fn() };
+vi.mock('next/navigation', () => ({ useRouter: () => router }));
+
 const NOW = '2026-11-11T09:00:00.000Z';
 const uuid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const aws = { code: 'AWS', name: 'Amazon Web Services', hue: 55 };
@@ -422,7 +425,7 @@ describe('ProfileView', () => {
 
   it('shows my own profile with chapter counts, my privacy and the help switch', async () => {
     const user = userEvent.setup();
-    const api = mockApi({ availableToHelp: true });
+    const api = mockApi({ availableToHelp: true, leaderboardVisible: false });
     render(
       <ProfileView
         profile={profile({
@@ -463,6 +466,32 @@ describe('ProfileView', () => {
     await user.click(help);
     expect(await screen.findByRole('status')).toHaveTextContent("Couldn't save. Try again.");
     expect(help).toBeChecked();
+  });
+
+  it('hides my name from the leaderboard and refreshes the profile', async () => {
+    const user = userEvent.setup();
+    const api = mockApi({ availableToHelp: false, leaderboardVisible: false });
+    render(
+      <ProfileView
+        profile={profile({ isMe: true, privacy: { leaderboardVisible: true } })}
+        now={NOW}
+      />,
+    );
+    expect(screen.getByText('Visible on leaderboard')).toBeInTheDocument();
+    const visible = screen.getByRole('switch', { name: 'Appear on the leaderboard' });
+    expect(visible).toBeChecked();
+    await user.click(visible);
+    expect(visible).not.toBeChecked();
+    await waitFor(() => expect(api).toHaveBeenCalledTimes(1));
+    expect(api.mock.calls[0]?.[1]).toMatchObject({
+      method: 'PATCH',
+      body: '{"leaderboardVisible":false}',
+    });
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'You now appear as Anonymous on the leaderboard',
+    );
+    // The chips at the top come from the server.
+    expect(router.refresh).toHaveBeenCalled();
   });
 
   it('copies the email and says so', async () => {
