@@ -119,7 +119,7 @@ test.describe('signed in', () => {
   test.use({ storageState: STUDENT_FILE('main') });
 
   test('placeholder screens', async ({ page }) => {
-    for (const route of ['paths', 'leaderboard', 'requests', 'notifications', 'settings']) {
+    for (const route of ['paths', 'requests', 'notifications', 'settings']) {
       await page.goto(`/${route}`);
       await shot(page, route);
     }
@@ -152,6 +152,18 @@ test.describe('signed in', () => {
     await shot(page, 'profile-other');
     await page.goto('/community/00000000-0000-4000-8000-000000000000');
     await shot(page, 'profile-not-found');
+  });
+
+  test('leaderboard', async ({ page }) => {
+    const routes = {
+      leaderboard: '',
+      'leaderboard-class-all': '?scope=class&period=all',
+      'leaderboard-specialties': '?view=specialties',
+    };
+    for (const [name, search] of Object.entries(routes)) {
+      await page.goto(`/leaderboard${search}`);
+      await shot(page, name);
+    }
   });
 
   test('community filter sheet', async ({ page }) => {
