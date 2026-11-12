@@ -41,7 +41,7 @@ export class CommunityController {
   }
 
   @Patch('me/profile')
-  @ApiOperation({ summary: 'Switch "Available to help" on or off' })
+  @ApiOperation({ summary: 'Switch "Available to help" or my name on the leaderboard' })
   @ZodResponse({ type: MyProfileSettingsDto })
   updateMine(@CurrentAuth() auth: AccessClaims, @Body() body: UpdateMyProfileDto) {
     return this.community.updateMine(auth.userId, body);

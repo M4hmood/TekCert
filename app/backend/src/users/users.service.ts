@@ -52,6 +52,37 @@ export interface DirectoryFilter extends ScopeFilter {
 /** A student with `class`, its `specialty` and `targetSpecialty` loaded. */
 export type ProfileMember = CommunityMember & { targetSpecialty: Specialty | null };
 
+/** A student as a leaderboard needs them. */
+export interface RankableStudent {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatarKey: string | null;
+  leaderboardVisible: boolean;
+  classCode: string;
+  year: number;
+  /** The class specialty (ING-4/5). */
+  specialty: { code: string; name: string; hue: number } | null;
+  /** ING-1…3: the specialty aimed for. */
+  targetSpecialty: { code: string; name: string; hue: number } | null;
+}
+
+interface RankableRow {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatarKey: string | null;
+  leaderboardVisible: boolean;
+  classCode: string;
+  year: number;
+  specialtyCode: string | null;
+  specialtyName: string | null;
+  specialtyHue: number | null;
+  targetCode: string | null;
+  targetName: string | null;
+  targetHue: number | null;
+}
+
 /** Escapes `%`, `_` and `\` so a search term only ever matches itself. */
 export function likePattern(term: string): string {
   return `%${term.replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
@@ -119,8 +150,17 @@ export class UsersService {
     await this.users.update({ id }, { avatarKey });
   }
 
-  async setAvailableToHelp(id: string, availableToHelp: boolean): Promise<void> {
-    await this.users.update({ id }, { availableToHelp });
+  /** The switches on the student's own profile; returns both as they now stand. */
+  async updateProfileSettings(
+    id: string,
+    changes: Partial<Pick<User, 'availableToHelp' | 'leaderboardVisible'>>,
+  ): Promise<Pick<User, 'availableToHelp' | 'leaderboardVisible'>> {
+    await this.users.update({ id }, changes);
+    const user = await this.users.findOneOrFail({
+      where: { id },
+      select: { id: true, availableToHelp: true, leaderboardVisible: true },
+    });
+    return { availableToHelp: user.availableToHelp, leaderboardVisible: user.leaderboardVisible };
   }
 
   countInClass(classId: string): Promise<number> {
@@ -229,6 +269,52 @@ export class UsersService {
       .addSelect('COUNT(*)::int', 'count')
       .groupBy('s.code')
       .getRawMany<{ code: string | null; count: number }>();
+  }
+
+  /**
+   * Every student a leaderboard may rank in a scope (email verified, onboarding finished), the
+   * one asking included. `targetSpecialty` is loaded for the specialties board.
+   */
+  async findRankable(scope: ScopeFilter): Promise<RankableStudent[]> {
+    const qb = this.users
+      .createQueryBuilder('u')
+      .innerJoin('u.class', 'c')
+      .leftJoin('c.specialty', 's')
+      .leftJoin('u.targetSpecialty', 't')
+      .where('u.emailVerifiedAt IS NOT NULL')
+      .andWhere('u.onboardingCompletedAt IS NOT NULL');
+    applyScope(qb, scope);
+    // Plain rows: building a thousand entities with their relations costs more than the query.
+    const rows = await qb
+      .select('u.id', 'id')
+      .addSelect('u.firstName', 'firstName')
+      .addSelect('u.lastName', 'lastName')
+      .addSelect('u.avatarKey', 'avatarKey')
+      .addSelect('u.leaderboardVisible', 'leaderboardVisible')
+      .addSelect('c.code', 'classCode')
+      .addSelect('c.year', 'year')
+      .addSelect('s.code', 'specialtyCode')
+      .addSelect('s.name', 'specialtyName')
+      .addSelect('s.hue', 'specialtyHue')
+      .addSelect('t.code', 'targetCode')
+      .addSelect('t.name', 'targetName')
+      .addSelect('t.hue', 'targetHue')
+      .getRawMany<RankableRow>();
+    return rows.map((row) => ({
+      id: row.id,
+      firstName: row.firstName,
+      lastName: row.lastName,
+      avatarKey: row.avatarKey,
+      leaderboardVisible: row.leaderboardVisible,
+      classCode: row.classCode,
+      year: row.year,
+      specialty: row.specialtyCode
+        ? { code: row.specialtyCode, name: row.specialtyName ?? '', hue: row.specialtyHue ?? 0 }
+        : null,
+      targetSpecialty: row.targetCode
+        ? { code: row.targetCode, name: row.targetName ?? '', hue: row.targetHue ?? 0 }
+        : null,
+    }));
   }
 
   /** A student other students may open: email verified and onboarding finished. */

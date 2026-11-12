@@ -15,6 +15,7 @@ import {
   type Specialty,
   type SpecialtyCode,
   type StudentProfile,
+  type UpdateMyProfileInput,
   type Year,
 } from '@tekcert/types';
 import {
@@ -179,9 +180,13 @@ export class CommunityService {
     };
   }
 
-  async updateMine(userId: string, changes: MyProfileSettings): Promise<MyProfileSettings> {
-    await this.users.setAvailableToHelp(userId, changes.availableToHelp);
-    return { availableToHelp: changes.availableToHelp };
+  updateMine(userId: string, changes: UpdateMyProfileInput): Promise<MyProfileSettings> {
+    return this.users.updateProfileSettings(userId, {
+      ...(changes.availableToHelp !== undefined && { availableToHelp: changes.availableToHelp }),
+      ...(changes.leaderboardVisible !== undefined && {
+        leaderboardVisible: changes.leaderboardVisible,
+      }),
+    });
   }
 
   /** Null when the scope can't apply (no class saved yet): nobody is listed. */

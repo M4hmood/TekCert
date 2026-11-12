@@ -19,6 +19,12 @@ export interface PointEntry {
   chapterId: string | null;
 }
 
+export interface PeriodTotal {
+  points: number;
+  /** Chapters finished, net of unticks. */
+  chapters: number;
+}
+
 /** The points ledger and the badges. Totals are always summed from the ledger. */
 @Injectable()
 export class PointsService {
@@ -54,6 +60,26 @@ export class PointsService {
       .groupBy('e.userId')
       .getRawMany<{ userId: string; total: number }>();
     return new Map(rows.map((row) => [row.userId, row.total]));
+  }
+
+  /**
+   * Every student's points and chapters over a slice of the ledger: from `from` (included; null
+   * = the beginning) to `to` (excluded; null = now). Students without rows there are absent.
+   */
+  async totalsBetween(from: Date | null, to: Date | null): Promise<Map<string, PeriodTotal>> {
+    const qb = this.events
+      .createQueryBuilder('e')
+      .select('e.userId', 'userId')
+      .addSelect('SUM(e.delta)::int', 'points')
+      .addSelect(
+        `SUM(CASE e.reason WHEN 'chapter_done' THEN 1 WHEN 'chapter_undone' THEN -1 ELSE 0 END)::int`,
+        'chapters',
+      )
+      .groupBy('e.userId');
+    if (from) qb.andWhere('e.createdAt >= :from', { from });
+    if (to) qb.andWhere('e.createdAt < :to', { to });
+    const rows = await qb.getRawMany<{ userId: string; points: number; chapters: number }>();
+    return new Map(rows.map((row) => [row.userId, { points: row.points, chapters: row.chapters }]));
   }
 
   /** Grants the badges the student doesn't have yet; returns the ones granted now. */

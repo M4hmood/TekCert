@@ -201,7 +201,7 @@ describe('Community directory and profiles (e2e)', () => {
       const saved = MyProfileSettingsSchema.parse(
         (await helper.agent.patch('/me/profile').send({ availableToHelp: true }).expect(200)).body,
       );
-      expect(saved).toEqual({ availableToHelp: true });
+      expect(saved).toEqual({ availableToHelp: true, leaderboardVisible: true });
       const list = await directory(me.agent, query);
       expect(names(list)).toEqual(['Helper']);
       expect(list.items[0]?.availableToHelp).toBe(true);

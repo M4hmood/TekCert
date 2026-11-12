@@ -50,8 +50,10 @@ describe('levelBadgeFor', () => {
 });
 
 describe('UpdateMyProfileSchema', () => {
-  it('needs a boolean', () => {
+  it('needs at least one boolean', () => {
     expect(UpdateMyProfileSchema.safeParse({ availableToHelp: true }).success).toBe(true);
+    expect(UpdateMyProfileSchema.safeParse({ leaderboardVisible: false }).success).toBe(true);
+    expect(UpdateMyProfileSchema.safeParse({ leaderboardVisible: 0 }).success).toBe(false);
     expect(UpdateMyProfileSchema.safeParse({ availableToHelp: 'yes' }).success).toBe(false);
     expect(UpdateMyProfileSchema.safeParse({}).success).toBe(false);
   });

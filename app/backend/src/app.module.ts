@@ -13,6 +13,7 @@ import { ProblemDetailsFilter } from './common/filters/problem-details.filter';
 import { type Env, validateEnv } from './config/env';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { MailModule } from './mail/mail.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
 import { ProgressModule } from './progress/progress.module';
@@ -55,6 +56,7 @@ export const REQUEST_ID_HEADER = 'x-request-id';
     AvatarsModule,
     ProgressModule,
     CommunityModule,
+    LeaderboardModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },
