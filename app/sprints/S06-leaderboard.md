@@ -10,21 +10,21 @@
 3. Stop and wait for approval.
 
 ## Scope
-- [ ] Students and Specialties views
-- [ ] Scopes (class, specialty, institute) and periods (month, semester, all time)
-- [ ] Pinned “you” row on mobile, position change indicator
-- [ ] “Hide my name” → shown as Anonymous
-- [ ] Query strategy: SQL view or materialized view refreshed on point events
+- [x] Students and Specialties views
+- [x] Scopes (class, specialty, institute) and periods (month, semester, all time)
+- [x] Pinned “you” row on mobile, position change indicator
+- [x] “Hide my name” → shown as Anonymous
+- [x] Query strategy: decided against a view; one grouped query on the ledger per request (ADR-022)
 
 ## Done when
-- [ ] Leaderboard numbers match the points ledger exactly
-- [ ] p95 response under 300 ms with 1,000 seeded students
+- [x] Leaderboard numbers match the points ledger exactly
+- [x] p95 response under 300 ms with 1,000 seeded students (110 ms on the slowest board)
 
 ## Out of scope
 - Points from verified certs (Release 2)
 
 ## Plan
-_Written 2026-11-11, ahead of time at your request. Building starts only after S05 is finished and this plan is approved._
+_Written 2026-11-11 and approved the same day; built after S05. See the outcome under "Notes / decisions"._
 
 Branch `sprint/S06-leaderboard`, cut once S05 is done.
 
@@ -78,3 +78,45 @@ A new `leaderboard/` module with no entities (ADR-017).
 - Rank snapshots or history charts.
 
 ## Notes / decisions
+
+### Decisions from review (2026-11-11)
+The plan was approved with all five recommendations:
+1. No SQL view or materialized view: one grouped query on the ledger per request, measured with 1,000 students.
+2. Semester 1 is 1 September to 31 January, Semester 2 is 1 February to 31 August.
+3. "Change" is the places gained or lost over the last 7 days, computed from the ledger.
+4. The "Verified" column becomes "Chapters"; Scoring lists only "+10 per chapter".
+5. "Hide my name" is a second switch on the student's own profile.
+
+### Outcome (2026-11-12)
+Tests:
+- types: 134 (Vitest)
+- backend: 73 unit + 108 API e2e (Jest), 9 of the API tests new for the leaderboards
+- frontend: 130 (Vitest)
+- Playwright: 80 passing at 1440 and 390 px, 17 skipped by design; 6 new runs for the leaderboard
+- Visual baseline: retaken for every screen (68 captures across 4 projects, 17 skipped by design) and compared again with no difference. It now includes the leaderboard (default, class over all time, specialties). The other test students got names of their own, because lists order by name and identical names fell back on random ids; a run that straddles midnight still differs on the dashboard date.
+
+**Performance ("Done when"):** with 1,000 seeded students and 100,000 ledger rows, 100 requests per board:
+
+| Board | p50 | p95 |
+|---|---|---|
+| Students · class · month / semester / all time | 45 / 55 / 73 ms | 74 / 83 / 110 ms |
+| Students · specialty · month / semester / all time | 42 / 45 / 51 ms | 66 / 81 / 74 ms |
+| Students · institute · month / semester / all time | 42 / 47 / 59 ms | 62 / 78 / 101 ms |
+| Specialties · month / semester / all time | 30 / 35 / 55 ms | 42 / 50 / 101 ms |
+
+The budget is 300 ms. Run it again with `pnpm --filter backend test:perf` (it rebuilds the `tekcert_perf` database).
+
+**Numbers match the ledger ("Done when"):** the API tests compare every row with `SUM(delta)` from `point_events`, for each period and after an untick.
+
+Lint, typecheck and build pass. No migration: the sprint adds no table and no index. Screens checked at 1440 and 390 px, light and dark, against design/Classement.
+
+Where the build differs from the plan or the design:
+- **The first measurement missed the budget** (p95 about 500 ms on the institute board). The ledger query took about 35 ms; building 1,000 user entities with their relations took about 200 ms. The boards now read students as plain rows.
+- **"Change" is empty for a student who had no points a week ago.** Comparing with a week where everyone was at zero (all tied for first) showed a fall for every newcomer.
+- **A period's points can be negative** when a chapter from an earlier month is unticked. The board shows the ledger's sum as it is.
+- **Phones** show the view switch, the scope tabs, the period and the list, with my row pinned above the tab bar. The "Your position" and "Scoring" cards are desktop only, as in the design.
+- **Empty states** aren't in the design: "No points yet in November 2026" when nobody has points in the period.
+- **The test ports can move.** After a restart Windows had reserved a port range that includes 4010, so the API couldn't start. `E2E_API_PORT=4510 pnpm --filter e2e test:e2e` runs it elsewhere.
+- **Playwright starts from a clean set of students**, like the API tests since S05: boards and lists filled up with students of earlier runs.
+
+Backlog added to PLAN.md: a per-month summary table if the ledger grows past a few million rows, and rank history.
