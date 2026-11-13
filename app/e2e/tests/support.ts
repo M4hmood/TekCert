@@ -1,8 +1,13 @@
+import { execSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { expect, type APIRequestContext, type Page } from '@playwright/test';
 
 /** Mailpit (docker compose service "mail") catches every email the API sends. */
 const MAILPIT_URL = process.env.MAILPIT_URL ?? 'http://127.0.0.1:8025';
+
+/** The database the Playwright servers use (playwright.config.ts). */
+const TEST_DATABASE_URL =
+  process.env.TEST_DATABASE_URL ?? 'postgresql://tekcert:tekcert@localhost:5432/tekcert_test';
 
 export const PASSWORD = 'correct-horse-9';
 
@@ -75,7 +80,9 @@ export async function signInNewStudent(
 export async function completeOnboarding(
   request: APIRequestContext,
   certifications: string[] = [],
-  klass: { year: number; specialty: string; group: string } = {
+  klass: { year: number; group: string } & (
+    { specialty: string } | { targetSpecialty: string | null }
+  ) = {
     year: 4,
     specialty: 'CIM',
     group: 'A',
@@ -98,4 +105,43 @@ export async function signInOnboardedStudent(page: Page, email = uniqueEmail()):
   await signInNewStudent(page, email);
   await completeOnboarding(page.request);
   return email;
+}
+
+/** Waits for an email with this subject to reach the address and returns its text. */
+export async function emailWithSubject(
+  request: APIRequestContext,
+  to: string,
+  subject: string,
+): Promise<string> {
+  let text: string | undefined;
+  await expect
+    .poll(
+      async () => {
+        const search = await request.get(`${MAILPIT_URL}/api/v1/search`, {
+          params: { query: `to:"${to}"` },
+        });
+        const { messages } = (await search.json()) as { messages: MailpitSummary[] };
+        const found = messages.find((message) => message.Subject === subject);
+        if (!found) return undefined;
+        const message = await request.get(`${MAILPIT_URL}/api/v1/message/${found.ID}`);
+        text = ((await message.json()) as { Text: string }).Text;
+        return text;
+      },
+      { message: `email "${subject}" for ${to}`, timeout: 15_000 },
+    )
+    .toBeTruthy();
+  return text as string;
+}
+
+/**
+ * Puts a student back a year: the API has no way to do it, and the servers run on the real
+ * clock, so this is how a test gets the "new academic year" prompt. `email` comes from
+ * uniqueEmail(), so it is safe inside the statement.
+ */
+export function expireAcademicYear(email: string, databaseUrl = TEST_DATABASE_URL): void {
+  if (!/^[a-z0-9.]+@tek-up\.de$/.test(email)) throw new Error(`Unexpected email: ${email}`);
+  execSync(
+    `pnpm --filter backend typeorm query "UPDATE users SET enrolment_confirmed_year = enrolment_confirmed_year - 1 WHERE email = '${email}'"`,
+    { env: { ...process.env, DATABASE_URL: databaseUrl }, stdio: 'pipe' },
+  );
 }

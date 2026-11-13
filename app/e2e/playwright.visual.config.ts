@@ -1,5 +1,6 @@
 import { defineConfig, devices, type PlaywrightTestConfig } from '@playwright/test';
 import base from './playwright.config';
+import { VISUAL_DATABASE_URL } from './visual/shared';
 
 /**
  * Screenshots of every screen, compared with a local baseline. Local only, not in CI: font
@@ -13,7 +14,7 @@ import base from './playwright.config';
 
 type WebServer = Extract<NonNullable<PlaywrightTestConfig['webServer']>, unknown[]>[number];
 
-const DATABASE_URL = 'postgresql://tekcert:tekcert@localhost:5432/tekcert_visual';
+const DATABASE_URL = VISUAL_DATABASE_URL;
 const psql = (sql: string) => `docker compose exec -T db psql -U tekcert -d postgres -c "${sql}"`;
 const resetDatabase = [
   psql('DROP DATABASE IF EXISTS tekcert_visual WITH (FORCE)'),

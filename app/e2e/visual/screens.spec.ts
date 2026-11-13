@@ -6,6 +6,8 @@ import { shot, STUDENT_FILE } from './shared';
 const PHOTO = path.join(__dirname, '..', 'tests', 'fixtures', 'photo.png');
 const isPhone = (page: Page) => (page.viewportSize()?.width ?? 0) < 768;
 const BASE_URL = 'http://127.0.0.1:3010';
+/** "2026-27 academic year": a new one every September. */
+const YEAR_LABEL = (page: Page) => page.getByText(/\d{4}-\d{2} academic year/);
 
 test.beforeEach(async ({ context }) => {
   await context.addCookies([{ name: 'splash_seen', value: '1', url: BASE_URL }]);
@@ -119,7 +121,7 @@ test.describe('signed in', () => {
   test.use({ storageState: STUDENT_FILE('main') });
 
   test('placeholder screens', async ({ page }) => {
-    for (const route of ['paths', 'requests', 'notifications', 'settings']) {
+    for (const route of ['paths', 'requests']) {
       await page.goto(`/${route}`);
       await shot(page, route);
     }
@@ -163,6 +165,25 @@ test.describe('signed in', () => {
     for (const [name, search] of Object.entries(routes)) {
       await page.goto(`/leaderboard${search}`);
       await shot(page, name);
+    }
+  });
+
+  test('notifications', async ({ page }) => {
+    await page.goto('/notifications');
+    await expect(page.getByRole('region', { name: 'Today' }).getByRole('listitem')).toHaveCount(2);
+    await shot(page, 'notifications');
+    await page.goto('/notifications?filter=leaderboard');
+    await shot(page, 'notifications-empty');
+  });
+
+  test('settings', async ({ page }) => {
+    // Desktop: Account next to the menu. Phones: the list of sections alone.
+    await page.goto('/settings');
+    await shot(page, 'settings');
+    for (const section of ['account', 'enrolment', 'privacy', 'notifications', 'appearance']) {
+      await page.goto(`/settings/${section}`);
+      await expect(page.getByRole('heading', { level: 2 })).toBeVisible();
+      await shot(page, `settings-${section}`);
     }
   });
 
@@ -267,10 +288,18 @@ test.describe('signed in', () => {
     await context.addCookies([
       { name: 'theme', value: osIsDark ? 'light' : 'dark', url: BASE_URL },
     ]);
+    const forced = osIsDark ? 'light' : 'dark';
     await page.goto('/catalog');
     await shot(page, 'theme-forced');
     await page.goto('/catalog/saa-c03');
     await shot(page, 'theme-forced-certification');
+    // A theme chosen in the browser is saved on the account: hand the account back to
+    // "system", or every later screen of this student would keep the forced theme.
+    await expect
+      .poll(async () => (await page.request.get('/api/auth/me').then((r) => r.json())).theme)
+      .toBe(forced);
+    const reset = await page.request.patch('/api/me/preferences', { data: { theme: 'system' } });
+    expect(reset.ok()).toBe(true);
   });
 
   test('widths between the breakpoints', async ({ page }, testInfo) => {
@@ -282,6 +311,27 @@ test.describe('signed in', () => {
       await page.goto('/catalog/saa-c03');
       await shot(page, `width-${width}-certification`);
     }
+  });
+});
+
+test.describe('new academic year', () => {
+  test.use({ storageState: STUDENT_FILE('returning') });
+
+  test('the prompt, and the notice in Settings', async ({ page, context }) => {
+    await page.goto('/dashboard');
+    await expect(page.getByRole('dialog')).toBeVisible();
+    // The dialog covers the viewport, so the page under it isn't scrolled through.
+    await expect.soft(page).toHaveScreenshot('year-prompt.png', { mask: [YEAR_LABEL(page)] });
+    await page.getByRole('radio', { name: /I’m repeating/ }).click();
+    await expect.soft(page).toHaveScreenshot('year-prompt-repeating.png', {
+      mask: [YEAR_LABEL(page)],
+    });
+
+    // "Remind me tomorrow": the prompt stays away, the notice in Settings stays.
+    await context.addCookies([{ name: 'year_prompt_snoozed', value: '1', url: BASE_URL }]);
+    await page.goto('/settings/enrolment');
+    await expect(page.getByText(/academic year not confirmed/)).toBeVisible();
+    await shot(page, 'settings-enrolment-due');
   });
 });
 
