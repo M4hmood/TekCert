@@ -1,6 +1,7 @@
 'use client';
 
 import { useId, useState } from 'react';
+import { Label } from './ui/label';
 import {
   Select as SelectBase,
   SelectContent,
@@ -54,6 +55,49 @@ export function Select<T extends string>({ label, value, options, onChange }: Se
           <span className="font-bold">
             <SelectValue>{selected?.label}</SelectValue>
           </span>
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={toItem(option.value)}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </SelectBase>
+    </div>
+  );
+}
+
+export interface SelectFieldProps<T extends string> {
+  /** Shown above the control, as on a form field. */
+  label: string;
+  value: T;
+  options: SelectOption<T>[];
+  onChange: (value: T) => void;
+}
+
+/** A select laid out as a form field: label above, full width (Settings, the year prompt). */
+export function SelectField<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+}: SelectFieldProps<T>) {
+  const labelId = `${useId()}-label`;
+  const selected = options.find((option) => option.value === value);
+  return (
+    <div className="flex flex-col gap-1.75 min-w-0">
+      <Label id={labelId}>{label}</Label>
+      <SelectBase
+        // An empty value shows the placeholder: nothing is chosen yet.
+        value={selected ? toItem(value) : ''}
+        onValueChange={(item) => {
+          const option = options.find((candidate) => toItem(candidate.value) === item);
+          if (option && option.value !== value) onChange(option.value);
+        }}
+      >
+        <SelectTrigger aria-labelledby={labelId} className="h-12 text-[15px]">
+          <SelectValue placeholder="Choose…">{selected?.label}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
