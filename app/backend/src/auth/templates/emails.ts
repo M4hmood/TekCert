@@ -1,29 +1,11 @@
 import type { OutgoingMail } from '../../mail/interfaces/mail-sender';
+import { escapeHtml as escape, mailLayout as layout } from '../../mail/layout';
 
 /** Plain, brand-coloured HTML that renders in every client, plus a text version. */
 
 interface LinkMail {
   firstName: string;
   url: string;
-}
-
-function layout(title: string, paragraphs: string[], action?: { label: string; url: string }) {
-  const body = paragraphs.map((p) => `<p style="margin:0 0 16px">${p}</p>`).join('');
-  const button = action
-    ? `<p style="margin:24px 0"><a href="${action.url}" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#1c2f5e;color:#ffffff;font-weight:600;text-decoration:none">${action.label}</a></p>
-       <p style="margin:0 0 16px;font-size:13px;color:#62677a">If the button does not work, copy this link:<br><a href="${action.url}" style="color:#1c2f5e;word-break:break-all">${action.url}</a></p>`
-    : '';
-  return `<!doctype html><html><body style="margin:0;padding:24px;background:#f6f3ec;font-family:Arial,sans-serif;color:#131a2c">
-  <div style="max-width:520px;margin:0 auto;padding:32px;background:#fffdf8;border:1px solid #e1dacb;border-radius:14px">
-    <p style="margin:0 0 24px;font-family:Georgia,serif;font-size:22px;font-weight:600">TekCert</p>
-    <h1 style="margin:0 0 16px;font-family:Georgia,serif;font-size:24px;font-weight:500">${title}</h1>
-    ${body}${button}
-    <p style="margin:24px 0 0;font-size:13px;color:#62677a">TekCert · TEK-UP community platform</p>
-  </div></body></html>`;
-}
-
-function escape(value: string): string {
-  return value.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
 
 export function verifyEmailMail(to: string, { firstName, url }: LinkMail): OutgoingMail {

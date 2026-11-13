@@ -19,6 +19,16 @@ export class TestClock implements Clock {
   advanceMinutes(minutes: number): void {
     this.offsetMs += minutes * 60_000;
   }
+
+  /** Jumps to a date, e.g. the first day of the next academic year. */
+  travelTo(date: Date): void {
+    this.offsetMs = date.getTime() - Date.now();
+  }
+
+  /** Back to the real time. */
+  reset(): void {
+    this.offsetMs = 0;
+  }
 }
 
 export interface TestApp {
@@ -41,6 +51,19 @@ export async function createTestApp(): Promise<TestApp> {
   configureApp(app);
   await app.init();
   return { app, mail, clock };
+}
+
+/** Waits for something the API does in the background, such as a notification email. */
+export async function eventually<T>(
+  read: () => T | undefined | Promise<T | undefined>,
+  what = 'the expected result',
+): Promise<T> {
+  for (let attempt = 0; attempt < 100; attempt++) {
+    const value = await read();
+    if (value !== undefined) return value;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  throw new Error(`Timed out waiting for ${what}`);
 }
 
 /** A fresh institute address per test, so tests never share accounts or lockouts. */
@@ -90,6 +113,24 @@ export async function signUpAndVerify(
     .send({ token: tokenFromMail(t.mail, email, '/verify-email') })
     .expect(200);
   return { agent, email };
+}
+
+/**
+ * Moves the clock to `to` and signs the students in again: access tokens last 15 minutes on
+ * the same clock, so a jump of days leaves every earlier session expired.
+ */
+export async function travelTo(
+  t: TestApp,
+  to: Date,
+  ...students: { agent: ReturnType<typeof request.agent>; email: string }[]
+): Promise<void> {
+  t.clock.travelTo(to);
+  for (const student of students) {
+    await student.agent
+      .post('/auth/sign-in')
+      .send({ email: student.email, password: PASSWORD })
+      .expect(200);
+  }
 }
 
 /** Signs up, verifies and finishes onboarding in `enrolment`, declaring `certifications`. */

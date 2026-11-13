@@ -9,6 +9,8 @@ import { ChapterProgress } from '../certifications/entities/chapter-progress.ent
 import { Preparation } from '../certifications/entities/preparation.entity';
 import { Provider } from '../certifications/entities/provider.entity';
 import { UserCertification } from '../certifications/entities/user-certification.entity';
+import { NotificationPreference } from '../notifications/entities/notification-preference.entity';
+import { Notification } from '../notifications/entities/notification.entity';
 import { PathNode } from '../paths/entities/path-node.entity';
 import { Path } from '../paths/entities/path.entity';
 import { ActivityEvent } from '../progress/entities/activity-event.entity';
@@ -32,6 +34,8 @@ export {
   ChapterProgress,
   EmailToken,
   LoginAttempt,
+  Notification,
+  NotificationPreference,
   Path,
   PathNode,
   PointEvent,
@@ -65,4 +69,6 @@ export const ENTITIES = [
   PointEvent,
   UserBadge,
   ActivityEvent,
+  Notification,
+  NotificationPreference,
 ];

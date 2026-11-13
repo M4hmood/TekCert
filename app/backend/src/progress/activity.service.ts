@@ -40,10 +40,10 @@ export class ActivityService {
 
   /**
    * Records an event that happens once (a start, a badge, a level, a finished syllabus). A
-   * second time is ignored by the partial unique indexes.
+   * second time is ignored by the partial unique indexes. Returns true the first time.
    */
-  async recordOnce(event: OnceEvent, manager?: EntityManager): Promise<void> {
-    await (manager ?? this.events.manager)
+  async recordOnce(event: OnceEvent, manager?: EntityManager): Promise<boolean> {
+    const inserted = await (manager ?? this.events.manager)
       .createQueryBuilder()
       .insert()
       .into(ActivityEvent)
@@ -55,7 +55,9 @@ export class ActivityService {
         level: event.level ?? null,
       })
       .orIgnore()
+      .returning(['id'])
       .execute();
+    return (inserted.raw as unknown[]).length > 0;
   }
 
   /** One more chapter ticked today: today's roll-up line goes up and moves to the top. */

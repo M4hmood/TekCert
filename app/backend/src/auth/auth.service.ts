@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   AUTH_PROBLEM,
   type CurrentUser,
+  isYearPromptDue,
   LOCKOUT_MINUTES,
   type ResetPasswordInput,
   type SignInInput,
@@ -87,7 +88,10 @@ export class AuthService {
     const user = await this.users.findWithClass(userId);
     // The token row cascades with the account, so this only happens if it was just deleted.
     if (!user) throw invalidLink();
-    return { user: toCurrentUser(user), session: await this.sessions.create(user, false, device) };
+    return {
+      user: toCurrentUser(user, this.clock.now()),
+      session: await this.sessions.create(user, false, device),
+    };
   }
 
   async signIn(input: SignIn, device: DeviceInfo): Promise<SessionResult> {
@@ -118,7 +122,7 @@ export class AuthService {
       });
     }
     return {
-      user: toCurrentUser(user),
+      user: toCurrentUser(user, this.clock.now()),
       session: await this.sessions.create(user, input.remember, device),
     };
   }
@@ -162,7 +166,7 @@ export class AuthService {
         status: HttpStatus.UNAUTHORIZED,
       });
     }
-    return toCurrentUser(user);
+    return toCurrentUser(user, this.clock.now());
   }
 
   private async sendVerification(user: User): Promise<void> {
@@ -207,7 +211,7 @@ export interface SessionResult {
 }
 
 /** `user.class` must be loaded. */
-function toCurrentUser(user: User): CurrentUser {
+function toCurrentUser(user: User, now: Date): CurrentUser {
   return {
     id: user.id,
     email: user.email,
@@ -217,6 +221,16 @@ function toCurrentUser(user: User): CurrentUser {
     classCode: user.class?.code ?? null,
     avatarPath: avatarPath(user.id, user.avatarKey),
     onboardingCompleted: user.onboardingCompletedAt !== null,
+    theme: user.theme,
+    alumni: user.alumniSince !== null,
+    yearPromptDue: isYearPromptDue(
+      {
+        confirmedYear: user.enrolmentConfirmedYear,
+        alumni: user.alumniSince !== null,
+        onboarded: user.onboardingCompletedAt !== null,
+      },
+      now,
+    ),
   };
 }
 

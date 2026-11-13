@@ -1,5 +1,11 @@
 import type { Specialty } from '@tekcert/types';
-import { type BoardMember, buildSpecialtyBoard, buildStudentBoard, type Total } from './board';
+import {
+  type BoardMember,
+  buildSpecialtyBoard,
+  buildStudentBoard,
+  rankChanges,
+  type Total,
+} from './board';
 
 const member = (id: string, visible = true): BoardMember => ({
   person: {
@@ -120,6 +126,32 @@ describe('buildStudentBoard', () => {
     });
     expect(board.me).toBeNull();
     expect(board.rows).toHaveLength(1);
+  });
+});
+
+describe('rankChanges', () => {
+  it('lists the students whose rank moved, with the places gained or lost', () => {
+    const moved = rankChanges(
+      ['a', 'b', 'c', 'd'],
+      totals({ a: 10, b: 20, c: 30, d: 5 }),
+      totals({ a: 10, b: 5, c: 1, d: 0 }),
+    );
+    expect(moved).toEqual([
+      { id: 'c', rank: 1, change: 2 },
+      { id: 'a', rank: 3, change: -2 },
+    ]);
+  });
+
+  it('leaves out students who had no points a week ago', () => {
+    // b went from nothing to first: a week ago they weren't really ranked.
+    expect(rankChanges(['a', 'b'], totals({ a: 10, b: 20 }), totals({ a: 10 }))).toEqual([
+      { id: 'a', rank: 2, change: -1 },
+    ]);
+  });
+
+  it('is empty when nobody moved', () => {
+    expect(rankChanges(['a', 'b'], totals({ a: 30, b: 20 }), totals({ a: 20, b: 10 }))).toEqual([]);
+    expect(rankChanges([], new Map(), new Map())).toEqual([]);
   });
 });
 

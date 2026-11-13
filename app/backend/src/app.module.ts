@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerModule } from 'nestjs-pino';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './auth/auth.module';
@@ -15,8 +16,10 @@ import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { MailModule } from './mail/mail.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
 import { ProgressModule } from './progress/progress.module';
+import { SettingsModule } from './settings/settings.module';
 import { StorageModule } from './storage/storage.module';
 
 export const REQUEST_ID_HEADER = 'x-request-id';
@@ -45,6 +48,8 @@ export const REQUEST_ID_HEADER = 'x-request-id';
         },
       }),
     }),
+    // Runs the weekly leaderboard notification (leaderboard/rank-digest.service.ts).
+    ScheduleModule.forRoot(),
     CommonModule,
     DatabaseModule,
     MailModule,
@@ -57,6 +62,8 @@ export const REQUEST_ID_HEADER = 'x-request-id';
     ProgressModule,
     CommunityModule,
     LeaderboardModule,
+    NotificationsModule,
+    SettingsModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },

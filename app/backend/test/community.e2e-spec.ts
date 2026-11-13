@@ -93,6 +93,7 @@ describe('Community directory and profiles (e2e)', () => {
         year: 4,
         specialty: 'CIM',
         availableToHelp: false,
+        alumni: false,
         isMe: false,
         held: expect.arrayContaining([
           { code: 'CLF-C02', slug: 'clf-c02' },

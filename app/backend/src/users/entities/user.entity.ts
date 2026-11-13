@@ -1,4 +1,4 @@
-import { ROLES, type Role } from '@tekcert/types';
+import { ROLES, type Role, type Theme, THEMES } from '@tekcert/types';
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { SchoolClass } from '../../school/entities/school-class.entity';
 import { Specialty } from '../../school/entities/specialty.entity';
@@ -72,4 +72,22 @@ export class User extends Timestamped {
 
   @Column({ type: 'timestamptz', nullable: true })
   onboardingCompletedAt!: Date | null;
+
+  /** Light, dark or the device's choice. Kept on the account so it follows the student. */
+  @Column({ type: 'enum', enum: THEMES, enumName: 'user_theme', default: 'system' })
+  theme!: Theme;
+
+  /**
+   * The academic year (2026 for 2026-27) the student last confirmed their class for. A later
+   * year brings the "Where are you this year?" prompt. Null until onboarding is finished.
+   */
+  @Column({ type: 'smallint', nullable: true })
+  enrolmentConfirmedYear!: number | null;
+
+  /**
+   * Set when the student says they graduated or left TEK-UP. They keep their account and their
+   * last class, leave the leaderboards, and are no longer asked about the year.
+   */
+  @Column({ type: 'timestamptz', nullable: true })
+  alumniSince!: Date | null;
 }

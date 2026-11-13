@@ -82,6 +82,25 @@ export class PointsService {
     return new Map(rows.map((row) => [row.userId, { points: row.points, chapters: row.chapters }]));
   }
 
+  /** The student's whole ledger, oldest first: for their data export. */
+  ledgerOf(
+    userId: string,
+  ): Promise<
+    Pick<PointEvent, 'delta' | 'reason' | 'certificationId' | 'chapterId' | 'createdAt'>[]
+  > {
+    return this.events.find({
+      where: { userId },
+      select: {
+        delta: true,
+        reason: true,
+        certificationId: true,
+        chapterId: true,
+        createdAt: true,
+      },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
+  }
+
   /** Grants the badges the student doesn't have yet; returns the ones granted now. */
   async award(manager: EntityManager, userId: string, keys: BadgeKey[]): Promise<BadgeKey[]> {
     if (!keys.length) return [];
