@@ -7,7 +7,9 @@ import { defineConfig, devices } from '@playwright/test';
  * tekcert_test database and read emails from Mailpit's API.
  */
 
-const API_PORT = 4010;
+// Windows sometimes reserves a port range that includes 4010 (Hyper-V / WSL): E2E_API_PORT
+// moves the API elsewhere for that run.
+const API_PORT = Number(process.env.E2E_API_PORT ?? 4010);
 const WEB_PORT = 3010;
 const DATABASE_URL =
   process.env.TEST_DATABASE_URL ?? 'postgresql://tekcert:tekcert@localhost:5432/tekcert_test';
@@ -42,8 +44,9 @@ export default defineConfig({
   webServer: [
     {
       name: 'api',
+      // Students of earlier runs are removed first: boards and lists would fill up with them.
       command:
-        'pnpm --filter backend db:deploy && pnpm --filter backend db:seed:deploy && pnpm --filter backend start',
+        'pnpm --filter backend db:deploy && pnpm --filter backend typeorm query "DELETE FROM users" && pnpm --filter backend db:seed:deploy && pnpm --filter backend start',
       url: `http://127.0.0.1:${API_PORT}/health`,
       env: {
         DATABASE_URL,

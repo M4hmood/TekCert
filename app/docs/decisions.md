@@ -160,7 +160,7 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
     | `auth/` | `Session`, `EmailToken`, `LoginAttempt` | nothing (global guards) |
     | `onboarding/`, `avatars/`, `health/` | nothing | nothing |
 
-    S04 kept `UserCertification` in `certifications/` and added `ChapterProgress` there; points, badges and the feed live in `progress/` (ADR-020). S05 added `community/`, which owns nothing and reads through `users`, `certifications`, `progress` and `paths` (ADR-021).
+    S04 kept `UserCertification` in `certifications/` and added `ChapterProgress` there; points, badges and the feed live in `progress/` (ADR-020). S05 added `community/`, which owns nothing and reads through `users`, `certifications`, `progress` and `paths` (ADR-021). S06 added `leaderboard/`, which owns nothing either (ADR-022).
   - **Dependency direction:** `auth`, `onboarding` and `avatars` depend on `users`, `school`, `certifications` and `paths`. Those four depend only on infrastructure: config, database, mail, storage and common. A cycle means an entity has the wrong owner. Fix the ownership instead of using `forwardRef`.
   - **Module layout:** `*.module.ts`, `*.controller.ts` and `*.service.ts`, plus their specs, sit at the module root. Everything else goes in subfolders, and each module only has the ones it needs: `dto/`, `entities/`, `guards/`, `decorators/`, `utils/` (pure functions, specs alongside), `templates/`, `indicators/`, `interfaces/`, `adapters/`.
   - **Infrastructure:** a global `CommonModule` provides `CLOCK` once. `common/` is split into `filters/`, `exceptions/`, `middleware/` (origin check) and `utils/` (clock). Mail and storage keep only their port in `interfaces/`, and storage keeps the S3 implementation in `adapters/`. The auth email templates move to `auth/templates/`, so `mail/` is transport only. `database/` keeps the connection, `data-source.ts`, the naming strategy, the `Timestamped` base, migrations and seed. It also keeps one `entities.ts` registry that imports every module's entities, because the TypeORM CLI needs the full list.
@@ -241,7 +241,7 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
 - **Consequences:**
   - A chapter removed from the seed drops its `chapter_progress` rows, but the points it earned stay in the ledger (`point_events.chapter_id` has no foreign key).
   - Release 2 adds ledger reasons (verified certification, practice test) without touching existing rows.
-  - S06 leaderboards can sum `point_events` by period (index on user, created_at).
+  - S06 leaderboards sum `point_events` by period (ADR-022).
 
 ## ADR-021 Student directory and profiles (S05)
 - **Context:** Students need to find classmates who hold or prepare a certification and write to them. Every profile is visible to signed-in students (decision 2026-10-29), so there is no "private profile" state. The search spans tables owned by three modules (`users`, `certifications`, `progress`), which ADR-017 keeps apart.
@@ -260,6 +260,27 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - The id lists grow with the number of students holding a certification. At a few thousand students that is fine; past that, the search should move to one SQL query or a search index.
   - Name search is a sequential `ILIKE`. A trigram index is in the backlog if it gets slow.
   - In Release 1 points only come from chapters, so the percentages shown under "Preparing" still let someone estimate hidden points. Release 2 adds other sources of points.
+
+## ADR-022 Leaderboards (S06)
+- **Context:** Students are ranked by points in their class, their specialty and the institute, over the month, the semester and all time. The numbers must match the ledger exactly (ADR-020), and the sprint asked for a p95 under 300 ms with 1,000 students. The sprint file proposed a SQL view or a materialized view refreshed on point events.
+- **Decision:**
+  - **No view and nothing stored.** Each request runs one grouped query on `point_events` for the period (`SUM(delta)` and the net chapter count per student), reads the students of the scope, and ranks them in a pure function (`rankByPoints`, `buildStudentBoard`). A board can't drift from the ledger, and there is nothing to refresh or invalidate.
+  - **Measured:** with 1,000 students and 100,000 ledger rows, the slowest of the twelve boards answers with a p95 of 110 ms (`pnpm --filter backend test:perf`, which rebuilds a `tekcert_perf` database). No index was added: the existing `(user_id, created_at)` index and a sequential scan are enough at this size.
+  - **Students are read as plain rows** for the boards (`UsersService.findRankable`). Building a thousand entities with their relations took about 200 ms on its own and put the institute board over the budget.
+  - **Scopes** are class, specialty and institute, relative to the viewer, with the same rules as the directory: verified email, onboarding finished. Everyone in the scope is ranked, students without points last.
+  - **Ties share a rank** (1, 1, 3). Tied students are ordered by id, which says nothing about who an anonymous row is.
+  - **Periods** are counted in Tunis time. The month is the calendar month. Semester 1 runs 1 September to 31 January and Semester 2 runs 1 February to 31 August (decision 2026-11-11). Tunis stays on UTC+1 all year, so the boundaries are midnight +01:00.
+  - **A period's total can be negative**: a chapter ticked last month and unticked this month is −10 this month. The board shows the ledger's sum as it is.
+  - **Change** is the number of places gained or lost against the same board 7 days ago, computed from the ledger (the period's rows up to a week ago). It is empty when there is nothing to compare with: the period began less than a week ago, or the student had no points a week ago. Without that second rule everyone at zero ties for first, and every newcomer would show a fall.
+  - **Anonymous.** A student with `leaderboard_visible = false` stays ranked with their points, but the row carries no person at all (no id, name, photo or class), and "N points behind …" doesn't name them. They still see their own row. The switch is on the student's own profile (`PATCH /me/profile`), next to "Available to help"; S07 also shows it in Settings.
+  - **What a response holds:** the first 20 rows, plus the viewer's row with two neighbours on each side when they are further down, and a `me` block (rank, gap to the nearest student with more points, the certification to continue).
+  - **Specialties board:** average points per student, all years. ING-1 to 3 students count for the specialty they aim for; undecided students are left out.
+  - **Release 1 wording.** The "Verified" column of the design is "Chapters" (finished in the period), and Scoring lists only "+10 per chapter".
+  - **Ownership (ADR-017):** a `leaderboard/` module with no entities, depending on `users`, `certifications` and `progress`.
+- **Consequences:**
+  - Cost grows with the ledger: the all-time board scans every row. Past a few million rows, a summary table per student and month (filled in the tick transaction) or a materialized view becomes worth it; the pure ranking code stays the same.
+  - There is no history of ranks, so "change" can't look further back than the ledger allows and there are no rank charts.
+  - Release 2 adds ledger reasons (verified certifications, practice tests); the boards pick them up without change, and the chapter count keeps counting chapters only.
 
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).

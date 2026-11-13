@@ -44,6 +44,8 @@ Solo developer + Claude Code · 1-week sprints · English only at launch · emai
 - A trigram index for the directory's name search if it gets slow (ADR-021).
 - Hidden points can still be estimated from the "Preparing" percentages while chapters are the only source of points (ADR-021). Decide whether a student who hides their name also hides their percentages.
 - The profile's back link always goes to the directory. The design returns to where the student came from ("Community · SAA-C03").
+- A per-student, per-month points summary (or a materialized view) once the ledger passes a few million rows: the all-time leaderboard scans every row (ADR-022).
+- Rank history: the leaderboard's "change" only compares with a week ago, and there are no rank charts.
 - Clean up expired rows in `sessions`, `email_tokens` and `login_attempts` (a scheduled job).
 - Move the per-IP auth rate limit to a shared store (e.g. Redis) once the API runs on several instances.
 - Subset the Material Symbols font to the icons actually used (it is about 3 MB today). Fits with the S08 performance pass.

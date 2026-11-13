@@ -14,7 +14,7 @@ import { ProgressService } from './progress.service';
 
 /**
  * Points, badges, the classmates feed and the dashboard (ADR-020). Depends on certifications,
- * paths and users; the community module reads points and activity from it (ADR-021).
+ * paths and users; the community and leaderboard modules read points and activity from it (ADR-021, ADR-022).
  */
 @Module({
   imports: [

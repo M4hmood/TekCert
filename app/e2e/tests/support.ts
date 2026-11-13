@@ -68,16 +68,20 @@ export async function signInNewStudent(
 }
 
 /**
- * Finishes onboarding through the API (ING-4 CIM, group A), as the app screens require.
+ * Finishes onboarding through the API (ING-4 CIM, group A unless `klass` says otherwise), as
+ * the app screens require.
  * The browser must already be signed in.
  */
 export async function completeOnboarding(
   request: APIRequestContext,
   certifications: string[] = [],
+  klass: { year: number; specialty: string; group: string } = {
+    year: 4,
+    specialty: 'CIM',
+    group: 'A',
+  },
 ): Promise<void> {
-  const enrolment = await request.put('/api/onboarding/enrolment', {
-    data: { year: 4, specialty: 'CIM', group: 'A' },
-  });
+  const enrolment = await request.put('/api/onboarding/enrolment', { data: klass });
   expect(enrolment.ok()).toBe(true);
   if (certifications.length) {
     const declared = await request.put('/api/onboarding/certifications', {

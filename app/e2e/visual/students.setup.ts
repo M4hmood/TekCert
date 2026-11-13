@@ -2,9 +2,15 @@ import { expect, type Page, test as setup } from '@playwright/test';
 import { signInNewStudent } from '../tests/support';
 import { STUDENT_FILE } from './shared';
 
+/**
+ * The student the screens are taken as. The others have names of their own: lists order
+ * students by name, and identical names would fall back on random ids.
+ */
+const MAIN = { firstName: 'Test', lastName: 'Student' };
+
 /** Onboards as ING-4 CIM A holding CLF-C02, and stops on the recommended path. */
-async function walkToResult(page: Page) {
-  await signInNewStudent(page);
+async function walkToResult(page: Page, names: { firstName: string; lastName: string }) {
+  await signInNewStudent(page, undefined, names);
   await page.goto('/onboarding');
   await page.getByRole('button', { name: /ING-4/ }).click();
   await page.getByRole('button', { name: 'Continue' }).click();
@@ -44,10 +50,10 @@ setup('students', async ({ browser }) => {
   setup.setTimeout(180_000);
   const students = {
     // Stays on the recommended path screen, with a certification declared.
-    result: async (page: Page) => walkToResult(page),
+    result: async (page: Page) => walkToResult(page, { firstName: 'Salma', lastName: 'Haddad' }),
     // Shown in the main student's "Who to ask" lists, "Also preparing" and the feed.
     peer: async (page: Page) => {
-      await walkToResult(page);
+      await walkToResult(page, { firstName: 'Rania', lastName: 'Gharbi' });
       await finishAndStart(page, 4);
       const help = await page.request.patch('/api/me/profile', {
         data: { availableToHelp: true },
@@ -55,12 +61,12 @@ setup('students', async ({ browser }) => {
       expect(help.ok()).toBe(true);
     },
     main: async (page: Page) => {
-      await walkToResult(page);
+      await walkToResult(page, MAIN);
       await finishAndStart(page, 5);
     },
     // Onboarded, nothing started: the empty dashboard.
     fresh: async (page: Page) => {
-      await walkToResult(page);
+      await walkToResult(page, { firstName: 'Omar', lastName: 'Kacem' });
       await finish(page);
     },
   };

@@ -23,7 +23,7 @@ import {
 } from '@/components/progress/parts';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { groupOf } from './format';
-import { CopyEmail, HelpSwitch } from './profile-actions';
+import { CopyEmail, ProfileSwitches } from './profile-actions';
 
 const CARD = 'flex flex-col border border-ln rounded-[16px] bg-sf';
 const H2 = 'font-serif text-[28px] font-medium max-md:px-1 max-md:text-[22px] max-md:font-semibold';
@@ -232,7 +232,12 @@ export function ProfileView({ profile, now }: ProfileViewProps) {
 
         <div className="flex flex-col gap-5 min-w-0 max-md:gap-3 max-md:pt-3">
           <LevelCard profile={profile} />
-          {isMe && <HelpSwitch initial={profile.availableToHelp} />}
+          {isMe && (
+            <ProfileSwitches
+              availableToHelp={profile.availableToHelp}
+              leaderboardVisible={profile.privacy?.leaderboardVisible ?? true}
+            />
+          )}
           {profile.path && <PathCard path={profile.path} isMe={isMe} />}
           <section aria-labelledby="badges-title" className={cn(CARD, 'gap-4 p-5.5 max-md:p-4')}>
             <div className="flex items-baseline justify-between">
@@ -265,7 +270,7 @@ export function ProfileView({ profile, now }: ProfileViewProps) {
                     >
                       <Icon name={line.icon} size={18} className="flex-none text-ink3" />
                       <span className="flex-1 first-letter:uppercase">{line.what}</span>
-                      <span className="flex-none text-ink3 text-[12.5px]">
+                      <span className="flex-none w-18 text-ink3 text-[12.5px] text-end">
                         {timeAgo(item.at, new Date(now))}
                       </span>
                     </li>

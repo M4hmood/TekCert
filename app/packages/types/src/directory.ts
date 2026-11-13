@@ -171,8 +171,21 @@ export const StudentProfileSchema = z.object({
 });
 export type StudentProfile = z.infer<typeof StudentProfileSchema>;
 
-export const UpdateMyProfileSchema = z.object({ availableToHelp: z.boolean() });
+/** The switches on my own profile. Send the ones that change. */
+export const UpdateMyProfileSchema = z
+  .object({
+    availableToHelp: z.boolean().optional(),
+    /** False: I stay ranked, shown as "Anonymous". */
+    leaderboardVisible: z.boolean().optional(),
+  })
+  .refine(
+    (changes) => changes.availableToHelp !== undefined || changes.leaderboardVisible !== undefined,
+    { message: 'Nothing to change' },
+  );
 export type UpdateMyProfileInput = z.infer<typeof UpdateMyProfileSchema>;
 
-export const MyProfileSettingsSchema = z.object({ availableToHelp: z.boolean() });
+export const MyProfileSettingsSchema = z.object({
+  availableToHelp: z.boolean(),
+  leaderboardVisible: z.boolean(),
+});
 export type MyProfileSettings = z.infer<typeof MyProfileSettingsSchema>;

@@ -1,12 +1,31 @@
+import { SpecialtyLeaderboardSchema, StudentLeaderboardSchema } from '@tekcert/types';
 import type { Metadata } from 'next';
-import { Placeholder } from '@/components/Placeholder';
+import { boardPath, parseBoardFilters } from '@/components/leaderboard/format';
+import { LeaderboardView } from '@/components/leaderboard/LeaderboardView';
+import { getAsStudent } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'Leaderboard' };
+export const dynamic = 'force-dynamic';
 
-export default function Page() {
+type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+
+export default async function LeaderboardPage({ searchParams }: Props) {
+  const filters = parseBoardFilters(await searchParams);
+  // The students board is always loaded: it carries the scope labels and my position.
+  const [students, specialties] = await Promise.all([
+    getAsStudent(boardPath({ ...filters, view: 'students' }), StudentLeaderboardSchema).catch(
+      () => null,
+    ),
+    filters.view === 'specialties'
+      ? getAsStudent(boardPath(filters), SpecialtyLeaderboardSchema).catch(() => null)
+      : null,
+  ]);
   return (
-    <Placeholder title="Leaderboard" icon="leaderboard" arrives="Sprint 6">
-      Rankings by class, specialty and level. This screen is built in Sprint 6.
-    </Placeholder>
+    <LeaderboardView
+      initialFilters={filters}
+      initialStudents={students}
+      initialSpecialties={specialties}
+      now={new Date().toISOString()}
+    />
   );
 }
