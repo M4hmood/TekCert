@@ -4,6 +4,7 @@ import type { ActivityFeed, BadgeState, ChapterTickResult, Dashboard } from '@te
 import { cn, EmptyState, Toast } from '@tekcert/ui';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
+import { NotificationBell } from '@/components/NotificationBell';
 import { PageHeader } from '@/components/PageHeader';
 import { useChapterTicks } from '@/components/progress/use-chapter-ticks';
 import { ActivityCard } from './ActivityCard';
@@ -52,6 +53,7 @@ export function DashboardView({ dashboard, activity, now }: DashboardViewProps) 
   const header = (
     <PageHeader
       title={`Hello ${dashboard.firstName}`}
+      actions={<NotificationBell />}
       overline={
         dashboard.empty ? (
           'Welcome to TekCert'

@@ -27,6 +27,9 @@ const USER = {
   classCode: null,
   avatarPath: null,
   onboardingCompleted: true,
+  theme: null,
+  alumni: false,
+  yearPromptDue: false,
 };
 
 beforeEach(() => {

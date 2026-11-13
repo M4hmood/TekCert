@@ -41,7 +41,7 @@ export interface ProfileViewProps {
 export function ProfileView({ profile, now }: ProfileViewProps) {
   const { isMe } = profile;
   const name = `${profile.firstName} ${profile.lastName}`;
-  const group = `ING-${profile.year}${profile.specialty ? ` ${profile.specialty.code}` : ''} · group ${groupOf(profile.classCode)}`;
+  const group = `${profile.alumni ? 'Alumni · ' : ''}ING-${profile.year}${profile.specialty ? ` ${profile.specialty.code}` : ''} · group ${groupOf(profile.classCode)}`;
   const pointsLine =
     profile.points === null ? (
       profile.level.name
