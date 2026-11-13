@@ -73,9 +73,12 @@ export class User extends Timestamped {
   @Column({ type: 'timestamptz', nullable: true })
   onboardingCompletedAt!: Date | null;
 
-  /** Light, dark or the device's choice. Kept on the account so it follows the student. */
-  @Column({ type: 'enum', enum: THEMES, enumName: 'user_theme', default: 'system' })
-  theme!: Theme;
+  /**
+   * Light, dark or the device's choice, kept on the account so it follows the student. Null
+   * until they choose: the browser's own setting then applies.
+   */
+  @Column({ type: 'enum', enum: THEMES, enumName: 'user_theme', nullable: true })
+  theme!: Theme | null;
 
   /**
    * The academic year (2026 for 2026-27) the student last confirmed their class for. A later

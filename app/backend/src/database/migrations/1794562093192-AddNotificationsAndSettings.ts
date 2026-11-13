@@ -26,9 +26,7 @@ export class AddNotificationsAndSettings1794562093192 implements MigrationInterf
       `CREATE UNIQUE INDEX "UQ_notifications_user_dedupe" ON "notifications"  ("user_id", "dedupe_key") `,
     );
     await queryRunner.query(`CREATE TYPE "public"."user_theme" AS ENUM('light', 'dark', 'system')`);
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "theme" "public"."user_theme" NOT NULL DEFAULT 'system'`,
-    );
+    await queryRunner.query(`ALTER TABLE "users" ADD "theme" "public"."user_theme"`);
     await queryRunner.query(`ALTER TABLE "users" ADD "enrolment_confirmed_year" smallint`);
     await queryRunner.query(`ALTER TABLE "users" ADD "alumni_since" TIMESTAMP WITH TIME ZONE`);
     // Students already onboarded chose their class in the academic year they joined (it

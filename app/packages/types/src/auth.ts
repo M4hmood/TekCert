@@ -102,7 +102,8 @@ export const CurrentUserSchema = z.object({
   /** API path of the profile photo (versioned, so it changes when the photo does), or null. */
   avatarPath: z.string().nullable(),
   onboardingCompleted: z.boolean(),
-  theme: ThemeSchema,
+  /** Null until the student chooses one: the browser's own setting then applies. */
+  theme: ThemeSchema.nullable(),
   /** Said they left TEK-UP: off the leaderboards, and never asked about the year again. */
   alumni: z.boolean(),
   /** A new academic year began and the student hasn't said where they are yet. */

@@ -79,7 +79,7 @@ describe('Settings (e2e)', () => {
       enrolment: { year: 4, group: 'D', specialty: 'AIOT', classCode: 'ING-4-AIOT-D' },
       alumni: false,
       privacy: { leaderboardVisible: true, availableToHelp: false },
-      theme: 'system',
+      theme: null,
       academicYear: { due: false },
     });
     expect(mine.academicYear.label).toBe(
@@ -133,7 +133,8 @@ describe('Settings (e2e)', () => {
   describe('PATCH /me/preferences', () => {
     it('keeps my theme on my account, so another device gets it', async () => {
       const s = await onboardedStudent(t, { year: 4, specialty: 'AIOT', group: 'D' });
-      expect((await me(s.agent)).theme).toBe('system');
+      // Nothing chosen yet: the browser's own setting applies.
+      expect((await me(s.agent)).theme).toBeNull();
       const saved = SettingsSchema.parse(
         (await s.agent.patch('/me/preferences').send({ theme: 'dark' }).expect(200)).body,
       );

@@ -40,7 +40,8 @@ export const SettingsSchema = z.object({
   /** Said they left TEK-UP; `enrolment` is then their last class. */
   alumni: z.boolean(),
   privacy: MyProfileSettingsSchema,
-  theme: ThemeSchema,
+  /** Null until the student chooses one: the browser's own setting then applies. */
+  theme: ThemeSchema.nullable(),
   academicYear: z.object({
     /** The year the current academic year started in. */
     year: z.number().int(),
