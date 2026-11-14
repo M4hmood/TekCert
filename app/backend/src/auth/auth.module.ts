@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import type { Env } from '../config/env';
 import { UsersModule } from '../users/users.module';
 import { AccessTokenService } from './access-token.service';
+import { AuthCleanupService } from './auth-cleanup.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { EmailTokensService } from './email-tokens.service';
@@ -38,9 +39,12 @@ import { SessionsService } from './sessions.service';
     LoginAttemptsService,
     EmailTokensService,
     AuthService,
+    AuthCleanupService,
     // Order matters: authenticate first, then check roles.
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
   ],
+  // The nightly clean-up (maintenance module) deletes expired auth rows through this service.
+  exports: [AuthCleanupService],
 })
 export class AuthModule {}

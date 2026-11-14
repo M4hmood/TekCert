@@ -3,6 +3,7 @@ export * from './catalog.js';
 export * from './catalog-filter.js';
 export * from './community.js';
 export * from './directory.js';
+export * from './landing.js';
 export * from './leaderboard.js';
 export * from './notifications.js';
 export * from './onboarding.js';
