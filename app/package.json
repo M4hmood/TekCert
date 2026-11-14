@@ -20,6 +20,7 @@
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter backend db:migrate",
     "db:seed": "pnpm --filter backend db:seed",
+    "db:seed:pilot": "pnpm --filter backend db:seed:pilot",
     "db:reset": "pnpm --filter backend db:reset"
   },
   "devDependencies": {

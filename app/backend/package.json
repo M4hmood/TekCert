@@ -20,6 +20,7 @@
     "db:deploy": "typeorm migration:run -d dist/database/data-source.js",
     "db:seed:deploy": "node dist/database/seed/index.js",
     "db:seed": "tsx src/database/seed/index.ts",
+    "db:seed:pilot": "tsx src/database/seed/pilot.ts",
     "db:reset": "pnpm typeorm schema:drop && pnpm db:migrate && pnpm db:seed",
     "deploy:bundle": "node -e \"require('node:fs').rmSync('../deploy/backend',{recursive:true,force:true})\" && pnpm --filter backend deploy --prod --legacy ../deploy/backend"
   },
