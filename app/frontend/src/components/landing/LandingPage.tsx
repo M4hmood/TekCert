@@ -81,7 +81,7 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
           className="flex items-center gap-2.75 text-ink no-underline"
         >
           <Image
-            src="/icons/tekcert.png"
+            src="/icons/tekcert-96.png"
             alt=""
             width={36}
             height={36}

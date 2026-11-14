@@ -233,7 +233,7 @@ Source of truth: `backend/src/database/seed/data/certifications.ts` (loaded by `
 | LFCS | Linux Foundation Certified System Administrator | – | associate | 3/5 | none |
 | LFCE | Linux Foundation Certified Engineer | – | professional | 4/5 | none |
 | CKA | Certified Kubernetes Administrator | – | professional | 4/5 | lf-cka.webp |
-| CKAD | Certified Kubernetes Application Developer | – | associate | 4/5 | lf-ckad.png |
+| CKAD | Certified Kubernetes Application Developer | – | associate | 4/5 | lf-ckad.webp |
 | CFCD | Cloud Foundry Certified Developer | – | associate | 3/5 | none |
 | COA | Certified OpenStack Administrator | – | associate | 4/5 | none |
 | CHSA | Certified Hyperledger Sawtooth Administrator | – | associate | 3/5 | none |
@@ -257,15 +257,15 @@ Source of truth: `backend/src/database/seed/data/certifications.ts` (loaded by `
 | eCPPT | INE Security Certified Professional Penetration Tester | – | professional | 4/5 | ine-ecppt.svg |
 | ICCA | INE Certified Cloud Associate | – | foundational | 2/5 | none |
 | eCIR | INE Security Certified Incident Responder | – | professional | 4/5 | none |
-| eSOC | INE Security Operations | – | associate | 3/5 | ine-esoc.svg |
+| eSOC | INE Security Operations | – | associate | 3/5 | ine-esoc.webp |
 
 **Python Institute (4)**
 
 | Code | Name | Exam | Level | Difficulty | Badge |
 |---|---|---|---|---|---|
-| PCEP | Certified Entry-Level Python Programmer | PCEP-30-02 | foundational | 1/5 | pi-pcep.png |
-| PCAP | Certified Associate in Python Programming | PCAP-31-03 | associate | 2/5 | pi-pcap.png |
-| PCPP-32-1/2 | Certified Professional in Python Programming 1/2 | PCPP-32-1xx / PCPP-32-2xx | professional | 4/5 | pi-pcpp.png |
+| PCEP | Certified Entry-Level Python Programmer | PCEP-30-02 | foundational | 1/5 | pi-pcep.webp |
+| PCAP | Certified Associate in Python Programming | PCAP-31-03 | associate | 2/5 | pi-pcap.webp |
+| PCPP-32-1/2 | Certified Professional in Python Programming 1/2 | PCPP-32-1xx / PCPP-32-2xx | professional | 4/5 | pi-pcpp.webp |
 | CEPP | Certified Expert in Python Programming | – | expert | 5/5 | none |
 
 **Huawei (3)**

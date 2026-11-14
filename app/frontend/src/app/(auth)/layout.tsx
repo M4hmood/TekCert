@@ -24,7 +24,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
       <aside className="flex flex-col justify-between gap-8 px-14 py-12 overflow-hidden bg-hero text-hero-ink max-lg:flex-row max-lg:flex-wrap max-lg:items-center max-lg:gap-5.5 max-lg:px-6 max-lg:pt-7 max-lg:pb-8">
         <span className="flex items-center gap-2.75 text-inherit no-underline">
           <Image
-            src="/icons/tekcert.png"
+            src="/icons/tekcert-96.png"
             alt=""
             width={40}
             height={40}

@@ -75,7 +75,7 @@ export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
           aria-label="TekCert home"
         >
           <Image
-            src="/icons/tekcert.png"
+            src="/icons/tekcert-96.png"
             alt=""
             width={36}
             height={36}

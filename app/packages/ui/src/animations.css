@@ -154,7 +154,7 @@
     no-repeat;
   background-position: 160% 0;
   background-size: 260% 100%;
-  mask: url('/icons/tekcert.png') center / contain no-repeat;
+  mask: url('/icons/tekcert-512.webp') center / contain no-repeat;
 }
 
 @utility splash-bloom {

@@ -61,7 +61,7 @@ export function Splash() {
         <span className="absolute inset-[21%] opacity-0 animate-splash-strike">
           {/* Unoptimised: the glint masks this same file, so the browser loads it once. */}
           <Image
-            src="/icons/tekcert.png"
+            src="/icons/tekcert-512.webp"
             alt=""
             fill
             sizes="280px"

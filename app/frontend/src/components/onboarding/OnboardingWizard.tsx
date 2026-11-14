@@ -190,7 +190,7 @@ export function OnboardingWizard({
       <header className="grid grid-cols-[240px_1fr_240px] items-center py-5 px-12 border-b border-ln max-onboarding:grid-cols-[auto_1fr_auto] max-onboarding:gap-6 max-onboarding:py-4 max-onboarding:px-6 max-md:flex max-md:pt-3.5 max-md:px-3 max-md:pb-3 max-md:border-b-0">
         <span className="flex items-center gap-2.75 max-md:hidden">
           <Image
-            src="/icons/tekcert.png"
+            src="/icons/tekcert-96.png"
             alt=""
             width={32}
             height={32}

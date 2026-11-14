@@ -50,7 +50,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 export const config = {
   // Pages only: skip the API proxy, Next internals, the health and status checks and static files.
   matcher: [
-    '/((?!api/|_next/|healthz|status$|badges/|favicon\\.ico|.*\\.(?:png|svg|jpg|ico|woff2?)$).*)',
+    '/((?!api/|_next/|healthz|status$|badges/|favicon\\.ico|.*\\.(?:png|svg|jpg|webp|avif|gif|ico|woff2?)$).*)',
   ],
 };
 

@@ -9,7 +9,7 @@ import { getCurrentUser } from '@/lib/session';
 export const metadata: Metadata = {
   title: { default: 'TekCert', template: '%s · TekCert' },
   description: 'IT certifications for TEK-UP students: prepare, track your progress, find help.',
-  icons: { icon: '/icons/tekcert.png', apple: '/icons/tekcert.png' },
+  icons: { icon: '/icons/tekcert-96.png', apple: '/icons/tekcert-180.png' },
 };
 
 export const viewport: Viewport = {
