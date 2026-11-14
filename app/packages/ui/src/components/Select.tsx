@@ -97,7 +97,10 @@ export function SelectField<T extends string>({
         }}
       >
         <SelectTrigger aria-labelledby={labelId} className="h-12 text-[15px]">
-          <SelectValue placeholder="Choose…">{selected?.label}</SelectValue>
+          {/* A long value is cut with an ellipsis instead of pushing the chevron out. */}
+          <span className="min-w-0 truncate">
+            <SelectValue placeholder="Choose…">{selected?.label}</SelectValue>
+          </span>
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
