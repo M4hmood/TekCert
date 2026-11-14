@@ -48,8 +48,10 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  // Pages only: skip the API proxy, Next internals, health check and static files.
-  matcher: ['/((?!api/|_next/|healthz|badges/|favicon\\.ico|.*\\.(?:png|svg|jpg|ico|woff2?)$).*)'],
+  // Pages only: skip the API proxy, Next internals, the health and status checks and static files.
+  matcher: [
+    '/((?!api/|_next/|healthz|status$|badges/|favicon\\.ico|.*\\.(?:png|svg|jpg|ico|woff2?)$).*)',
+  ],
 };
 
 /** Returns the new Set-Cookie headers, or null when the refresh token is no longer valid. */

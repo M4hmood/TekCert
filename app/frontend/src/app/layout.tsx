@@ -28,6 +28,16 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const theme = user?.theme ?? parseTheme(jar.get(THEME_COOKIE)?.value);
   return (
     <html lang="en" data-theme={theme === 'system' ? undefined : theme}>
+      {/* Where the browser reports errors, when monitoring is set up (lib/monitoring.ts). */}
+      {process.env.SENTRY_DSN && (
+        <head>
+          <meta name="sentry-dsn" content={process.env.SENTRY_DSN} />
+          <meta
+            name="sentry-environment"
+            content={process.env.SENTRY_ENVIRONMENT ?? process.env.NODE_ENV}
+          />
+        </head>
+      )}
       <body>
         {!jar.has(SPLASH_COOKIE) && <Splash />}
         {children}

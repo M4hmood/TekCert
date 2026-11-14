@@ -23,6 +23,10 @@ describe('route guard helpers', () => {
     expect(isPublicPage('/sign-in-help')).toBe(false);
     expect(isSignedOutOnly('/sign-up')).toBe(true);
     expect(isSignedOutOnly('/verify-email')).toBe(false);
+    // The landing page is for visitors; a signed-in student goes to their dashboard instead.
+    expect(isPublicPage('/')).toBe(true);
+    expect(isSignedOutOnly('/')).toBe(true);
+    expect(isPublicPage('/catalog')).toBe(false);
   });
 
   it('treats a token as fresh only well before it expires', () => {

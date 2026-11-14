@@ -10,16 +10,18 @@ const PUBLIC_PAGES = [
 ];
 /** Public pages a signed-in student has no reason to see. */
 const SIGNED_OUT_ONLY = ['/sign-in', '/sign-up'];
+/** The landing page: public, and replaced by the dashboard for a signed-in student. */
+const LANDING = '/';
 
 const under = (pathname: string, base: string) =>
   pathname === base || pathname.startsWith(`${base}/`);
 
 export function isPublicPage(pathname: string): boolean {
-  return PUBLIC_PAGES.some((base) => under(pathname, base));
+  return pathname === LANDING || PUBLIC_PAGES.some((base) => under(pathname, base));
 }
 
 export function isSignedOutOnly(pathname: string): boolean {
-  return SIGNED_OUT_ONLY.some((base) => under(pathname, base));
+  return pathname === LANDING || SIGNED_OUT_ONLY.some((base) => under(pathname, base));
 }
 
 /**
