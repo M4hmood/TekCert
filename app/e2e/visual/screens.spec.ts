@@ -281,25 +281,22 @@ test.describe('signed in', () => {
     await shot(page, 'sidebar-collapsed');
   });
 
-  test('theme forced against the OS', async ({ page, context }) => {
+  test('theme forced against the OS', async ({ page }) => {
     const osIsDark = await page.evaluate(
       () => window.matchMedia('(prefers-color-scheme: dark)').matches,
     );
-    await context.addCookies([
-      { name: 'theme', value: osIsDark ? 'light' : 'dark', url: BASE_URL },
-    ]);
-    const forced = osIsDark ? 'light' : 'dark';
-    await page.goto('/catalog');
-    await shot(page, 'theme-forced');
-    await page.goto('/catalog/saa-c03');
-    await shot(page, 'theme-forced-certification');
-    // A theme chosen in the browser is saved on the account: hand the account back to
-    // "system", or every later screen of this student would keep the forced theme.
-    await expect
-      .poll(async () => (await page.request.get('/api/auth/me').then((r) => r.json())).theme)
-      .toBe(forced);
-    const reset = await page.request.patch('/api/me/preferences', { data: { theme: 'system' } });
-    expect(reset.ok()).toBe(true);
+    // A signed-in student's theme is the one saved on their account (ADR-023).
+    const save = (theme: string) => page.request.patch('/api/me/preferences', { data: { theme } });
+    expect((await save(osIsDark ? 'light' : 'dark')).ok()).toBe(true);
+    try {
+      await page.goto('/catalog');
+      await shot(page, 'theme-forced');
+      await page.goto('/catalog/saa-c03');
+      await shot(page, 'theme-forced-certification');
+    } finally {
+      // Back to the device's theme, or every later screen of this student would stay forced.
+      expect((await save('system')).ok()).toBe(true);
+    }
   });
 
   test('widths between the breakpoints', async ({ page }, testInfo) => {

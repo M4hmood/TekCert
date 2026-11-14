@@ -36,6 +36,8 @@ export async function shot(page: Page, name: string) {
       // "2026-27 academic year": a new one every September.
       page.getByText(/\d{4}-\d{2} academic year/),
       page.getByText(/^e2e\.[0-9a-f]+@tek-up\.de$/),
+      // Settings › Account shows the address in a read-only field.
+      page.locator('main input[type="email"][readonly]'),
       // The phone's mail button shows the address in a proportional font: mask the whole button.
       page.locator('main a[href^="mailto:"]'),
     ],
