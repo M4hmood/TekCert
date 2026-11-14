@@ -5,6 +5,7 @@ export * from './community.js';
 export * from './directory.js';
 export * from './landing.js';
 export * from './leaderboard.js';
+export * from './monitoring.js';
 export * from './notifications.js';
 export * from './onboarding.js';
 export * from './problem.js';
