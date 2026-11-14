@@ -10,22 +10,22 @@
 3. Stop and wait for approval.
 
 ## Scope
-- [ ] Notification model + in-app list: filters, read / unread, mark all read
-- [ ] Email notifications with per-type preferences
-- [ ] Settings: enrolment (year, group, specialty), privacy, notification preferences, appearance (light / dark / system), account (display name, export my data as CSV, sign out)
-- [ ] New academic year prompt (confirm year / repeating / left TEK-UP)
+- [x] Notification model + in-app list: filters, read / unread, mark all read
+- [x] Email notifications with per-type preferences
+- [x] Settings: enrolment (year, group, specialty), privacy, notification preferences, appearance (light / dark / system), account (display name, export my data as CSV, sign out)
+- [x] New academic year prompt (confirm year / repeating / left TEK-UP)
 
 ## Done when
-- [ ] Every notification type in the design can be triggered from a real event
-- [ ] Theme preference persists across devices
+- [x] Every notification type in the design can be triggered from a real event: the three Release 1 categories. The Release 2 kinds wait for their features (decision 1)
+- [x] Theme preference persists across devices
 
 ## Out of scope
 - Push notifications
 
 ## Plan
-_Written 2026-11-13. Waiting for approval; nothing is built yet._
+_Written 2026-11-13 and approved the same day with the six recommendations; built after S06 merged. See the outcome under "Notes / decisions"._
 
-Branch `sprint/S07-notifications-settings`, cut from `main` once PR #13 (S06) has merged. One PR at the end.
+Branch `sprint/S07-notifications-settings`, cut from `main` (515eada). One PR at the end.
 
 ### Decisions I need from you
 Each one has my recommendation first.
@@ -106,3 +106,47 @@ Emails reuse the layout of the auth emails: one line, one button to the right sc
 - Deleting old notifications (goes to the backlog with the other clean-up job).
 
 ## Notes / decisions
+
+### Decisions from review (2026-11-13)
+The plan was approved with all six recommendations:
+1. Three categories of notification, each from a real event: Community, Leaderboard, Progress. The Release 2 kinds wait for their features.
+2. Everything is on in the app. By email: Progress on, Community and Leaderboard off.
+3. "I'm no longer at TEK-UP" keeps the account, points and profile, marks the student as an alumnus with their last class, and takes them off the leaderboards. Saving a class in Settings undoes it.
+4. The year prompt is due from 1 September (Tunis time). Everyone already onboarded counts as confirmed for 2026-27.
+5. "Export my data" is one CSV file with a `record` column.
+6. First name and Last name are two fields; the email is read-only.
+
+### Outcome (2026-11-14)
+Tests:
+- types: 161 (Vitest), 27 new
+- backend: 84 unit + 138 API e2e (Jest), 11 and 30 new
+- frontend: 189 (Vitest), 59 new
+- Playwright: 98 runs at 1440 and 390 px, 17 skipped by design; 18 new runs for notifications, settings and the year prompt. One run of the catalog test failed once on a connection reset and passed when run again.
+- Visual baseline: retaken for every screen (80 captures across 4 projects, 17 skipped by design) and compared again with no difference. Every signed-in screen changed, because the sidebar now shows the unread count and the setup has two more students. New screens: the notifications list and its empty state, the six settings screens, the year prompt (two states) and the "not confirmed" notice.
+
+Lint, typecheck and build pass. One migration (`AddNotificationsAndSettings`): two tables, three columns on `users`. Screens checked at 1440 and 390 px, light and dark, against design/Notifications and design/Parametres.
+
+**Every notification type can be triggered from a real event ("Done when"):** the API tests start a certification, tick chapters up to a badge, a level and a finished syllabus, and run the weekly leaderboard job, then read the notification and the email each one produced.
+
+**The theme persists across devices ("Done when"):** a Playwright test picks Dark in Settings, signs in from a second browser with no cookie and finds it dark, changes it there, and sees the first browser follow.
+
+Where the build differs from the plan or the design:
+- **"In-app off" still writes a row when email is on.** It is hidden from the list and only stops a second email for the same event. With both channels off nothing is written, as planned.
+- **The saved theme starts empty**, not as "System". A default would have overridden a theme picked in the browser before signing in. The first visit hands that choice to the account.
+- **Moving up is accepted once a year.** A second click, or a second tab, answers 409 instead of moving the student up twice. Repeating and leaving can be answered again.
+- **In ING-5 the first answer is "I graduated"** and "I'm no longer at TEK-UP" stays as the third; both lead to alumni mode.
+- **The leaderboard notification is about the all-time specialty board**, so there is always a week to compare with. Its button opens that board.
+- **ING-1 to 3 students choose the specialty they aim for in Settings › Enrolment**, "Undecided" included, as in onboarding. The design only shows a note there.
+- **Privacy has two switches and a line of explanation.** The design's "Profile visibility" choice is gone (decision of 2026-10-29).
+- **Settings on phones** is a list of sections, each on its own page, with Sign out under the list. The design has no phone layout for Settings.
+- **The dashboard has the bell from design/Tableau-de-bord**, with a dot when something is unread. It is the way to Notifications on phones.
+- **On phones a notification row opens its screen when tapped**, because the row's button is hidden there.
+- **Empty states** that the design doesn't show for a category: "Nothing here yet".
+- **Alumni** are marked on their profile and on directory cards ("Alumni · ING-5 CIM · group A").
+- **`@nestjs/schedule` 6**, not 12: version 12 is ESM only and Jest can't load it in this setup.
+
+Found on the way:
+- **Windows reserved port 5432 after a reboot**, so Postgres couldn't start. The tests ran with the database on another port (`TEST_DATABASE_URL`, and a new `VISUAL_DATABASE_URL` for the visual run).
+- **The visual "theme forced" screens now set the theme on the account.** A cookie alone no longer forces it for a signed-in student.
+
+Backlog added to PLAN.md: the Release 2 notification kinds, deleting old notifications, retrying failed emails, an unsubscribe link, a 1 September reminder, live unread counts, changing the email or password and deleting the account, and moving the weekly run out of the API process.

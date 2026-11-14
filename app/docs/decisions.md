@@ -282,6 +282,33 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - There is no history of ranks, so "change" can't look further back than the ledger allows and there are no rank charts.
   - Release 2 adds ledger reasons (verified certifications, practice tests); the boards pick them up without change, and the chapter count keeps counting chapters only.
 
+## ADR-023 Notifications, settings and the academic year (S07)
+- **Context:** Students should be told about what matters to them and control their account. The designs show notifications for exam requests, verified certifications, answers to questions and exam sessions, none of which exist before Release 2, and the sprint asked that every type be triggered by a real event. The theme must follow the student across devices, and each September a student has to say where they are.
+- **Decision:**
+  - **Three categories, five kinds, all from real events** (decision 2026-11-13). Community: a classmate starts a certification I prepare. Leaderboard: my rank moved, once a week. Progress: a level, a badge, a finished syllabus. The Release 2 kinds are left out of the filters and the preferences until their features exist.
+  - **A `notifications/` module that owns two tables** (ADR-017): `notifications` and `notification_preferences`. It depends on `users` and `certifications` only. `progress/` and `leaderboard/` announce events through `NotificationsService`; it never calls them back.
+  - **A dedupe key per student** (`level:3`, `badge:first_step`, `syllabus:<id>`, `rank:<day>`, `started:<certification>:<day>`) with a unique index. A retry, a tick around a threshold, or the same job on a second server writes nothing the second time.
+  - **Classmates roll up.** One line per recipient, certification and day in Tunis. A further classmate that day raises the count, moves the line up and makes it unread again. A student who hides their name on the leaderboard is counted, never named.
+  - **The words live in `@tekcert/types`** (`notificationText`), so the app and the emails always say the same thing. A row stores the kind and a small JSON payload, never the sentence.
+  - **Preferences are read when the event happens.** Both channels off: nothing is written. Email only: the row is written with `in_app = false`, so it is never listed but still stops a duplicate email. Defaults: in the app for everything, email for Progress only. No row means the defaults.
+  - **Emails go out after the commit, in the background.** A request never waits for SMTP and nothing is sent about a transaction that rolled back. A failed send is logged and not retried; `emailed_at` records the ones that left.
+  - **The weekly rank run** is a cron job in the API (`@nestjs/schedule`, Mondays 08:00 Tunis) on each student's specialty board over all time, with the same "change" as ADR-022. Only students whose rank moved are told.
+  - **Privacy:** every route is under `/me` and scoped to the session's student. Someone else's notification id answers 404, like an unknown one.
+  - **The theme is saved on the account** (`users.theme`, null until chosen). The cookie stays as the copy the server reads for the first paint. On a full page load the account wins; a browser that chose a theme before the account had one hands it to the account. The header button and Settings both save to the account.
+  - **The academic year** is named by the year it starts in (2026 for 2026-27) and starts on 1 September in Tunis. `users.enrolment_confirmed_year` holds the last year the student confirmed; a later year makes the prompt due. Onboarding and saving a class in Settings both confirm the current year. The migration counts everyone already onboarded as confirmed for the year they joined.
+  - **Three answers.** Moving up changes the class (a specialty is needed for ING-4, the one aimed for being the default) and is accepted once a year, so a double click can't move a student up twice. Repeating keeps the class. Left, or graduated from ING-5, sets `users.alumni_since`.
+  - **Alumni** keep their account, points, profile and last class. They are off the leaderboards, get no classmate or rank notifications, and are never asked about the year again. Saving a class in Settings ends alumni mode.
+  - **"Remind me tomorrow"** is a one-day cookie on the device. The notice in Settings › Enrolment stays until the year is confirmed.
+  - **A `settings/` module with no entities** for the account, the class, the theme, the year answer and the export. Privacy switches keep using `PATCH /me/profile` (ADR-021, ADR-022).
+  - **Export my data** is one CSV file with a `record` column: profile, certifications, finished chapters and every ledger line, so the `points` rows add up to the total. Cells a spreadsheet would run as a formula are made plain text.
+  - **Settings has one URL per section** (`/settings/account`, …). On phones `/settings` is the list of sections and each opens on its own page: the design has no phone layout for it.
+- **Consequences:**
+  - The unread count is read on each navigation, not pushed. A notification that arrives while a student stays on one screen shows up on their next click.
+  - The rank run lives in the API process. On several servers each one runs it; the dedupe key keeps the result single, at the cost of repeated work.
+  - Notifications are never deleted. A clean-up job is in the backlog with the other expired rows.
+  - A save still in flight is lost if the student leaves the page at once (as with ticks, in the backlog).
+  - Emails need an SMTP provider in staging and production (see Open).
+
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).
 - SMTP provider for transactional email in staging and production (the code is ready; see ADR-015)
