@@ -10,15 +10,15 @@
 3. Stop and wait for approval.
 
 ## Scope
-- [ ] Accessibility pass (keyboard, focus, contrast, 44 px targets)
-- [ ] Performance: image optimisation, caching, bundle size
-- [ ] Playwright e2e for every MVP flow; seed realistic pilot data
-- [ ] Error monitoring + uptime check; backups for Postgres
-- [ ] Landing page (public) with the certifications showcase
+- [x] Accessibility pass (keyboard, focus, contrast, 44 px targets)
+- [x] Performance: image optimisation, caching, bundle size (downloads cut from about 5 MB to under 1.1 MB; the Lighthouse Performance budget is not met yet, see the outcome)
+- [x] Playwright e2e for every MVP flow; seed realistic pilot data
+- [x] Error monitoring + uptime check; backups for Postgres (in place; Sentry needs an account and the uptime monitor a public address)
+- [x] Landing page (public) with the certifications showcase
 
 ## Done when
-- [ ] All e2e tests green on staging
-- [ ] A pilot class can sign up and use every MVP screen
+- [x] All e2e tests green on staging: on the production builds, as decided (decision 1). Staging is the next piece of work
+- [x] A pilot class can sign up and use every MVP screen (on the production builds)
 
 ## Plan
 _Written 2026-11-14 and approved the same day with the six recommendations. See the outcome under "Notes / decisions"._
@@ -86,3 +86,70 @@ Each one has my recommendation first.
 - French and Arabic.
 
 ## Notes / decisions
+
+### Decisions from review (2026-11-14)
+The plan was approved with all six recommendations:
+1. S08 runs on the production builds locally; staging on AWS is its own piece of work right after.
+2. The landing page shows totals only, the real catalog and paths, and no student's name.
+3. Sentry for errors, on the API and in the browser, off until `SENTRY_DSN` is set, with personal data stripped.
+4. `/status` for uptime, backup and restore scripts with a restore check, and a runbook.
+5. A separate pilot seed of invented students, which refuses production.
+6. Budgets: Lighthouse Performance 90 and Accessibility 100 on three pages, no axe violation, 44 px tap areas.
+
+### Outcome (2026-11-15)
+Tests:
+- types: 174 (Vitest), 13 new
+- backend: 101 unit + 151 API e2e (Jest), 17 and 13 new
+- frontend: 207 (Vitest), 18 new
+- Playwright: 117 runs at 1440 and 390 px, all passing, 18 skipped by design; about 30 new runs (axe on every screen in both themes, tap areas, keyboard on notifications and settings, the landing page and the status check)
+- Visual baseline: retaken for every screen (84 captures across 4 projects, 17 skipped by design) and compared again with no difference. New: the landing page and its provider rail
+- `pnpm db:backup:check` restores a dump of the dev database and finds the same rows in all 23 tables
+
+Lint, typecheck, format check and build pass. No migration.
+
+**Accessibility.** axe (WCAG 2.1 A and AA) finds no violation on any screen, in light or dark, at either size. It found links named differently from what they show (the logo links, the directory and dashboard cards), now named by their visible text. Lighthouse Accessibility is 100 on the landing page, the catalog and the dashboard. Every control is at least 44 × 44 px on a phone, measured by a test: chips, segments and small links keep their look and get an invisible tap area (`tap-target`).
+
+**Bug found on the way:** a dialog opened from state (the year prompt, opened from Settings › Enrolment) gave the focus back to the page instead of the button that opened it. The element to return to is now read when the dialog opens.
+
+**Downloads** on a first visit, compressed (`pnpm --filter e2e test:perf`):
+
+| Screen | Before | After |
+|---|---|---|
+| Landing | 5.9 MB | 1.0 MB |
+| Sign in | 5.6 MB | 1.0 MB |
+| Dashboard | 5.1 MB | 0.84 MB |
+| Catalog | 5.3 MB | 0.82 MB |
+| Notifications / Settings | 5.0 MB | 0.69 MB |
+
+The icon font went from 4 MB to 88 kB (112 icons), the logo from 182 kB to a 96 px PNG and a 35 kB WebP, and the five heaviest badges to WebP (386 kB SVG, 130–150 kB PNGs, now about 20 kB each).
+
+**Lighthouse Performance is not met.** On a phone profile: landing 36 (63 once the splash has played), catalog 55, dashboard 61, against 90. The scripts are the main cost: zod is on every page (about 105 kB compressed, 0.9 s of main thread under Lighthouse's throttling) because the browser checks API answers and forms with the shared schemas. The headings also wait for the serif font. This machine scores about 1,000–1,300 on Lighthouse's CPU benchmark, which lowers every number. Fixing it means changing how the browser validates answers, which is beyond this sprint: the options are in PLAN.md › Backlog.
+
+**MVP flows and the tests that cover them** (Playwright):
+
+| Flow | Test |
+|---|---|
+| Landing page, then sign up | `landing.spec.ts` |
+| Sign up, verify the email, sign out, sign in; forgot password; lockout | `auth.spec.ts` |
+| Onboarding, ING-4 and ING-3, resume after reload | `onboarding.spec.ts` |
+| Catalog, filters, search, paging, certification page, Start | `catalog.spec.ts` |
+| Tick chapters, points, levels, badges, dashboard | `progress.spec.ts` |
+| Directory, profiles, "Available to help" | `community.spec.ts` |
+| Leaderboard, Anonymous, specialties | `leaderboard.spec.ts` |
+| Notifications, emails, filters, read | `notifications.spec.ts` |
+| Settings, theme across devices, year prompt, alumni | `settings.spec.ts` |
+| Navigation on both sizes, theme, not found | `shell.spec.ts` |
+| Keyboard on every interactive screen | `keyboard.spec.ts` |
+| Accessibility and tap areas | `accessibility.spec.ts` |
+
+`E2E_BASE_URL` runs the same suite against a deployed address, without starting servers.
+
+Where the build differs from the plan or the design:
+- **The landing page's numbers** are students preparing, students on TekCert and certifications in the catalog. The design's "certifications verified this semester", named activity ("Ons earned AZ-900") and "Earned by specialty" are Release 2 or would name students. "Find help" shows what "Who to ask" lists, without people.
+- **Step III** reads "Find who can help" instead of "Pass the exam, get it verified".
+- **Provider cards** show the badges TekCert has; providers without official badge files show code tiles. The design's Google Developers card is left out (not funded).
+- **Arrow keys on the theme cards**: Radix moves the focus a moment after the key goes down, so the test holds the key as a person would. Real use was not affected.
+- **The visual setup** has a student who left TekCert, so that no two students tie on the boards (ties are ordered by random ids).
+- **No Sentry account and no uptime monitor** are connected: both need an address and an account you choose.
+
+Left for a person: the screen-reader check, with `docs/screen-reader-check.md`.
