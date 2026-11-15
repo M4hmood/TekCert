@@ -1,6 +1,6 @@
 import { expect, type Page, test as setup } from '@playwright/test';
-import { signInNewStudent } from '../tests/support';
-import { STUDENT_FILE } from './shared';
+import { completeOnboarding, expireAcademicYear, signInNewStudent } from '../tests/support';
+import { STUDENT_FILE, VISUAL_DATABASE_URL } from './shared';
 
 /**
  * The student the screens are taken as. The others have names of their own: lists order
@@ -63,6 +63,20 @@ setup('students', async ({ browser }) => {
     main: async (page: Page) => {
       await walkToResult(page, MAIN);
       await finishAndStart(page, 5);
+    },
+    // Starts SAA-C03 after the main student, who is then told a classmate started it.
+    late: async (page: Page) => {
+      await walkToResult(page, { firstName: 'Karim', lastName: 'Mansour' });
+      await finishAndStart(page, 0);
+    },
+    // A year behind: the "Where are you this year?" prompt is due.
+    returning: async (page: Page) => {
+      const email = await signInNewStudent(page, undefined, {
+        firstName: 'Ines',
+        lastName: 'Jaziri',
+      });
+      await completeOnboarding(page.request, [], { year: 3, targetSpecialty: 'CIM', group: 'A' });
+      expireAcademicYear(email, VISUAL_DATABASE_URL);
     },
     // Onboarded, nothing started: the empty dashboard.
     fresh: async (page: Page) => {

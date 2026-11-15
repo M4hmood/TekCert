@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
   type BadgeKey,
@@ -12,26 +12,42 @@ import {
 import type { DataSource } from 'typeorm';
 import { CertificationsService } from '../certifications/certifications.service';
 import { CLOCK, type Clock } from '../common/utils/clock';
+import { NotificationsService, type PendingEmail } from '../notifications/notifications.service';
+import { UsersService } from '../users/users.service';
 import { ActivityService } from './activity.service';
 import { PointsService } from './points.service';
 import { tunisDay } from './utils/labels';
 
-/** Starting a certification and ticking its chapters: state, ledger, badges and feed together. */
+/**
+ * Starting a certification and ticking its chapters: state, ledger, badges and feed together,
+ * and the notifications those events bring (ADR-023).
+ */
 @Injectable()
 export class ProgressService {
+  private readonly logger = new Logger('Progress');
+
   constructor(
     private readonly certifications: CertificationsService,
     private readonly points: PointsService,
     private readonly activity: ActivityService,
+    private readonly notifications: NotificationsService,
+    private readonly users: UsersService,
     @InjectDataSource() private readonly dataSource: DataSource,
     @Inject(CLOCK) private readonly clock: Clock,
   ) {}
 
-  /** "Start" (S03), now also announced in the classmates feed the first time. */
+  /**
+   * "Start" (S03), announced the first time in the classmates feed and to the classmates who
+   * prepare the same certification.
+   */
   async start(userId: string, slug: string): Promise<MyCertification & { created: boolean }> {
     const { certificationId, ...status } = await this.certifications.start(userId, slug);
     if (status.created) {
       await this.activity.recordOnce({ userId, kind: 'certification_started', certificationId });
+      // The start is saved: trouble telling classmates about it must not undo or fail it.
+      await this.tellClassmates(userId, certificationId).catch((error: unknown) => {
+        this.logger.error(`Could not notify classmates of a start: ${String(error)}`);
+      });
     }
     return status;
   }
@@ -41,7 +57,9 @@ export class ProgressService {
    * the feed roll-up in one transaction; ticking a chapter already ticked writes nothing.
    */
   async setChapter(userId: string, chapterId: string, done: boolean): Promise<ChapterTickResult> {
-    return this.dataSource.transaction(async (manager) => {
+    // Emails wait for the commit: nothing is sent about a tick that was rolled back.
+    const pending: PendingEmail[] = [];
+    const result = await this.dataSource.transaction(async (manager) => {
       const change = await this.certifications.setChapterDone(userId, chapterId, done, manager);
       const delta = change.changed ? (done ? POINTS_PER_CHAPTER : -POINTS_PER_CHAPTER) : 0;
       if (change.changed) {
@@ -71,21 +89,27 @@ export class ProgressService {
         const completed = await this.certifications.completedChapterCount(userId, manager);
         newBadges = await this.points.award(manager, userId, badgesForChapters(completed));
         for (const badge of newBadges) {
-          await this.activity.recordOnce({ userId, kind: 'badge_earned', badge }, manager);
+          const earned = { userId, kind: 'badge_earned', badge } as const;
+          await this.activity.recordOnce(earned, manager);
+          pending.push(...(await this.notifications.record(earned, manager)));
         }
         // Written the first time a level is reached only, so unticking and re-ticking around a
-        // threshold doesn't repeat it.
+        // threshold doesn't repeat it (nor the notification).
         if (level.rank > 1) {
-          await this.activity.recordOnce(
-            { userId, kind: 'level_reached', level: level.rank },
-            manager,
-          );
+          const reached = { userId, kind: 'level_reached', level: level.rank } as const;
+          if (await this.activity.recordOnce(reached, manager)) {
+            pending.push(...(await this.notifications.record(reached, manager)));
+          }
         }
         if (change.total > 0 && change.done === change.total) {
-          await this.activity.recordOnce(
-            { userId, kind: 'syllabus_completed', certificationId: change.certificationId },
-            manager,
-          );
+          const finished = {
+            userId,
+            kind: 'syllabus_completed',
+            certificationId: change.certificationId,
+          } as const;
+          if (await this.activity.recordOnce(finished, manager)) {
+            pending.push(...(await this.notifications.record(finished, manager)));
+          }
         }
       }
 
@@ -103,5 +127,28 @@ export class ProgressService {
         newBadges,
       };
     });
+    this.notifications.deliver(pending);
+    return result;
+  }
+
+  /**
+   * Classmates preparing the same certification are told, once per day and certification. A
+   * student who hides their name is counted, not named; alumni neither tell nor are told.
+   */
+  private async tellClassmates(userId: string, certificationId: string): Promise<void> {
+    const starter = await this.users.findWithEnrolment(userId);
+    if (!starter?.class || !starter.onboardingCompletedAt || starter.alumniSince) return;
+    const preparing = await this.certifications.preparingIds(certificationId);
+    const classmates = await this.users.findCommunityMembers(preparing, {
+      excludeUserId: userId,
+      classId: starter.class.id,
+    });
+    const pending = await this.notifications.recordClassmateStart({
+      recipientIds: classmates.filter((mate) => !mate.alumniSince).map((mate) => mate.id),
+      certificationId,
+      name: starter.leaderboardVisible ? starter.firstName : null,
+      day: tunisDay(this.clock.now()),
+    });
+    this.notifications.deliver(pending);
   }
 }

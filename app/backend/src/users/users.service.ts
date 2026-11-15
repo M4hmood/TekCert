@@ -21,6 +21,20 @@ export type OnboardingChanges = Partial<
   Pick<User, 'classId' | 'targetSpecialtyId' | 'leaderboardVisible'>
 >;
 
+/** What Settings and the year prompt may change on an account. */
+export type AccountChanges = Partial<
+  Pick<
+    User,
+    | 'firstName'
+    | 'lastName'
+    | 'theme'
+    | 'classId'
+    | 'targetSpecialtyId'
+    | 'enrolmentConfirmedYear'
+    | 'alumniSince'
+  >
+>;
+
 /** A scope relative to the student asking. Every field is optional and they combine with AND. */
 export interface ScopeFilter {
   classId?: string;
@@ -163,6 +177,11 @@ export class UsersService {
     return { availableToHelp: user.availableToHelp, leaderboardVisible: user.leaderboardVisible };
   }
 
+  /** Settings and the year prompt: names, theme, class, the confirmed year, alumni mode. */
+  async updateAccount(id: string, changes: AccountChanges): Promise<void> {
+    await this.users.update({ id }, changes);
+  }
+
   countInClass(classId: string): Promise<number> {
     return this.users.countBy({ classId });
   }
@@ -184,8 +203,17 @@ export class UsersService {
     );
   }
 
-  async completeOnboarding(id: string, at: Date, step: number): Promise<void> {
-    await this.users.update({ id }, { onboardingCompletedAt: at, onboardingStep: step });
+  /** `academicYear`: the class chosen in onboarding is confirmed for the year it happens in. */
+  async completeOnboarding(
+    id: string,
+    at: Date,
+    step: number,
+    academicYear: number,
+  ): Promise<void> {
+    await this.users.update(
+      { id },
+      { onboardingCompletedAt: at, onboardingStep: step, enrolmentConfirmedYear: academicYear },
+    );
   }
 
   /**
@@ -272,8 +300,8 @@ export class UsersService {
   }
 
   /**
-   * Every student a leaderboard may rank in a scope (email verified, onboarding finished), the
-   * one asking included. `targetSpecialty` is loaded for the specialties board.
+   * Every student a leaderboard may rank in a scope (email verified, onboarding finished, still
+   * at TEK-UP), the one asking included. `targetSpecialty` is loaded for the specialties board.
    */
   async findRankable(scope: ScopeFilter): Promise<RankableStudent[]> {
     const qb = this.users
@@ -282,7 +310,8 @@ export class UsersService {
       .leftJoin('c.specialty', 's')
       .leftJoin('u.targetSpecialty', 't')
       .where('u.emailVerifiedAt IS NOT NULL')
-      .andWhere('u.onboardingCompletedAt IS NOT NULL');
+      .andWhere('u.onboardingCompletedAt IS NOT NULL')
+      .andWhere('u.alumniSince IS NULL');
     applyScope(qb, scope);
     // Plain rows: building a thousand entities with their relations costs more than the query.
     const rows = await qb

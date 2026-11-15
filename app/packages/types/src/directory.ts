@@ -60,6 +60,8 @@ export const DirectoryPersonSchema = z.object({
   /** The class specialty (ING-4/5); null in ING-1 to 3. */
   specialty: SpecialtyCodeSchema.nullable(),
   availableToHelp: z.boolean(),
+  /** Graduated or left TEK-UP: `classCode` is then their last class. */
+  alumni: z.boolean(),
   /** The student asking is listed too, first. */
   isMe: z.boolean(),
   /** The first few certifications held, oldest first. */
@@ -149,6 +151,8 @@ export const StudentProfileSchema = z.object({
   targetSpecialty: SpecialtySchema.nullable(),
   email: z.email(),
   availableToHelp: z.boolean(),
+  /** Graduated or left TEK-UP: `classCode` is then their last class. */
+  alumni: z.boolean(),
   isMe: z.boolean(),
   level: LevelBadgeSchema,
   /** Null for a student who hides their name on the leaderboard (except to themselves). */

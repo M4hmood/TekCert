@@ -374,6 +374,28 @@ export class CertificationsService {
     return (await this.userCertifications.holdersOf(certificationId)).map((h) => h.userId);
   }
 
+  /** Every chapter the student has ticked, oldest first: for their data export. */
+  completedChapters(
+    userId: string,
+  ): Promise<{ certificationId: string; title: string; completedAt: Date }[]> {
+    return this.chapterProgress.completedBy(userId);
+  }
+
+  /** Titles by chapter id; a chapter since removed from the syllabus is absent. */
+  chapterTitles(chapterIds: string[]): Promise<Map<string, string>> {
+    return this.chapterProgress.titles(chapterIds);
+  }
+
+  /** Who is preparing the certification and doesn't hold it yet. */
+  async preparingIds(certificationId: string): Promise<string[]> {
+    const [holders, preparers] = await Promise.all([
+      this.userCertifications.holdersOf(certificationId),
+      this.preparations.preparersOf(certificationId),
+    ]);
+    const held = new Set(holders.map((h) => h.userId));
+    return preparers.map((p) => p.userId).filter((id) => !held.has(id));
+  }
+
   /** Ids of the certifications the student holds. */
   async heldIds(userId: string): Promise<string[]> {
     return (await this.userCertifications.listForUser(userId)).map((h) => h.certificationId);

@@ -1,17 +1,23 @@
-import type { Metadata } from 'next';
-import { Placeholder } from '@/components/Placeholder';
+import { DEFAULT_SECTION } from '@/components/settings/sections';
+import { SettingsScreen } from '@/components/settings/SettingsScreen';
 import { SettingRow } from '@/components/SettingRow';
 import { SignOutButton } from '@/components/SignOutButton';
 
-export const metadata: Metadata = { title: 'Settings' };
+export const dynamic = 'force-dynamic';
 
-export default function Page() {
+/**
+ * Desktop opens on the first section next to the list. Phones show the list alone here (the
+ * section is hidden) and open each section on its own page; signing out stays one tap away.
+ */
+export default function SettingsPage() {
   return (
     <>
-      <Placeholder title="Settings" overline="My space" icon="settings" arrives="Sprint 7">
-        Account, privacy and notification preferences. This screen is built in Sprint 7.
-      </Placeholder>
-      <SettingRow title="Sign out" meta="On this device" action={<SignOutButton />} />
+      <div className="max-md:hidden">
+        <SettingsScreen section={DEFAULT_SECTION} />
+      </div>
+      <div className="hidden mt-4 max-md:block">
+        <SettingRow title="Sign out" meta="On this device" action={<SignOutButton />} />
+      </div>
     </>
   );
 }

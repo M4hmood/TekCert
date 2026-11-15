@@ -371,7 +371,8 @@ function ScopeSwitch({
 /** A card on desktop, a list row on phones. The whole thing opens the profile. */
 function PersonCard({ person }: { person: DirectoryPerson }) {
   const name = `${person.firstName} ${person.lastName}`;
-  const group = classLabel(person);
+  // An alumnus keeps their last class, marked as such.
+  const group = `${person.alumni ? 'Alumni · ' : ''}${classLabel(person)}`;
   const heldLine = person.held.length
     ? person.held
         .slice(0, 2)

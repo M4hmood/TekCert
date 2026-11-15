@@ -49,6 +49,15 @@ Solo developer + Claude Code · 1-week sprints · English only at launch · emai
 - Clean up expired rows in `sessions`, `email_tokens` and `login_attempts` (a scheduled job).
 - Move the per-IP auth rate limit to a shared store (e.g. Redis) once the API runs on several instances.
 - Subset the Material Symbols font to the icons actually used (it is about 3 MB today). Fits with the S08 performance pass.
+- Notifications for the Release 2 features: exam requests, verified certifications, answers to questions and exam sessions, each with its row in Settings › Notifications (ADR-023).
+- Delete old notifications (they are kept for good today), in the same scheduled job as the expired sessions and tokens.
+- Retry a notification email that failed to send; today it is logged and the notification stays in the app (ADR-023).
+- A link in notification emails that turns a category off without signing in.
+- An email or notification on 1 September asking students to confirm their year; today the prompt waits for their next visit.
+- Show new notifications without a click: the unread count is read again on each navigation only (ADR-023).
+- Change the email address or the password from Settings, and delete the account.
+- A setting or notification switch still being saved is lost if the student leaves the page at once (the same as ticks, above).
+- Move the weekly leaderboard run out of the API process (one scheduled task) once the API runs on several instances; today each instance runs it and the dedupe key keeps one result (ADR-023).
 
 ## Decision: every profile is visible (2026-10-29)
 Students must accept profile visibility to sign up, and can't make their profile private afterwards (replaces S01 decision 1; built in S02). Impact on later sprints:

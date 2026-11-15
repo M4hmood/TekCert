@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
 import { Splash } from '@/components/Splash';
 import { parseTheme, SPLASH_COOKIE, THEME_COOKIE } from '@/lib/preferences';
+import { getCurrentUser } from '@/lib/session';
 
 export const metadata: Metadata = {
   title: { default: 'TekCert', template: '%s · TekCert' },
@@ -19,9 +20,12 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  // Read on the server so the first paint already has the chosen theme (no flash).
+  // Read on the server so the first paint already has the chosen theme (no flash). A signed-in
+  // student's saved theme wins over this browser's cookie, so a new device opens in it; the
+  // API being unreachable must not take the error pages down with it.
   const jar = await cookies();
-  const theme = parseTheme(jar.get(THEME_COOKIE)?.value);
+  const user = await getCurrentUser().catch(() => null);
+  const theme = user?.theme ?? parseTheme(jar.get(THEME_COOKIE)?.value);
   return (
     <html lang="en" data-theme={theme === 'system' ? undefined : theme}>
       <body>

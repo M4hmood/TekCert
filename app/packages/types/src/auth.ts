@@ -49,7 +49,7 @@ export const NewPasswordSchema = z
     }
   });
 
-const NameSchema = z.string().trim().min(1, 'Required').max(80);
+export const NameSchema = z.string().trim().min(1, 'Required').max(80);
 
 export const VISIBILITY_REQUIRED_MESSAGE = 'You need to accept this to create an account';
 
@@ -86,6 +86,11 @@ export const ROLES = ['student', 'staff', 'admin'] as const;
 export const RoleSchema = z.enum(ROLES);
 export type Role = z.infer<typeof RoleSchema>;
 
+/** Light, dark, or whatever the device uses. Saved on the account, so it follows the student. */
+export const THEMES = ['light', 'dark', 'system'] as const;
+export const ThemeSchema = z.enum(THEMES);
+export type Theme = z.infer<typeof ThemeSchema>;
+
 export const CurrentUserSchema = z.object({
   id: z.uuid(),
   email: z.string(),
@@ -97,6 +102,12 @@ export const CurrentUserSchema = z.object({
   /** API path of the profile photo (versioned, so it changes when the photo does), or null. */
   avatarPath: z.string().nullable(),
   onboardingCompleted: z.boolean(),
+  /** Null until the student chooses one: the browser's own setting then applies. */
+  theme: ThemeSchema.nullable(),
+  /** Said they left TEK-UP: off the leaderboards, and never asked about the year again. */
+  alumni: z.boolean(),
+  /** A new academic year began and the student hasn't said where they are yet. */
+  yearPromptDue: z.boolean(),
 });
 export type CurrentUser = z.infer<typeof CurrentUserSchema>;
 

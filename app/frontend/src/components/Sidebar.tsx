@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { isActive, MAIN_NAV, type NavItem, PERSONAL_NAV } from '@/lib/navigation';
 import { SIDEBAR_COOKIE, writePreference } from '@/lib/preferences';
+import { useShell } from '@/lib/shell-context';
 import { Avatar } from './Avatar';
 
 export interface SidebarProps {
@@ -19,6 +20,7 @@ export interface SidebarProps {
 export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(initiallyCollapsed);
+  const { unread } = useShell();
 
   const toggle = () => {
     const next = !collapsed;
@@ -28,18 +30,35 @@ export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
 
   const renderLink = (item: NavItem) => {
     const active = isActive(pathname, item.href);
+    const badge = item.href === '/notifications' && unread > 0 ? unread : 0;
     return (
       <Link
         key={item.href}
         href={item.href}
-        className="flex items-center gap-3 h-11 px-3 overflow-hidden rounded-field text-ink2 text-[14.5px] font-medium no-underline hover:bg-sf2 hover:text-ink aria-[current=page]:bg-pri-sf aria-[current=page]:text-pri aria-[current=page]:font-semibold"
+        className="relative flex items-center gap-3 h-11 px-3 overflow-hidden rounded-field text-ink2 text-[14.5px] font-medium no-underline hover:bg-sf2 hover:text-ink aria-[current=page]:bg-pri-sf aria-[current=page]:text-pri aria-[current=page]:font-semibold"
         aria-current={active ? 'page' : undefined}
         title={item.label}
       >
         <Icon name={item.icon} filled={active} />
-        <span className="whitespace-nowrap transition-opacity duration-[160ms] ease-standard group-data-[collapsed=true]/sidebar:opacity-0 max-xl:opacity-0">
+        <span className="flex-1 whitespace-nowrap transition-opacity duration-[160ms] ease-standard group-data-[collapsed=true]/sidebar:opacity-0 max-xl:opacity-0">
           {item.label}
         </span>
+        {badge > 0 && (
+          <>
+            <span
+              aria-hidden
+              className="grid flex-none place-items-center min-w-5.5 h-5.5 px-1.5 rounded-[11px] bg-pri text-pri-ink text-[12px] font-semibold transition-opacity duration-[160ms] ease-standard group-data-[collapsed=true]/sidebar:opacity-0 max-xl:opacity-0"
+            >
+              {badge > 99 ? '99+' : badge}
+            </span>
+            {/* The collapsed rail has no room for the number: a dot on the icon instead. */}
+            <span
+              aria-hidden
+              className="absolute top-2.5 start-7.5 size-2 rounded-full bg-err opacity-0 transition-opacity duration-[160ms] ease-standard group-data-[collapsed=true]/sidebar:opacity-100 max-xl:opacity-100"
+            />
+            <span className="sr-only">, {badge} unread</span>
+          </>
+        )}
       </Link>
     );
   };

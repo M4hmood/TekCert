@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { EntityManager, Repository } from 'typeorm';
+import { type EntityManager, In, type Repository } from 'typeorm';
 import { ChapterProgress } from './entities/chapter-progress.entity';
 import { Chapter } from './entities/chapter.entity';
 
@@ -70,6 +70,32 @@ export class ChapterProgressService {
       select: { chapterId: true },
     });
     return rows.map((row) => row.chapterId);
+  }
+
+  /** Every chapter the student has ticked, with its title, oldest first. */
+  async completedBy(
+    userId: string,
+  ): Promise<{ certificationId: string; title: string; completedAt: Date }[]> {
+    const rows = await this.progress.find({
+      where: { userId },
+      relations: { chapter: true },
+      order: { completedAt: 'ASC', chapterId: 'ASC' },
+    });
+    return rows.map((row) => ({
+      certificationId: row.certificationId,
+      title: row.chapter.title,
+      completedAt: row.completedAt,
+    }));
+  }
+
+  /** Titles by chapter id; a chapter since removed from the seed is absent. */
+  async titles(chapterIds: string[]): Promise<Map<string, string>> {
+    if (!chapterIds.length) return new Map();
+    const rows = await this.chapters.find({
+      where: { id: In(chapterIds) },
+      select: { id: true, title: true },
+    });
+    return new Map(rows.map((row) => [row.id, row.title]));
   }
 
   /** Per certification: chapters ticked and when the last one was. */

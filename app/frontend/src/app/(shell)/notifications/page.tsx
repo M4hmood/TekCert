@@ -1,12 +1,18 @@
+import { NotificationListSchema } from '@tekcert/types';
 import type { Metadata } from 'next';
-import { Placeholder } from '@/components/Placeholder';
+import { notificationsPath, parseNotificationFilter } from '@/components/notifications/format';
+import { NotificationsView } from '@/components/notifications/NotificationsView';
+import { getAsStudent } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'Notifications' };
+export const dynamic = 'force-dynamic';
 
-export default function Page() {
-  return (
-    <Placeholder title="Notifications" overline="My space" icon="notifications" arrives="Sprint 7">
-      Updates about your certifications and your classmates. This screen is built in Sprint 7.
-    </Placeholder>
+type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+
+export default async function NotificationsPage({ searchParams }: Props) {
+  const filter = parseNotificationFilter(await searchParams);
+  const list = await getAsStudent(notificationsPath(filter), NotificationListSchema).catch(
+    () => null,
   );
+  return <NotificationsView initialFilter={filter} initial={list} now={new Date().toISOString()} />;
 }

@@ -28,6 +28,51 @@ export interface StudentBoard {
 const NOTHING: Total = { points: 0, chapters: 0 };
 
 /**
+ * How many places a student gained since `previous` (the same totals a week ago; null when
+ * there is no "week ago" to compare with). Null for a student without points then: everyone at
+ * zero ties for first, and comparing with that would show a fall for anyone who started since.
+ */
+function changeSince(
+  memberIds: readonly string[],
+  previous: ReadonlyMap<string, Pick<Total, 'points'>> | null,
+): (id: string, rank: number) => number | null {
+  const rankBefore = previous
+    ? new Map(
+        rankByPoints(memberIds.map((id) => ({ id, points: previous.get(id)?.points ?? 0 }))).map(
+          (entry) => [entry.id, entry.rank],
+        ),
+      )
+    : null;
+  return (id, rank) => {
+    const before = rankBefore?.get(id);
+    if (before === undefined || (previous?.get(id)?.points ?? 0) <= 0) return null;
+    return before - rank;
+  };
+}
+
+export interface RankChange {
+  id: string;
+  rank: number;
+  /** Places gained since last week; negative when lost. */
+  change: number;
+}
+
+/**
+ * The members of one board whose rank moved since `previous`, for the weekly notification.
+ * Students who weren't really ranked a week ago (no points then) are left out.
+ */
+export function rankChanges(
+  memberIds: readonly string[],
+  current: ReadonlyMap<string, Pick<Total, 'points'>>,
+  previous: ReadonlyMap<string, Pick<Total, 'points'>>,
+): RankChange[] {
+  const change = changeSince(memberIds, previous);
+  return rankByPoints(memberIds.map((id) => ({ id, points: current.get(id)?.points ?? 0 })))
+    .map((entry) => ({ id: entry.id, rank: entry.rank, change: change(entry.id, entry.rank) }))
+    .filter((entry): entry is RankChange => entry.change !== null && entry.change !== 0);
+}
+
+/**
  * Ranks every member of a scope on the points of the period and keeps the rows a board shows:
  * the top, and the viewer with their neighbours. `previous` holds the same period's totals a
  * week ago (null when the period is younger than that): the change is the places gained since,
@@ -46,23 +91,10 @@ export function buildStudentBoard(input: {
   const ranked = rankByPoints(
     members.map(({ person }) => ({ id: person.id, ...(current.get(person.id) ?? NOTHING) })),
   );
-  const rankBefore = previous
-    ? new Map(
-        rankByPoints(
-          members.map(({ person }) => ({
-            id: person.id,
-            points: previous.get(person.id)?.points ?? 0,
-          })),
-        ).map((entry) => [entry.id, entry.rank]),
-      )
-    : null;
-  const change = (id: string, rank: number) => {
-    const before = rankBefore?.get(id);
-    // Without points a week ago the student wasn't really ranked: everyone at zero ties for
-    // first, and comparing with that would show a fall for anyone who has started since.
-    if (before === undefined || (previous?.get(id)?.points ?? 0) <= 0) return null;
-    return before - rank;
-  };
+  const change = changeSince(
+    members.map(({ person }) => person.id),
+    previous,
+  );
 
   const mine = ranked.find((entry) => entry.id === viewerId) ?? null;
   const shown = new Set(boardPositions(ranked.length, mine?.position ?? null));

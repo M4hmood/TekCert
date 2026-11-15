@@ -75,14 +75,17 @@ export function ProfileSwitches({ availableToHelp, leaderboardVisible }: Record<
   );
 }
 
-function SettingSwitch({
+/** One switch, saved at once. Also used by Settings › Privacy. */
+export function SettingSwitch({
   setting,
   initial,
   notify,
+  className,
 }: {
   setting: Setting;
   initial: boolean;
   notify: ReturnType<typeof useToast>['show'];
+  className?: string;
 }) {
   const [on, setOn] = useState(initial);
   const [saving, setSaving] = useState(false);
@@ -108,7 +111,12 @@ function SettingSwitch({
   };
 
   return (
-    <div className="flex items-center justify-between gap-4 py-4 px-5.5 border-b border-ln last:border-b-0 max-md:px-4">
+    <div
+      className={cn(
+        'flex items-center justify-between gap-4 py-4 px-5.5 border-b border-ln last:border-b-0 max-md:px-4',
+        className,
+      )}
+    >
       <span className="flex items-start gap-3">
         <span
           className={cn(

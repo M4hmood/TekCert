@@ -1,10 +1,9 @@
 import { HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
+  academicYearOf,
   AUTH_PROBLEM,
-  classCodeFor,
   type EnrolmentInput,
-  GroupSchema,
   ONBOARDING_PROBLEM,
   ONBOARDING_STEP,
   type OnboardingState,
@@ -14,7 +13,6 @@ import {
   SPECIALTY_CODES,
   SpecialtyCodeSchema,
   type SpecialtyOption,
-  YearSchema,
 } from '@tekcert/types';
 import type { DataSource } from 'typeorm';
 import { CertificationsService } from '../certifications/certifications.service';
@@ -25,6 +23,7 @@ import type { PathNode } from '../paths/entities/path-node.entity';
 import { PathsService } from '../paths/paths.service';
 import { SchoolService } from '../school/school.service';
 import { avatarPath } from '../users/utils/avatar-path';
+import { toSavedEnrolment } from '../users/utils/saved-enrolment';
 import { type UserWithEnrolment, UsersService } from '../users/users.service';
 import { initialsOf, type PathNodeInput, selectTrack } from './utils/recommended-path';
 
@@ -67,24 +66,11 @@ export class OnboardingService {
 
   /** Step 2: places the student in a seeded class (and, in ING-1…3, records the target). */
   async saveEnrolment(userId: string, input: EnrolmentInput): Promise<OnboardingState> {
-    const code = classCodeFor(input);
-    const schoolClass = await this.school.findClassByCode(code);
-    if (!schoolClass) {
-      throw new ProblemException({
-        type: ONBOARDING_PROBLEM.unknownClass,
-        title: 'Unknown class',
-        status: HttpStatus.UNPROCESSABLE_ENTITY,
-        detail: `There is no class ${code}.`,
-      });
-    }
-    const target =
-      'targetSpecialty' in input && input.targetSpecialty
-        ? await this.school.getSpecialtyByCode(input.targetSpecialty)
-        : null;
-    await this.users.advanceOnboarding(userId, ONBOARDING_STEP.certifications, {
-      classId: schoolClass.id,
-      targetSpecialtyId: target?.id ?? null,
-    });
+    await this.users.advanceOnboarding(
+      userId,
+      ONBOARDING_STEP.certifications,
+      await this.school.resolveEnrolment(input),
+    );
     return this.state(userId);
   }
 
@@ -129,7 +115,8 @@ export class OnboardingService {
   async complete(userId: string): Promise<OnboardingState> {
     const user = await this.requireEnrolment(userId);
     if (!user.onboardingCompletedAt) {
-      await this.users.completeOnboarding(userId, this.clock.now(), ONBOARDING_STEP.result);
+      const now = this.clock.now();
+      await this.users.completeOnboarding(userId, now, ONBOARDING_STEP.result, academicYearOf(now));
     }
     return this.state(userId);
   }
@@ -187,16 +174,7 @@ export class OnboardingService {
 
   private async savedEnrolment(user: UserWithEnrolment): Promise<SavedEnrolment | null> {
     if (!user.class) return null;
-    return {
-      year: YearSchema.parse(user.class.year),
-      group: GroupSchema.parse(user.class.group),
-      specialty: user.class.specialty ? SpecialtyCodeSchema.parse(user.class.specialty.code) : null,
-      targetSpecialty: user.targetSpecialty
-        ? SpecialtyCodeSchema.parse(user.targetSpecialty.code)
-        : null,
-      classCode: user.class.code,
-      classmates: await this.users.countInClass(user.class.id),
-    };
+    return toSavedEnrolment(user, await this.users.countInClass(user.class.id));
   }
 
   /** The six specialties in design order, each with the first track of its path as a preview. */
