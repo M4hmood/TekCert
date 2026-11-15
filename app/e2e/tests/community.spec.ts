@@ -101,7 +101,7 @@ test('"Available to help" is switched on from my profile and found by the filter
   await page.goto(filtered);
   const me = page.getByRole('list', { name: 'Students' }).getByRole('link');
   await expect(me).toHaveCount(1);
-  await expect(me).toHaveAccessibleName(new RegExp(`^Mehdi ${lastName} \\(you\\)`));
+  await expect(me).toHaveAccessibleName(new RegExp(`^Mehdi ${lastName} · you`));
   // My own card opens my profile, where the switch is still on after a reload.
   await me.click();
   await expect(page).toHaveURL(/\/profile$/);

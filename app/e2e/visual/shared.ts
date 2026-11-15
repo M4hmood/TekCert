@@ -27,19 +27,22 @@ export async function shot(page: Page, name: string) {
     window.scrollTo(0, 0);
   });
   await page.waitForLoadState('networkidle');
-  await expect.soft(page).toHaveScreenshot(`${name}.png`, {
-    fullPage: true,
-    // Dates change from one day to the next, and every run signs up with new addresses.
-    mask: [
-      page.getByText(/^(Started|Declared|started) /),
-      page.getByText(MOVING_TEXT),
-      // "2026-27 academic year": a new one every September.
-      page.getByText(/\d{4}-\d{2} academic year/),
-      page.getByText(/^e2e\.[0-9a-f]+@tek-up\.de$/),
-      // Settings › Account shows the address in a read-only field.
-      page.locator('main input[type="email"][readonly]'),
-      // The phone's mail button shows the address in a proportional font: mask the whole button.
-      page.locator('main a[href^="mailto:"]'),
-    ],
-  });
+  await expect.soft(page).toHaveScreenshot(`${name}.png`, { fullPage: true, mask: moving(page) });
+}
+
+/** What changes from run to run: times and dates, and the addresses each run signs up with. */
+export function moving(page: Page) {
+  return [
+    page.getByText(/^(Started|Declared|started) /),
+    page.getByText(MOVING_TEXT),
+    // "2026-27 academic year": a new one every September.
+    page.getByText(/\d{4}-\d{2} academic year/),
+    // "Fall semester 2026" on the landing page.
+    page.getByText(/^(Fall|Spring) semester \d{4}$/),
+    page.getByText(/^e2e\.[0-9a-f]+@tek-up\.de$/),
+    // Settings › Account shows the address in a read-only field.
+    page.locator('main input[type="email"][readonly]'),
+    // The phone's mail button shows the address in a proportional font: mask the whole button.
+    page.locator('main a[href^="mailto:"]'),
+  ];
 }

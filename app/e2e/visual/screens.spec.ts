@@ -1,13 +1,11 @@
 import path from 'node:path';
 import { expect, type Page, test } from '@playwright/test';
 import { PASSWORD, signInNewStudent, uniqueEmail } from '../tests/support';
-import { shot, STUDENT_FILE } from './shared';
+import { moving, shot, STUDENT_FILE } from './shared';
 
 const PHOTO = path.join(__dirname, '..', 'tests', 'fixtures', 'photo.png');
 const isPhone = (page: Page) => (page.viewportSize()?.width ?? 0) < 768;
 const BASE_URL = 'http://127.0.0.1:3010';
-/** "2026-27 academic year": a new one every September. */
-const YEAR_LABEL = (page: Page) => page.getByText(/\d{4}-\d{2} academic year/);
 
 test.beforeEach(async ({ context }) => {
   await context.addCookies([{ name: 'splash_seen', value: '1', url: BASE_URL }]);
@@ -28,6 +26,16 @@ test.describe('signed out', () => {
         }
       }, time);
       await expect.soft(page).toHaveScreenshot(`splash-${time}.png`, { animations: 'allow' });
+    }
+  });
+
+  test('landing page', async ({ page }) => {
+    await page.goto('/');
+    await shot(page, 'landing');
+    // The provider rail moved along by one press of its arrow.
+    if (!isPhone(page)) {
+      await page.getByRole('button', { name: 'Next providers' }).click();
+      await shot(page, 'landing-rail-next');
     }
   });
 
@@ -318,10 +326,10 @@ test.describe('new academic year', () => {
     await page.goto('/dashboard');
     await expect(page.getByRole('dialog')).toBeVisible();
     // The dialog covers the viewport, so the page under it isn't scrolled through.
-    await expect.soft(page).toHaveScreenshot('year-prompt.png', { mask: [YEAR_LABEL(page)] });
+    await expect.soft(page).toHaveScreenshot('year-prompt.png', { mask: moving(page) });
     await page.getByRole('radio', { name: /I’m repeating/ }).click();
     await expect.soft(page).toHaveScreenshot('year-prompt-repeating.png', {
-      mask: [YEAR_LABEL(page)],
+      mask: moving(page),
     });
 
     // "Remind me tomorrow": the prompt stays away, the notice in Settings stays.
