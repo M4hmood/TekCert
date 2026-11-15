@@ -72,10 +72,9 @@ export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
         <Link
           href="/dashboard"
           className="flex items-center gap-2.75 h-11 ps-1.75 text-ink no-underline"
-          aria-label="TekCert home"
         >
           <Image
-            src="/icons/tekcert.png"
+            src="/icons/tekcert-96.png"
             alt=""
             width={36}
             height={36}
@@ -90,6 +89,8 @@ export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
               TEK-UP University
             </span>
           </span>
+          {/* The name is the visible text plus this, so speech input can say what it sees. */}
+          <span className="sr-only"> home</span>
         </Link>
         <IconButton
           icon={collapsed ? 'left_panel_open' : 'left_panel_close'}

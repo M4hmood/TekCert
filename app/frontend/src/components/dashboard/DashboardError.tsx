@@ -2,7 +2,8 @@
 
 import { Button, Icon } from '@tekcert/ui';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
+import { reportError } from '@/lib/monitoring';
 
 const timeFormat = new Intl.DateTimeFormat('en-US', {
   hour: 'numeric',
@@ -27,6 +28,7 @@ export function DashboardError({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [at] = useState(() => timeFormat.format(new Date()));
+  useEffect(() => reportError(error), [error]);
 
   // Server data has to be fetched again, not only the boundary reset.
   const retry = () =>

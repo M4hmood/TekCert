@@ -8,7 +8,7 @@ const COLUMNS = [
     'ine-ewpt.svg',
     'azure-associate.webp',
     'lf-cka.webp',
-    'pi-pcap.png',
+    'pi-pcap.webp',
   ],
   [
     'azure-fundamentals.webp',
@@ -16,15 +16,15 @@ const COLUMNS = [
     'cisco-ccnp.webp',
     'ine-ecppt.svg',
     'aws-sap-c02.webp',
-    'pi-pcep.png',
+    'pi-pcep.webp',
   ],
   [
     'ine-ejpt.svg',
     'aws-clf-c02.webp',
-    'lf-ckad.png',
+    'lf-ckad.webp',
     'cisco-ccie.webp',
     'azure-expert.webp',
-    'pi-pcpp.png',
+    'pi-pcpp.webp',
   ],
 ];
 

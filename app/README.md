@@ -40,6 +40,11 @@ If your `backend/.env` predates Sprint 2, copy the `S3_*` lines from `backend/.e
 | `pnpm test:api` | API e2e tests against the `tekcert_test` database |
 | `pnpm build && pnpm test:e2e` | Playwright smoke tests against the production builds |
 | `pnpm db:reset` | Drops, migrates and re-seeds the dev database |
+| `pnpm db:seed:pilot` | Adds about 60 invented students with weeks of progress, for demos (never in production; `PILOT_DEMO_PASSWORD` opens `pilot.demo@tek-up.de`) |
+| `pnpm db:backup` / `pnpm db:restore` / `pnpm db:backup:check` | Dump, restore, and prove a dump restores (see `docs/runbook.md`) |
+| `pnpm --filter e2e test:visual` | Screenshots of every screen against the local baseline |
+| `pnpm --filter e2e test:perf` | What each screen downloads, and Lighthouse on a phone profile |
+| `python packages/ui/scripts/subset-icons.py` | Rebuilds the icon font after adding an icon (`pip install fonttools brotli` once) |
 | `pnpm --filter backend db:migration:generate src/database/migrations/<Name>` | Generates a migration from entity changes |
 | `pnpm bundle` | Builds the self-contained deploy folders in `deploy/backend` and `deploy/frontend` |
 
@@ -59,7 +64,7 @@ PORT=4000 node dist/main.js
 cd deploy/frontend/frontend
 API_URL=http://<api-host>:4000 PORT=3000 HOSTNAME=0.0.0.0 node server.js
 ```
-Health checks: `GET /health` on the API (includes a database ping) and `GET /healthz` on the web app.
+Health checks: `GET /health` on the API (includes a database ping) and `GET /healthz` on the web app, for the load balancers. `GET /status` on the web app checks all three tiers at once, for an uptime monitor. Error monitoring turns on when `SENTRY_DSN` is set on both. What to watch and how to restore: `docs/runbook.md`.
 
 ## Repository layout
 | Path | Contents |

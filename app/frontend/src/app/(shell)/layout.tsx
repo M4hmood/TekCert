@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { BottomNav } from '@/components/BottomNav';
-import { YearPrompt } from '@/components/settings/YearPrompt';
+import { YearPromptLazy } from '@/components/settings/YearPromptLazy';
 import { Sidebar } from '@/components/Sidebar';
 import { ThemeSync } from '@/components/ThemeSync';
 import {
@@ -51,7 +51,7 @@ export default async function ShellLayout({ children }: { children: ReactNode })
         </main>
         <BottomNav />
         {settings?.academicYear.due && settings.enrolment && (
-          <YearPrompt
+          <YearPromptLazy
             firstName={user.firstName}
             enrolment={settings.enrolment}
             specialties={settings.specialties}

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Header, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ZodResponse } from 'nestjs-zod';
 import type { AccessClaims } from '../auth/access-token.service';
@@ -13,6 +13,12 @@ import {
 } from './dto/certifications.dto';
 import { CertificationsService } from './certifications.service';
 
+/**
+ * The catalog is the same for everyone and changes rarely: a browser or a CDN may reuse an
+ * answer for a minute, and serve it a little longer while it fetches a new one.
+ */
+const PUBLIC_CATALOG_CACHE = 'public, max-age=60, stale-while-revalidate=300';
+
 @ApiTags('certifications')
 @Controller('certifications')
 export class CertificationsController {
@@ -21,6 +27,7 @@ export class CertificationsController {
   /** Public: the sign-in page and the landing page show the catalog. Counts name nobody. */
   @Public()
   @Get()
+  @Header('cache-control', PUBLIC_CATALOG_CACHE)
   @ApiOperation({ summary: 'Search and filter the funded certification catalog' })
   @ZodResponse({ type: CertificationListDto })
   list(@Query() query: CertificationListQueryDto) {
@@ -29,6 +36,7 @@ export class CertificationsController {
 
   @Public()
   @Get(':slug')
+  @Header('cache-control', PUBLIC_CATALOG_CACHE)
   @ApiOperation({ summary: 'One certification: facts, syllabus, resources and prerequisites' })
   @ZodResponse({ type: CertificationDetailDto })
   findOne(@Param() params: CertificationParamsDto) {

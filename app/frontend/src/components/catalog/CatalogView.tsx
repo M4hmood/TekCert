@@ -207,10 +207,11 @@ export function CatalogView({ certifications, initialQuery, initialPage, mine }:
           </div>
         </div>
 
-        <div className="hidden gap-2 -me-4 pe-4 overflow-x-auto [scrollbar-width:none] max-md:flex">
+        {/* The padding leaves room for the tap areas, which the scrolling would cut off. */}
+        <div className="hidden gap-2 -me-4 pe-4 py-0.5 -my-0.5 overflow-x-auto [scrollbar-width:none] max-md:flex">
           <button
             type="button"
-            className="inline-flex flex-none items-center gap-1.5 h-10 px-3.5 border-[1.5px] border-pri rounded-[20px] bg-pri text-pri-ink text-[14px] font-semibold cursor-pointer"
+            className="tap-target inline-flex flex-none items-center gap-1.5 h-10 px-3.5 border-[1.5px] border-pri rounded-[20px] bg-pri text-pri-ink text-[14px] font-semibold cursor-pointer"
             onClick={() => setSheetOpen(true)}
             aria-haspopup="dialog"
           >
@@ -225,7 +226,7 @@ export function CatalogView({ certifications, initialQuery, initialPage, mine }:
                 type="button"
                 aria-pressed={on}
                 className={cn(
-                  'inline-flex flex-none items-center gap-1.75 h-10 px-3.5 border-[1.5px] border-ln2 rounded-[20px] bg-sf text-[14px] font-semibold cursor-pointer',
+                  'tap-target inline-flex flex-none items-center gap-1.75 h-10 px-3.5 border-[1.5px] border-ln2 rounded-[20px] bg-sf text-[14px] font-semibold cursor-pointer',
                   on && 'border-pri bg-pri-sf text-pri',
                 )}
                 onClick={() => toggleProvider(p.code)}

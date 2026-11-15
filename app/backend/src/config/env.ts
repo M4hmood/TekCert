@@ -34,6 +34,12 @@ export const EnvSchema = z
     S3_REGION: z.string().min(1).default('eu-central-1'),
     S3_BUCKET: z.string().min(3).default('tekcert-avatars'),
     S3_FORCE_PATH_STYLE: BooleanString.default(false),
+    /**
+     * Error monitoring (ADR-024). Unset: nothing is sent anywhere. Read before the app starts
+     * (monitoring/monitoring.ts); checked here so a mistyped value stops the start.
+     */
+    SENTRY_DSN: z.url().optional(),
+    SENTRY_ENVIRONMENT: z.string().min(1).optional(),
     S3_ACCESS_KEY_ID: z.string().min(1).optional(),
     S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
   })

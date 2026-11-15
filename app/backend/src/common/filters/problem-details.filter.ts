@@ -12,6 +12,7 @@ import type { Request, Response } from 'express';
 import { ZodSerializationException, ZodValidationException } from 'nestjs-zod';
 import { EntityNotFoundError, QueryFailedError } from 'typeorm';
 import { ZodError } from 'zod';
+import { reportError } from '../../monitoring/monitoring';
 import { ProblemException } from '../exceptions/problem.exception';
 
 export const VALIDATION_PROBLEM_TYPE = 'urn:tekcert:problem:validation';
@@ -41,6 +42,12 @@ export class ProblemDetailsFilter implements ExceptionFilter {
 
     if (problem.status >= 500) {
       this.logger.error({ err: exception, requestId: problem.requestId }, problem.title);
+      // The route pattern, not the URL: ids and search terms stay out of the monitor.
+      const route = (request.route as { path?: string } | undefined)?.path;
+      reportError(exception, {
+        requestId: problem.requestId,
+        route: route ? `${request.method} ${route}` : undefined,
+      });
     }
 
     response.status(problem.status).type('application/problem+json').json(problem);

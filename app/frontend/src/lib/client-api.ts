@@ -30,6 +30,9 @@ async function call<S extends z.ZodType>(
         ...(body !== undefined && !isForm && { 'content-type': 'application/json' }),
       },
       body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
+      // A change still on its way when the student leaves the page is finished by the browser
+      // instead of dropped (a tick, a switch). Uploads are too large for it.
+      keepalive: method !== 'GET' && !isForm,
     });
   } catch {
     return { ok: false, problem: NETWORK_PROBLEM };

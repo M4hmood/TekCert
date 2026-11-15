@@ -365,7 +365,7 @@ function HeldCard({ cert }: { cert: ProfileHeld }) {
         </span>
         <Link
           href={`/catalog/${cert.slug}`}
-          className="font-serif text-[19px] font-semibold leading-[1.2] text-ink2 no-underline hover:underline max-md:font-sans max-md:text-[14.5px]"
+          className="tap-target font-serif text-[19px] font-semibold leading-[1.2] text-ink2 no-underline hover:underline max-md:font-sans max-md:text-[14.5px]"
         >
           {cert.name}
         </Link>

@@ -65,9 +65,13 @@ setup('students', async ({ browser }) => {
       await finishAndStart(page, 5);
     },
     // Starts SAA-C03 after the main student, who is then told a classmate started it.
+    // Then leaves TEK-UP: an alumnus in the directory, and off the boards, where his zero would
+    // tie with Omar's (ties are ordered by random ids, so the screens would change each run).
     late: async (page: Page) => {
       await walkToResult(page, { firstName: 'Karim', lastName: 'Mansour' });
       await finishAndStart(page, 0);
+      const left = await page.request.post('/api/me/academic-year', { data: { status: 'left' } });
+      expect(left.ok()).toBe(true);
     },
     // A year behind: the "Where are you this year?" prompt is due.
     returning: async (page: Page) => {
@@ -75,7 +79,8 @@ setup('students', async ({ browser }) => {
         firstName: 'Ines',
         lastName: 'Jaziri',
       });
-      await completeOnboarding(page.request, [], { year: 3, targetSpecialty: 'CIM', group: 'A' });
+      // Aiming for SDIA, so she isn't on the CIM boards the screens show.
+      await completeOnboarding(page.request, [], { year: 3, targetSpecialty: 'SDIA', group: 'A' });
       expireAcademicYear(email, VISUAL_DATABASE_URL);
     },
     // Onboarded, nothing started: the empty dashboard.

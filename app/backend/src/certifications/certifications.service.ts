@@ -474,6 +474,11 @@ export class CertificationsService {
     return cert ? this.holderIds(cert.id) : [];
   }
 
+  /** Everyone who has started at least one certification. */
+  preparingUserIds(): Promise<string[]> {
+    return this.preparations.userIds();
+  }
+
   /** Students who hold or prepare at least one certification. */
   async engagedUserIds(): Promise<string[]> {
     const [holders, preparers] = await Promise.all([

@@ -32,7 +32,7 @@ test.beforeEach(async ({ page }) => {
 test.describe('desktop shell', () => {
   test.skip(({ viewport }) => (viewport?.width ?? 0) < 768, 'sidebar layout only');
 
-  test('opens the dashboard from the root URL', async ({ page }) => {
+  test('sends a signed-in student from the landing page to the dashboard', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveURL(/\/dashboard$/);
     // The dashboard greets the student (signed up as "Test Student").

@@ -14,8 +14,10 @@ import { ProblemDetailsFilter } from './common/filters/problem-details.filter';
 import { type Env, validateEnv } from './config/env';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
+import { LandingModule } from './landing/landing.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { MailModule } from './mail/mail.module';
+import { MaintenanceModule } from './maintenance/maintenance.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
 import { ProgressModule } from './progress/progress.module';
@@ -48,7 +50,7 @@ export const REQUEST_ID_HEADER = 'x-request-id';
         },
       }),
     }),
-    // Runs the weekly leaderboard notification (leaderboard/rank-digest.service.ts).
+    // Runs the weekly leaderboard notification and the nightly clean-up.
     ScheduleModule.forRoot(),
     CommonModule,
     DatabaseModule,
@@ -64,6 +66,8 @@ export const REQUEST_ID_HEADER = 'x-request-id';
     LeaderboardModule,
     NotificationsModule,
     SettingsModule,
+    LandingModule,
+    MaintenanceModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },

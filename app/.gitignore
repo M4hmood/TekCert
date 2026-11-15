@@ -19,3 +19,5 @@ e2e/blob-report/
 .DS_Store
 *.log
 next-env.d.ts
+# Database dumps from `pnpm db:backup`: they hold personal data.
+backups/

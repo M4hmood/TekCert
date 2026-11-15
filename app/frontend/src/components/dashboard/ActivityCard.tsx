@@ -73,7 +73,7 @@ export function ActivityCard({ initial, now, limit = 5 }: ActivityCardProps) {
       <div
         role="group"
         aria-label="Whose activity"
-        className="grid grid-cols-4 gap-0.5 mb-2 p-0.75 rounded-[9px] bg-sf2 max-md:flex max-md:gap-1.5 max-md:p-0 max-md:pb-2 max-md:bg-transparent max-md:overflow-x-auto"
+        className="grid grid-cols-4 gap-0.5 mb-2 p-0.75 rounded-[9px] bg-sf2 max-md:flex max-md:gap-1.5 max-md:p-0 max-md:pt-0.5 max-md:pb-2 max-md:-mt-0.5 max-md:bg-transparent max-md:overflow-x-auto"
       >
         {COMMUNITY_SCOPES.map((s) => {
           const on = s === scope;
@@ -87,7 +87,7 @@ export function ActivityCard({ initial, now, limit = 5 }: ActivityCardProps) {
               className={cn(
                 'h-8.5 p-0 border-none rounded-[7px] bg-transparent text-ink2 text-[12.5px] font-semibold cursor-pointer',
                 on && 'bg-sf text-ink shadow-[0_1px_2px_rgba(19,26,44,.12)]',
-                'max-md:flex-none max-md:h-10 max-md:px-3.5 max-md:border-[1.5px] max-md:border-solid max-md:border-ln2 max-md:rounded-[20px] max-md:bg-sf max-md:text-ink max-md:text-[13.5px] max-md:shadow-none',
+                'max-md:tap-target max-md:flex-none max-md:h-10 max-md:px-3.5 max-md:border-[1.5px] max-md:border-solid max-md:border-ln2 max-md:rounded-[20px] max-md:bg-sf max-md:text-ink max-md:text-[13.5px] max-md:shadow-none',
                 on && 'max-md:border-pri max-md:bg-pri max-md:text-pri-ink',
               )}
             >

@@ -166,7 +166,6 @@ export function NextCard({
       </section>
       <Link
         href={`/catalog/${next.slug}`}
-        aria-label={`Next: ${next.code} · ${next.name}`}
         className={cn(CARD, 'hidden gap-2.5 p-4.5 text-ink no-underline max-md:flex')}
       >
         <span className="text-ink3 text-[11.5px] font-semibold tracking-[.1em] uppercase">

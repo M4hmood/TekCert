@@ -21,7 +21,7 @@ import {
   type UpdateNotificationPreferencesInput,
   withPreferenceDefaults,
 } from '@tekcert/types';
-import { type EntityManager, In, IsNull, type Repository } from 'typeorm';
+import { type EntityManager, In, IsNull, LessThan, type Repository } from 'typeorm';
 import { CertificationsService } from '../certifications/certifications.service';
 import { CLOCK, type Clock } from '../common/utils/clock';
 import type { Env } from '../config/env';
@@ -219,6 +219,12 @@ export class NotificationsService {
   async markAllRead(userId: string): Promise<UnreadCount> {
     await this.notifications.update({ userId, readAt: IsNull() }, { readAt: this.clock.now() });
     return { unread: 0 };
+  }
+
+  /** Removes notifications that happened before `before`; returns how many. */
+  async deleteOlderThan(before: Date): Promise<number> {
+    const deleted = await this.notifications.delete({ occurredAt: LessThan(before) });
+    return deleted.affected ?? 0;
   }
 
   async getPreferences(userId: string): Promise<NotificationPreferences> {

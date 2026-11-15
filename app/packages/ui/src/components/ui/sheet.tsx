@@ -24,7 +24,7 @@ export function SheetContent({
       />
       <SheetPrimitive.Content
         data-slot="sheet-content"
-        onCloseAutoFocus={returnFocus}
+        {...returnFocus}
         className={cn(
           'fixed inset-x-0 bottom-0 z-50 max-h-[92dvh] overflow-y-auto rounded-t-[20px] bg-bg text-ink data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom data-[state=open]:duration-300',
           className,

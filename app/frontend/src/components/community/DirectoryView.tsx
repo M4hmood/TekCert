@@ -348,7 +348,7 @@ function ScopeSwitch({
             title={scope.long}
             onClick={() => !on && onChange(scope.value)}
             className={cn(
-              'h-9.5 px-3.5 border-none rounded-[7px] bg-transparent text-ink2 text-[13.5px] font-semibold whitespace-nowrap cursor-pointer',
+              'tap-target h-9.5 px-3.5 border-none rounded-[7px] bg-transparent text-ink2 text-[13.5px] font-semibold whitespace-nowrap cursor-pointer',
               !long && 'px-1 text-[13px] max-md:text-[12.5px]',
               on && 'bg-sf text-ink shadow-[0_1px_2px_rgba(19,26,44,.12)]',
             )}
@@ -383,7 +383,6 @@ function PersonCard({ person }: { person: DirectoryPerson }) {
     <li className="min-w-0 max-md:border-b max-md:border-ln max-md:last:border-b-0">
       <Link
         href={person.isMe ? '/profile' : `/community/${person.id}`}
-        aria-label={`${name}${person.isMe ? ' (you)' : ''}, ${group}`}
         className="flex flex-col gap-3.5 h-full p-4.5 border border-ln rounded-[14px] bg-sf text-ink no-underline hover:border-ln2 hover:shadow-[0_2px_8px_rgba(19,26,44,.06)] max-md:flex-row max-md:items-center max-md:gap-3 max-md:min-h-12 max-md:py-3 max-md:px-3.5 max-md:border-none max-md:rounded-none max-md:bg-transparent max-md:hover:shadow-none"
       >
         <div className="flex flex-1 items-center gap-3 min-w-0 max-md:contents">

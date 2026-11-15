@@ -20,7 +20,11 @@
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter backend db:migrate",
     "db:seed": "pnpm --filter backend db:seed",
-    "db:reset": "pnpm --filter backend db:reset"
+    "db:seed:pilot": "pnpm --filter backend db:seed:pilot",
+    "db:reset": "pnpm --filter backend db:reset",
+    "db:backup": "node scripts/db-backup.mjs backup",
+    "db:restore": "node scripts/db-backup.mjs restore",
+    "db:backup:check": "node scripts/db-backup.mjs check"
   },
   "devDependencies": {
     "prettier": "^3.9.10",

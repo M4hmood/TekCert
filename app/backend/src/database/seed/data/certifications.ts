@@ -996,7 +996,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 4,
     specialties: ['GLOps', 'DMWM'],
-    badgeAsset: 'lf-ckad.png',
+    badgeAsset: 'lf-ckad.webp',
     domains: [
       d('Application design and build', 'Design', 20, [
         ['Container images and multi-container pods', 150],
@@ -1351,7 +1351,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['SSIR'],
-    badgeAsset: 'ine-esoc.svg',
+    badgeAsset: 'ine-esoc.webp',
     domains: [
       d('SOC foundations', 'Foundations', null, [
         ['SOC roles and operations', 90],
@@ -1376,7 +1376,7 @@ export const certifications: CertificationSeed[] = [
     level: 'foundational',
     difficulty: 1,
     specialties: 'ALL',
-    badgeAsset: 'pi-pcep.png',
+    badgeAsset: 'pi-pcep.webp',
     domains: [
       d('Computer programming and Python fundamentals', 'Fundamentals', 18, [
         ['Python basics: literals, variables, operators', 90],
@@ -1405,7 +1405,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 2,
     specialties: ['SDIA', 'GLOps', 'AIOT', 'DMWM'],
-    badgeAsset: 'pi-pcap.png',
+    badgeAsset: 'pi-pcap.webp',
     domains: [
       d('Modules and packages', 'Modules', 12, [['Modules, packages and pip', 90]]),
       d('Exceptions', 'Exceptions', 14, [['Exception hierarchy and custom exceptions', 90]]),
@@ -1429,7 +1429,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 4,
     specialties: ['SDIA', 'GLOps'],
-    badgeAsset: 'pi-pcpp.png',
+    badgeAsset: 'pi-pcpp.webp',
     domains: [
       d('PCPP1: advanced Python', 'PCPP1', null, [
         ['Advanced OOP and metaclasses', 180],

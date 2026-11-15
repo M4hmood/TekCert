@@ -14,6 +14,12 @@ const WEB_PORT = 3010;
 const DATABASE_URL =
   process.env.TEST_DATABASE_URL ?? 'postgresql://tekcert:tekcert@localhost:5432/tekcert_test';
 
+/**
+ * E2E_BASE_URL runs the same suite against an address that is already up (staging, later):
+ * no servers are started here. Tests that read emails need Mailpit next to that API.
+ */
+const REMOTE = process.env.E2E_BASE_URL?.replace(/\/$/, '');
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -23,7 +29,7 @@ export default defineConfig({
   workers: 2,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
-    baseURL: `http://127.0.0.1:${WEB_PORT}`,
+    baseURL: REMOTE ?? `http://127.0.0.1:${WEB_PORT}`,
     trace: 'retain-on-failure',
   },
   // Sign-up, email delivery and verification take a few round trips.
@@ -41,47 +47,50 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 }, hasTouch: true },
     },
   ],
-  webServer: [
-    {
-      name: 'api',
-      // Students of earlier runs are removed first: boards and lists would fill up with them.
-      command:
-        'pnpm --filter backend db:deploy && pnpm --filter backend typeorm query "DELETE FROM users" && pnpm --filter backend db:seed:deploy && pnpm --filter backend start',
-      url: `http://127.0.0.1:${API_PORT}/health`,
-      env: {
-        DATABASE_URL,
-        PORT: String(API_PORT),
-        NODE_ENV: 'production',
-        LOG_LEVEL: 'warn',
-        JWT_ACCESS_SECRET: 'e2e-secret-that-is-at-least-32-characters',
-        WEB_URL: `http://127.0.0.1:${WEB_PORT}`,
-        // The test servers run over plain HTTP.
-        COOKIE_SECURE: 'false',
-        SMTP_URL: process.env.SMTP_URL ?? 'smtp://127.0.0.1:1025',
-        // Every test signs up from the same IP.
-        AUTH_RATE_LIMIT: '1000',
-        // S3Mock from docker compose (a service container in CI) stores the profile photos.
-        S3_ENDPOINT: process.env.S3_ENDPOINT ?? 'http://127.0.0.1:9090',
-        S3_FORCE_PATH_STYLE: 'true',
-        S3_BUCKET: 'tekcert-avatars',
-        S3_ACCESS_KEY_ID: 'e2e',
-        S3_SECRET_ACCESS_KEY: 'e2e',
-      },
-      reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
-    },
-    {
-      name: 'web',
-      command: 'pnpm --filter frontend deploy:bundle && node ../deploy/frontend/frontend/server.js',
-      url: `http://127.0.0.1:${WEB_PORT}/healthz`,
-      env: {
-        PORT: String(WEB_PORT),
-        HOSTNAME: '127.0.0.1',
-        API_URL: `http://127.0.0.1:${API_PORT}`,
-        NODE_ENV: 'production',
-      },
-      reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
-    },
-  ],
+  webServer: REMOTE
+    ? undefined
+    : [
+        {
+          name: 'api',
+          // Students of earlier runs are removed first: boards and lists would fill up with them.
+          command:
+            'pnpm --filter backend db:deploy && pnpm --filter backend typeorm query "DELETE FROM users" && pnpm --filter backend db:seed:deploy && pnpm --filter backend start',
+          url: `http://127.0.0.1:${API_PORT}/health`,
+          env: {
+            DATABASE_URL,
+            PORT: String(API_PORT),
+            NODE_ENV: 'production',
+            LOG_LEVEL: 'warn',
+            JWT_ACCESS_SECRET: 'e2e-secret-that-is-at-least-32-characters',
+            WEB_URL: `http://127.0.0.1:${WEB_PORT}`,
+            // The test servers run over plain HTTP.
+            COOKIE_SECURE: 'false',
+            SMTP_URL: process.env.SMTP_URL ?? 'smtp://127.0.0.1:1025',
+            // Every test signs up from the same IP.
+            AUTH_RATE_LIMIT: '1000',
+            // S3Mock from docker compose (a service container in CI) stores the profile photos.
+            S3_ENDPOINT: process.env.S3_ENDPOINT ?? 'http://127.0.0.1:9090',
+            S3_FORCE_PATH_STYLE: 'true',
+            S3_BUCKET: 'tekcert-avatars',
+            S3_ACCESS_KEY_ID: 'e2e',
+            S3_SECRET_ACCESS_KEY: 'e2e',
+          },
+          reuseExistingServer: !process.env.CI,
+          timeout: 120_000,
+        },
+        {
+          name: 'web',
+          command:
+            'pnpm --filter frontend deploy:bundle && node ../deploy/frontend/frontend/server.js',
+          url: `http://127.0.0.1:${WEB_PORT}/healthz`,
+          env: {
+            PORT: String(WEB_PORT),
+            HOSTNAME: '127.0.0.1',
+            API_URL: `http://127.0.0.1:${API_PORT}`,
+            NODE_ENV: 'production',
+          },
+          reuseExistingServer: !process.env.CI,
+          timeout: 120_000,
+        },
+      ],
 });

@@ -8,7 +8,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 /* In a layer, or its font-size would beat every text-* utility set on an icon. */
-@import 'material-symbols/outlined.css' layer(base);
+@import './icons.css' layer(base);
 @import './tokens.css';
 @import './theme.css';
 @import './animations.css';

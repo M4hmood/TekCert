@@ -101,7 +101,7 @@ export function SignInForm({ next }: { next?: string }) {
         labelAction={
           <Link
             href="/forgot-password"
-            className="min-h-6 p-0 border-none bg-transparent text-pri text-[13.5px] font-semibold no-underline cursor-pointer"
+            className="tap-target min-h-6 p-0 border-none bg-transparent text-pri text-[13.5px] font-semibold no-underline cursor-pointer"
           >
             Forgot password?
           </Link>
