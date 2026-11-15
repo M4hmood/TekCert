@@ -23,7 +23,7 @@ export function DialogContent({
       />
       <DialogPrimitive.Content
         data-slot="dialog-content"
-        onCloseAutoFocus={returnFocus}
+        {...returnFocus}
         className={cn(
           'fixed inset-0 z-50 m-auto h-fit max-w-[calc(100%-6px-2em)] max-h-[calc(100%-6px-2em)] overflow-auto p-6 border border-ln rounded-card bg-sf text-ink shadow-elevated outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 duration-200',
           className,
