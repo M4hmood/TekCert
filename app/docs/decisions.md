@@ -309,6 +309,24 @@ Email + password limited to @tek-up.de, httpOnly cookie sessions. SSO can be add
   - A save still in flight is lost if the student leaves the page at once (as with ticks, in the backlog).
   - Emails need an SMTP provider in staging and production (see Open).
 
+## ADR-024 Hardening and the pilot (S08)
+- **Context:** The MVP has to be ready for one pilot class: a public front door, nothing that leaks a student, errors that someone hears about, data that can be got back, and screens that work with a keyboard, a screen reader and a phone. Staging on AWS doesn't exist yet (decision 2026-11-14: it is its own piece of work after S08).
+- **Decision:**
+  - **The landing page shows totals only.** `GET /stats/public` (no sign-in) answers with the size of the catalog, the number of students, how many prepare a certification, per specialty and per path, kept in memory five minutes. No name, id or activity of a student: profiles are for signed-in students (2026-10-29). The design's verified certifications, named activity and unfunded providers are left out. `/` shows it to visitors and sends a signed-in student to their dashboard.
+  - **Error monitoring is Sentry, off until `SENTRY_DSN` is set**, on the API and in the browser (the browser SDK is only downloaded then). Errors only, no tracing. The SDK's own data collection is switched off and every event goes through `scrubEvent` (in `@tekcert/types`): no user, cookie, body, query string or header beyond the user agent and request id; addresses and tokens are cut out of messages. The API tags an event with the request id and the route pattern, never the URL.
+  - **One status URL for uptime**, `/status` on the web app: 200 when the web app, the API and the database answer, 503 and the tier that isn't otherwise. The load balancers keep their own checks, which never chain.
+  - **Backups** are `pg_dump` in custom format through the `db` container, with a check that restores into a scratch database and compares the rows of every table. On AWS, RDS's own backups replace them (runbook).
+  - **A nightly clean-up** deletes rows nothing reads any more: expired sessions and email links (after a week), sign-in counters untouched for 30 days, notifications older than 90 days. The points ledger and the activity feed are never touched.
+  - **Pilot data is a separate seed**, `pnpm db:seed:pilot`: about 60 invented students in five classes, built from a fixed sequence so a demo looks the same each time, with progress written as real ledger rows. It refuses production, replaces only its own students (`pilot.*@tek-up.de`), and no account can sign in unless `PILOT_DEMO_PASSWORD` is set.
+  - **The icon font is a subset** of Material Symbols with the icons in use (4 MB to about 90 kB), built by `packages/ui/scripts/subset-icons.py`. A web test fails when the code uses an icon the font doesn't hold.
+  - **Tap areas of 44 px** without changing the look: the `tap-target` utility grows an invisible `::after` around chips, segments and small links. A Playwright test measures every control on a phone.
+  - **Accessibility is checked by axe** (WCAG 2.1 A and AA) on every screen and its main states, in light and dark, at 1440 and 390 px. Links and cards are named by their visible text, so speech input can use what is on screen.
+  - **Caching:** the public catalog may be cached for a minute (`stale-while-revalidate`); the public numbers for five minutes; anything personal is never cached (`no-store` on the export and the status).
+- **Consequences:**
+  - The Lighthouse Performance budget is not met yet on this machine (see the S08 outcome): zod is in every page's scripts because the browser validates API answers and forms with the shared schemas, and the serif font files are large. Both are in the backlog with their options.
+  - Without a Sentry account nothing is reported, and without staging there is no public address to watch: both wait for the AWS work.
+  - The screen-reader check is a script for a person (`docs/screen-reader-check.md`); no automated test replaces it.
+
 ## Open
 - Hosting for staging and production. The target is the AWS 3-tier design in `../docs/AWS-Architecture-V1.drawio`; the work is deferred (see PLAN.md backlog).
 - SMTP provider for transactional email in staging and production (the code is ready; see ADR-015)
