@@ -41,7 +41,7 @@ export function Pagination({
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="grid place-items-center min-w-10 h-10 px-1.5 border-[1.5px] border-ln2 rounded-[8px] bg-sf text-ink text-[14px] font-semibold cursor-pointer enabled:hover:border-pri disabled:bg-transparent disabled:text-ink3 disabled:opacity-55 disabled:cursor-default aria-[current=page]:border-pri aria-[current=page]:bg-pri aria-[current=page]:text-pri-ink aria-[current=page]:cursor-default max-md:min-w-11 max-md:h-11"
+          className="tap-target grid place-items-center min-w-10 h-10 px-1.5 border-[1.5px] border-ln2 rounded-[8px] bg-sf text-ink text-[14px] font-semibold cursor-pointer enabled:hover:border-pri disabled:bg-transparent disabled:text-ink3 disabled:opacity-55 disabled:cursor-default aria-[current=page]:border-pri aria-[current=page]:bg-pri aria-[current=page]:text-pri-ink aria-[current=page]:cursor-default max-md:min-w-11 max-md:h-11"
           aria-label="Previous page"
           disabled={page === 1}
           onClick={() => onChange(page - 1)}
@@ -58,7 +58,7 @@ export function Pagination({
               <button
                 key={item}
                 type="button"
-                className="grid place-items-center min-w-10 h-10 px-1.5 border-[1.5px] border-ln2 rounded-[8px] bg-sf text-ink text-[14px] font-semibold cursor-pointer enabled:hover:border-pri disabled:bg-transparent disabled:text-ink3 disabled:opacity-55 disabled:cursor-default aria-[current=page]:border-pri aria-[current=page]:bg-pri aria-[current=page]:text-pri-ink aria-[current=page]:cursor-default max-md:min-w-11 max-md:h-11"
+                className="tap-target grid place-items-center min-w-10 h-10 px-1.5 border-[1.5px] border-ln2 rounded-[8px] bg-sf text-ink text-[14px] font-semibold cursor-pointer enabled:hover:border-pri disabled:bg-transparent disabled:text-ink3 disabled:opacity-55 disabled:cursor-default aria-[current=page]:border-pri aria-[current=page]:bg-pri aria-[current=page]:text-pri-ink aria-[current=page]:cursor-default max-md:min-w-11 max-md:h-11"
                 aria-label={`Page ${item}`}
                 aria-current={item === page ? 'page' : undefined}
                 onClick={() => item !== page && onChange(item)}
@@ -73,7 +73,7 @@ export function Pagination({
         </span>
         <button
           type="button"
-          className="grid place-items-center min-w-10 h-10 px-1.5 border-[1.5px] border-ln2 rounded-[8px] bg-sf text-ink text-[14px] font-semibold cursor-pointer enabled:hover:border-pri disabled:bg-transparent disabled:text-ink3 disabled:opacity-55 disabled:cursor-default aria-[current=page]:border-pri aria-[current=page]:bg-pri aria-[current=page]:text-pri-ink aria-[current=page]:cursor-default max-md:min-w-11 max-md:h-11"
+          className="tap-target grid place-items-center min-w-10 h-10 px-1.5 border-[1.5px] border-ln2 rounded-[8px] bg-sf text-ink text-[14px] font-semibold cursor-pointer enabled:hover:border-pri disabled:bg-transparent disabled:text-ink3 disabled:opacity-55 disabled:cursor-default aria-[current=page]:border-pri aria-[current=page]:bg-pri aria-[current=page]:text-pri-ink aria-[current=page]:cursor-default max-md:min-w-11 max-md:h-11"
           aria-label="Next page"
           disabled={page === pageCount}
           onClick={() => onChange(page + 1)}

@@ -150,9 +150,10 @@ describe('DirectoryView', () => {
     view();
     const students = within(screen.getByRole('list', { name: 'Students' }));
     const links = students.getAllByRole('link');
-    expect(links[0]).toHaveAccessibleName('Yassine Ben Amor (you), ING-4 CIM · group A');
+    // The card is named by what it shows, so speech input can use any of it.
+    expect(links[0]).toHaveAccessibleName(/^Yassine Ben Amor\s*· you\s*ING-4 CIM · group A/);
     expect(links[0]).toHaveAttribute('href', '/profile');
-    expect(links[1]).toHaveAccessibleName('Rania Gharbi, ING-4 CIM · group A');
+    expect(links[1]).toHaveAccessibleName(/^Rania Gharbi\s*ING-4 CIM · group A/);
     expect(links[1]).toHaveAttribute('href', `/community/${uuid(2)}`);
     expect(links[1]).toHaveTextContent('3 earned · 1 in progress');
     expect(links[1]).toHaveTextContent('960 pts');

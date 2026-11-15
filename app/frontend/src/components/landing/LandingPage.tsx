@@ -75,11 +75,7 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
       <header
         className={`flex items-center justify-between gap-4 py-5 border-b border-ln max-md:py-3 ${SECTION}`}
       >
-        <Link
-          href="/"
-          aria-label="TekCert home"
-          className="flex items-center gap-2.75 text-ink no-underline"
-        >
+        <Link href="/" className="tap-target flex items-center gap-2.75 text-ink no-underline">
           <Image
             src="/icons/tekcert-96.png"
             alt=""
@@ -92,6 +88,7 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
           <span className="ms-0.5 ps-2.75 border-s border-ln2 text-ink3 text-[11px] font-semibold tracking-[0.12em] max-md:hidden">
             TEK-UP
           </span>
+          <span className="sr-only"> home</span>
         </Link>
         <nav aria-label="Sections" className="flex gap-1 max-lg:hidden">
           {NAV.map((item) => (

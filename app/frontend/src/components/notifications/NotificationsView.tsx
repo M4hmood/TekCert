@@ -184,7 +184,7 @@ export function NotificationsView({ initialFilter, initial, now }: Notifications
       <div
         role="group"
         aria-label="Filter"
-        className="inline-flex self-start gap-0.5 p-1 rounded-[10px] bg-sf2 max-md:self-stretch max-md:gap-1.5 max-md:-mx-4 max-md:px-4 max-md:py-0 max-md:rounded-none max-md:bg-transparent max-md:overflow-x-auto"
+        className="inline-flex self-start gap-0.5 p-1 rounded-[10px] bg-sf2 max-md:self-stretch max-md:gap-1.5 max-md:-mx-4 max-md:px-4 max-md:py-1 max-md:-my-1 max-md:rounded-none max-md:bg-transparent max-md:overflow-x-auto"
       >
         {NOTIFICATION_FILTERS.map((option) => {
           const on = option === filter;
@@ -196,7 +196,7 @@ export function NotificationsView({ initialFilter, initial, now }: Notifications
               onClick={() => !on && void load(option)}
               className={cn(
                 'h-9.5 px-3.5 border-none rounded-[7px] bg-transparent text-ink2 text-[13.5px] font-semibold whitespace-nowrap cursor-pointer',
-                'max-md:flex-none max-md:h-9 max-md:border-[1.5px] max-md:border-solid max-md:border-ln2 max-md:rounded-[18px] max-md:text-ink',
+                'max-md:tap-target max-md:flex-none max-md:h-9 max-md:border-[1.5px] max-md:border-solid max-md:border-ln2 max-md:rounded-[18px] max-md:text-ink',
                 on &&
                   'bg-sf text-ink shadow-[0_1px_2px_rgba(19,26,44,.12)] max-md:border-pri max-md:bg-pri max-md:text-pri-ink max-md:shadow-none',
               )}

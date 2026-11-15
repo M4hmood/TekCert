@@ -20,7 +20,7 @@ export function SectionCard({
       {/* Phones open a section on its own page: this is the way back to the list. */}
       <Link
         href="/settings"
-        className="hidden items-center gap-1.5 -mb-2 text-ink2 text-[14px] font-semibold no-underline max-md:flex"
+        className="tap-target hidden items-center gap-1.5 -mb-2 text-ink2 text-[14px] font-semibold no-underline max-md:flex"
       >
         <Icon name="arrow_back" size={19} />
         Settings

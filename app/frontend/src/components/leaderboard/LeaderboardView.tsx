@@ -48,7 +48,7 @@ export interface LeaderboardViewProps {
 const VIEW_LABELS: Record<BoardView, string> = { students: 'Students', specialties: 'Specialties' };
 const NO_VIEWER: StudentLeaderboard['viewer'] = { classCode: null, year: null, specialty: null };
 const SEGMENT =
-  'h-9.5 px-3.5 border-none rounded-[7px] bg-transparent text-ink2 text-[13.5px] font-semibold whitespace-nowrap cursor-pointer';
+  'tap-target h-9.5 px-3.5 border-none rounded-[7px] bg-transparent text-ink2 text-[13.5px] font-semibold whitespace-nowrap cursor-pointer';
 const SEGMENT_ON = 'bg-sf text-ink shadow-[0_1px_2px_rgba(19,26,44,.12)]';
 const ROW_GRID =
   'grid grid-cols-[64px_minmax(0,1fr)_120px_110px_110px] gap-3 max-lg:grid-cols-[52px_minmax(0,1fr)_90px_80px_90px] max-md:grid-cols-[34px_36px_minmax(0,1fr)_auto] max-md:gap-2.5';
