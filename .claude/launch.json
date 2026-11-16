@@ -1,0 +1,33 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tekcert-web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "app",
+        "--filter",
+        "frontend",
+        "exec",
+        "next",
+        "dev",
+        "--port",
+        "3100"
+      ],
+      "port": 3100
+    },
+    {
+      "name": "tekcert-api",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "app",
+        "--filter",
+        "backend",
+        "dev"
+      ],
+      "port": 4000
+    }
+  ]
+}
