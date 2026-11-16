@@ -149,7 +149,7 @@ test('the sidebar shows the signed-in student', async ({ page, viewport }) => {
 test('unknown pages show the not-found screen', async ({ page }) => {
   const response = await page.goto('/does-not-exist');
   expect(response?.status()).toBe(404);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'This page doesn’t exist' })).toBeVisible();
 });
 
 test.describe('catalog wiring', () => {

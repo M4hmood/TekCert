@@ -50,7 +50,7 @@ test('opens every section, from a list on phones and a side menu on desktop', as
     }
   }
   await page.goto('/settings/billing');
-  await expect(page.getByText('Page not found')).toBeVisible();
+  await expect(page.getByText('This page doesn’t exist')).toBeVisible();
 });
 
 test('changes my name and exports my data', async ({ page }) => {
