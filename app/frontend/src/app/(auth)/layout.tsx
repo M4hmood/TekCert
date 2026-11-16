@@ -20,7 +20,9 @@ async function catalogSize(): Promise<number | null> {
 export default async function AuthLayout({ children }: { children: ReactNode }) {
   const total = await catalogSize();
   return (
-    <div className="grid grid-cols-[minmax(420px,600px)_1fr] min-h-dvh max-lg:grid-cols-1">
+    // On phones and tablets the panel keeps its own height and the form takes the rest:
+    // with auto rows, a short form (sign in) would stretch the panel taller than on sign up.
+    <div className="grid grid-cols-[minmax(420px,600px)_1fr] min-h-dvh max-lg:grid-cols-1 max-lg:grid-rows-[auto_1fr]">
       <aside className="flex flex-col justify-between gap-8 px-14 py-12 overflow-hidden bg-hero text-hero-ink max-lg:flex-row max-lg:flex-wrap max-lg:items-center max-lg:gap-5.5 max-lg:px-6 max-lg:pt-7 max-lg:pb-8">
         <span className="flex items-center gap-2.75 text-inherit no-underline">
           <Image
@@ -39,11 +41,11 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
           </p>
           <BadgeWall />
         </div>
-        {total !== null && (
-          <span className="text-[14px] opacity-75 max-lg:hidden">
-            {total} certifications funded by the institute.
-          </span>
-        )}
+        {/* Always rendered: the panel spreads its three rows apart, so without this one the
+            headline and the wall would sink to the bottom when the API can't be reached. */}
+        <span className="min-h-5 text-[14px] opacity-75 max-lg:hidden">
+          {total !== null && `${total} certifications funded by the institute.`}
+        </span>
       </aside>
       <main id="main" className="flex flex-col px-12 py-8 max-lg:px-5 max-lg:pt-2 max-lg:pb-8">
         <div className="flex justify-end">
