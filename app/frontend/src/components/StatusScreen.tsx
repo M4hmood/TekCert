@@ -34,7 +34,10 @@ export function StatusScreen({
       aria-labelledby="status-title"
       className="flex flex-1 flex-col items-center justify-center px-6 py-16 text-center max-md:py-12"
     >
-      <div className="relative mb-8 grid place-items-center animate-auth-enter" aria-hidden="true">
+      <div
+        className="relative mb-5 grid place-items-center size-44 animate-auth-enter max-md:size-36"
+        aria-hidden="true"
+      >
         <span className="absolute size-44 rounded-full border border-ln max-md:size-36" />
         <span className="absolute size-30 rounded-full border border-ln2 max-md:size-26" />
         <span
