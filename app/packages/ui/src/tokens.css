@@ -8,7 +8,9 @@
   /* Typography: self-hosted fonts loaded by styles.css */
   --font-serif: 'Newsreader Variable', Georgia, serif;
   --font-sans: 'Instrument Sans Variable', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  /* Codes, counters and error codes: the UI sans with tabular figures (base.css), not a
+     monospace, which read as a developer tool. */
+  --font-mono: 'Instrument Sans Variable', system-ui, sans-serif;
   --tracking-overline: 0.1em;
   --tracking-heading: -0.015em;
 

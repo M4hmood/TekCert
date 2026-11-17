@@ -33,6 +33,13 @@
     outline-offset: 2px;
   }
 
+  /* `font-mono` and the code style use the sans: figures line up, letters get a little air. */
+  .font-mono,
+  .type-code {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+  }
+
   .material-symbols-outlined {
     font-size: 21px;
     line-height: 1;

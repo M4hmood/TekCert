@@ -205,7 +205,7 @@ export function CertBadge({
   if (!badgeAsset) {
     return (
       <span
-        className="grid flex-none place-items-center overflow-hidden p-1 border-[1.5px] border-[color-mix(in_oklch,var(--tile)_55%,var(--ln))] rounded-[10px] bg-[color-mix(in_oklch,var(--tile)_14%,var(--sf))] text-ink font-mono font-semibold leading-[1.1] text-center break-all"
+        className="grid flex-none place-items-center overflow-hidden p-1 border-[1.5px] border-[color-mix(in_oklch,var(--tile)_55%,var(--ln))] rounded-[10px] bg-[color-mix(in_oklch,var(--tile)_14%,var(--sf))] text-ink font-mono font-semibold leading-[1.15] text-center [overflow-wrap:anywhere]"
         style={
           {
             width: size,
