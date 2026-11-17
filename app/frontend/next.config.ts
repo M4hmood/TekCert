@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
   turbopack: { root: workspaceRoot },
   transpilePackages: ['@tekcert/ui'],
   poweredByHeader: false,
+  // The dev server's floating "N" button is a 32px target over every page in screenshots and
+  // accessibility checks; build and runtime errors still show in the dev overlay without it.
+  devIndicators: false,
 };
 
 export default nextConfig;

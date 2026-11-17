@@ -27,7 +27,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const user = await getCurrentUser().catch(() => null);
   const theme = user?.theme ?? parseTheme(jar.get(THEME_COOKIE)?.value);
   return (
-    <html lang="en" data-theme={theme === 'system' ? undefined : theme}>
+    <html
+      lang="en"
+      data-theme={theme === 'system' ? undefined : theme}
+      // Smooth scrolling is for in-page links only; route changes stay instant (base.css).
+      data-scroll-behavior="smooth"
+    >
       {/* Where the browser reports errors, when monitoring is set up (lib/monitoring.ts). */}
       {process.env.SENTRY_DSN && (
         <head>
