@@ -13,11 +13,7 @@ import type { ReactNode } from 'react';
 import { specialtyColor } from '@/components/catalog/parts';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { SchoolLogo } from '@/components/SchoolLogo';
-import {
-  groupByProvider,
-  maxPreparing,
-  semesterLabel,
-} from './format';
+import { groupByProvider, maxPreparing, semesterLabel } from './format';
 import { FundamentalsPathCard, SpecialtyPathCard } from './PathCards';
 import { ProviderCard } from './ProviderCard';
 import { ProviderRail } from './ProviderRail';

@@ -28,10 +28,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
     <div className="grid grid-cols-[minmax(420px,600px)_1fr] min-h-dvh max-lg:grid-cols-1 max-lg:grid-rows-[auto_1fr]">
       <aside className="flex flex-col justify-between gap-8 px-14 py-12 overflow-hidden bg-hero text-hero-ink max-lg:flex-row max-lg:flex-wrap max-lg:items-center max-lg:gap-5.5 max-lg:px-6 max-lg:pt-7 max-lg:pb-8">
         {/* Back to the landing page, as its own header logo does. */}
-        <Link
-          href="/"
-          className="flex items-center gap-2.75 min-h-11 text-inherit no-underline"
-        >
+        <Link href="/" className="flex items-center gap-2.75 min-h-11 text-inherit no-underline">
           <Image
             src="/icons/tekcert-96.png"
             alt=""

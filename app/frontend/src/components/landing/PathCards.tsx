@@ -110,8 +110,8 @@ export function FundamentalsPathCard({ path, length }: { path: LandingPath; leng
         {path.name}
       </h3>
       <p className="max-w-110 text-[14.5px] leading-[1.55] opacity-90">
-        The starting point if you haven’t chosen your specialty yet: the foundational
-        certifications of the major providers.
+        The starting point if you haven’t chosen your specialty yet: the foundational certifications
+        of the major providers.
       </p>
       <ul aria-label="Certifications of the Fundamentals" className="flex flex-wrap gap-2 mt-auto">
         {path.track.slice(0, length).map((code) => (

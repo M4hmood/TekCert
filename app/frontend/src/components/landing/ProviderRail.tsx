@@ -49,10 +49,7 @@ export function ProviderRail({
   const [onScreen, setOnScreen] = useState(false);
   const [canAutoplay, setCanAutoplay] = useState(false);
 
-  const cards = useCallback(
-    () => Array.from(rail.current?.children ?? []) as HTMLElement[],
-    [],
-  );
+  const cards = useCallback(() => Array.from(rail.current?.children ?? []) as HTMLElement[], []);
 
   /** Where the rail must scroll to put card `index` at its start. */
   const offsetOf = useCallback((card: HTMLElement) => {
@@ -243,10 +240,16 @@ export function ProviderRail({
         className={cn(
           'flex gap-5 -mt-5 -mb-11 px-18 pt-7 pb-14 overflow-x-auto scroll-px-18 [scrollbar-width:none] max-lg:px-8 max-lg:scroll-px-8 max-md:gap-3 max-md:px-4 max-md:scroll-px-4',
           // Free movement while the mouse drags; the rail snaps to a card again afterwards.
-          dragging ? 'cursor-grabbing select-none [&_img]:pointer-events-none' : 'snap-x snap-mandatory md:cursor-grab',
+          dragging
+            ? 'cursor-grabbing select-none [&_img]:pointer-events-none'
+            : 'snap-x snap-mandatory md:cursor-grab',
           // Fade the side that still has cards to show.
-          !atStart && !atEnd && '[mask-image:linear-gradient(to_right,transparent,#000_72px,#000_calc(100%-72px),transparent)]',
-          atStart && !atEnd && '[mask-image:linear-gradient(to_right,#000_calc(100%-72px),transparent)]',
+          !atStart &&
+            !atEnd &&
+            '[mask-image:linear-gradient(to_right,transparent,#000_72px,#000_calc(100%-72px),transparent)]',
+          atStart &&
+            !atEnd &&
+            '[mask-image:linear-gradient(to_right,#000_calc(100%-72px),transparent)]',
           !atStart && atEnd && '[mask-image:linear-gradient(to_right,transparent,#000_72px)]',
         )}
       >
