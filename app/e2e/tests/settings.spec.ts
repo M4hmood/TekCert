@@ -103,14 +103,14 @@ test('moves me to another class', async ({ page }) => {
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(toast(page)).toHaveText(/Enrolment saved/);
   if (!isPhone(page)) {
-    await expect(page.getByRole('complementary')).toContainText('ING-2-B');
+    await expect(page.getByRole('complementary')).toContainText('ING-2 · Group B');
   }
 
   await page.reload();
   await expect(page.getByRole('combobox', { name: 'Year' })).toContainText('ING-2');
   await expect(page.getByRole('combobox', { name: 'Group' })).toContainText('Group B');
   await expect(page.getByRole('radio', { name: /Undecided/ })).toBeChecked();
-  await expect(page.getByText('ING-2 · group B')).toBeVisible();
+  await expect(page.getByText('ING-2 · group B', { exact: true })).toBeVisible();
 });
 
 test('keeps my privacy and notification choices', async ({ page }) => {

@@ -29,7 +29,7 @@ export interface LandingPageProps {
 
 const SECTION = 'px-18 max-lg:px-8 max-md:px-4';
 const FOOTER_LINK =
-  'w-fit min-h-7 text-ink2 text-[14.5px] no-underline transition-colors hover:text-ink';
+  'inline-flex items-center w-fit min-h-7 text-ink2 text-[14.5px] no-underline transition-colors hover:text-ink max-md:min-h-11 max-md:min-w-11';
 const H2 =
   'font-serif text-[48px] font-medium tracking-[-0.02em] leading-[1.1] max-lg:text-[38px] max-md:text-[28px] max-md:leading-[1.15]';
 const OVERLINE = 'text-[12.5px] font-semibold tracking-[0.12em] uppercase';
