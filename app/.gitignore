@@ -21,3 +21,5 @@ e2e/blob-report/
 next-env.d.ts
 # Database dumps from `pnpm db:backup`: they hold personal data.
 backups/
+# Working files of the design tool.
+.taste/
