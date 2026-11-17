@@ -17,7 +17,12 @@ test('a visitor reads the landing page and goes on to sign up', async ({ page, v
   const providers = page.getByRole('region', { name: 'Funded certifications by provider' });
   await expect(providers.getByRole('article')).toHaveCount(10);
   await expect(
-    page.getByRole('region', { name: /One path per specialty/ }).getByRole('listitem'),
+    // One card per path; each card lists its own steps inside.
+    page
+      .getByRole('region', { name: /One path per specialty/ })
+      .locator('ul')
+      .first()
+      .locator(':scope > li'),
   ).toHaveCount(7);
 
   if (!isPhone(viewport?.width)) {

@@ -9,18 +9,19 @@ import {
 import { Icon } from '@tekcert/ui';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { CSSProperties, ReactNode } from 'react';
-import { CertBadge, specialtyColor } from '@/components/catalog/parts';
+import type { ReactNode } from 'react';
+import { specialtyColor } from '@/components/catalog/parts';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { SchoolLogo } from '@/components/SchoolLogo';
 import {
   groupByProvider,
   maxPreparing,
   semesterLabel,
-  SHOWCASE_BADGES,
-  SHOWCASE_ROWS,
-  trackLine,
 } from './format';
+import { FundamentalsPathCard, SpecialtyPathCard } from './PathCards';
+import { ProviderCard } from './ProviderCard';
 import { ProviderRail } from './ProviderRail';
+import { RevealOnScroll } from './RevealOnScroll';
 
 export interface LandingPageProps {
   /** Null when the API couldn't be reached: the page still explains TekCert, without numbers. */
@@ -31,13 +32,15 @@ export interface LandingPageProps {
 }
 
 const SECTION = 'px-18 max-lg:px-8 max-md:px-4';
+const FOOTER_LINK =
+  'w-fit min-h-7 text-ink2 text-[14.5px] no-underline transition-colors hover:text-ink';
 const H2 =
   'font-serif text-[48px] font-medium tracking-[-0.02em] leading-[1.1] max-lg:text-[38px] max-md:text-[28px] max-md:leading-[1.15]';
 const OVERLINE = 'text-[12.5px] font-semibold tracking-[0.12em] uppercase';
 const NAV = [
-  { href: '#certifications', label: 'Certifications' },
-  { href: '#how', label: 'How it works' },
+  { href: '#certifications', label: 'Catalog' },
   { href: '#paths', label: 'Paths' },
+  { href: '#how', label: 'How it works' },
   { href: '#help', label: 'Find help' },
 ];
 const STEPS = [
@@ -75,7 +78,10 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
       <header
         className={`flex items-center justify-between gap-4 py-5 border-b border-ln max-md:py-3 ${SECTION}`}
       >
-        <Link href="/" className="tap-target flex items-center gap-2.75 text-ink no-underline">
+        <Link
+          href="/"
+          className="tap-target flex items-center gap-2.75 min-h-11 text-ink no-underline"
+        >
           <Image
             src="/icons/tekcert-96.png"
             alt=""
@@ -85,17 +91,17 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
             priority
           />
           <span className="font-serif text-[23px] font-semibold tracking-[-0.01em]">TekCert</span>
-          <span className="ms-0.5 ps-2.75 border-s border-ln2 text-ink3 text-[11px] font-semibold tracking-[0.12em] max-md:hidden">
-            TEK-UP
+          <span className="flex items-center ms-0.5 ps-3 border-s border-ln2 max-md:hidden">
+            <SchoolLogo className="h-10" />
           </span>
           <span className="sr-only"> home</span>
         </Link>
-        <nav aria-label="Sections" className="flex gap-1 max-lg:hidden">
+        <nav aria-label="Sections" className="flex gap-1 max-xl:hidden">
           {NAV.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="flex items-center h-11 px-3.5 rounded-field text-ink2 text-[15px] font-medium no-underline hover:bg-sf2 hover:text-ink"
+              className="flex items-center h-11 px-3.5 rounded-field whitespace-nowrap text-ink2 text-[15px] font-medium no-underline transition-[background-color,color,scale] duration-150 hover:bg-sf2 hover:text-ink active:scale-[0.96]"
             >
               {item.label}
             </a>
@@ -105,13 +111,13 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
           <ThemeToggle />
           <Link
             href="/sign-in"
-            className="flex items-center h-11 px-4 rounded-field text-pri text-[15px] font-semibold no-underline hover:bg-pri-sf"
+            className="flex items-center h-11 px-4 rounded-field whitespace-nowrap text-pri text-[15px] font-semibold no-underline hover:bg-pri-sf"
           >
             Sign in
           </Link>
           <Link
             href="/sign-up"
-            className="flex items-center h-11 px-4.5 rounded-field bg-pri text-pri-ink text-[15px] font-semibold no-underline max-md:hidden"
+            className="flex items-center h-11 px-4.5 rounded-field whitespace-nowrap bg-pri text-pri-ink text-[15px] font-semibold no-underline max-md:hidden"
           >
             Create my account
           </Link>
@@ -121,10 +127,17 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
       <main id="main" className="flex flex-col">
         <section
           aria-labelledby="landing-title"
-          className={`grid grid-cols-[1.15fr_1fr] items-center gap-18 pt-22 pb-20 max-xl:gap-10 max-lg:grid-cols-1 max-lg:pt-14 max-lg:pb-14 max-md:gap-7 max-md:pt-8 max-md:pb-10 ${SECTION}`}
+          className={`relative isolate grid grid-cols-[1.15fr_1fr] items-center gap-18 pt-22 pb-20 max-xl:gap-10 max-lg:grid-cols-1 max-lg:pt-14 max-lg:pb-14 max-md:gap-7 max-md:pt-8 max-md:pb-10 ${SECTION}`}
         >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10 bg-[image:radial-gradient(45%_60%_at_80%_45%,color-mix(in_oklch,var(--gold)_16%,transparent),transparent_70%),radial-gradient(40%_50%_at_0%_0%,color-mix(in_oklch,var(--pri)_9%,transparent),transparent_70%)]"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10 bg-[image:radial-gradient(var(--ln2)_1px,transparent_1px)] bg-size-[24px_24px] opacity-60 [mask-image:radial-gradient(55%_70%_at_75%_45%,#000,transparent_75%)]"
+          />
           <div className="flex flex-col gap-7 max-md:gap-5">
-            <span className={`${OVERLINE} text-gold`}>For TEK-UP students only</span>
             <h1
               id="landing-title"
               className="font-serif text-[72px] font-medium tracking-[-0.025em] leading-[1.02] text-balance max-xl:text-[60px] max-md:text-[40px] max-md:leading-[1.05]"
@@ -167,6 +180,7 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
           className="flex flex-col gap-8 pt-20 pb-18 border-y border-ln bg-sf scroll-mt-4 max-md:gap-5 max-md:py-10"
         >
           <ProviderRail
+            labels={providers.map((showcase) => showcase.provider.name)}
             heading={
               <div className="flex flex-col gap-3 max-w-160">
                 {stats && (
@@ -181,50 +195,8 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
               </div>
             }
           >
-            {providers.map(({ provider, certifications }) => (
-              <article
-                key={provider.code}
-                aria-label={provider.name}
-                className="flex flex-none flex-col w-90 border border-ln rounded-[16px] bg-bg overflow-hidden snap-start max-md:w-70"
-              >
-                <div className="flex flex-wrap content-center items-center gap-3 min-h-36 p-6 border-b border-ln bg-sf2 max-md:min-h-28 max-md:p-4">
-                  {certifications.slice(0, SHOWCASE_BADGES).map((cert) => (
-                    <CertBadge
-                      key={cert.slug}
-                      code={cert.code}
-                      badgeAsset={cert.badgeAsset}
-                      provider={cert.provider}
-                      size={64}
-                    />
-                  ))}
-                </div>
-                <div className="flex flex-col gap-3 pt-4.5 px-6 pb-5.5 max-md:px-4 max-md:pb-4">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="font-serif text-[22px] font-semibold">{provider.name}</h3>
-                    <span className="flex-none text-ink3 text-[13px]">
-                      {countLabel(certifications.length, 'certification')}
-                    </span>
-                  </div>
-                  <ul className="flex flex-col">
-                    {certifications.slice(0, SHOWCASE_ROWS).map((cert) => (
-                      <li
-                        key={cert.slug}
-                        className="grid grid-cols-[92px_minmax(0,1fr)] items-baseline gap-2.5 py-1.75 border-t border-ln text-[14px]"
-                      >
-                        <span className="font-mono text-[12.5px] font-medium truncate">
-                          {cert.code}
-                        </span>
-                        <span className="text-ink2">{cert.name}</span>
-                      </li>
-                    ))}
-                    {certifications.length > SHOWCASE_ROWS && (
-                      <li className="py-1.75 border-t border-ln text-ink3 text-[13.5px]">
-                        and {certifications.length - SHOWCASE_ROWS} more
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              </article>
+            {providers.map((showcase) => (
+              <ProviderCard key={showcase.provider.code} {...showcase} />
             ))}
             {!catalog && (
               <p role="status" className="py-6 text-ink2 text-[15px]">
@@ -243,12 +215,17 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
           </div>
         </section>
 
+        {stats && <Paths stats={stats} />}
+
         <section
           id="how"
           aria-labelledby="landing-how"
-          className={`flex flex-col gap-12 py-24 scroll-mt-4 max-md:gap-7 max-md:py-12 ${SECTION}`}
+          className={`flex flex-col gap-12 py-24 border-y border-ln bg-sf scroll-mt-4 max-md:gap-7 max-md:py-12 ${SECTION}`}
         >
-          <div className="flex items-end justify-between gap-12 max-lg:flex-col max-lg:items-start max-lg:gap-4">
+          <div
+            data-reveal=""
+            className="flex items-end justify-between gap-12 max-lg:flex-col max-lg:items-start max-lg:gap-4"
+          >
             <h2 id="landing-how" className={`${H2} max-w-160`}>
               Three steps between you and your next certification.
             </h2>
@@ -257,7 +234,10 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
               shows you who can help.
             </p>
           </div>
-          <ol className="grid grid-cols-3 border-t-[1.5px] border-ink max-md:grid-cols-1">
+          <ol
+            data-reveal="stagger"
+            className="grid grid-cols-3 border-t-[1.5px] border-ink max-md:grid-cols-1"
+          >
             {STEPS.map((step) => (
               <li
                 key={step.numeral}
@@ -278,11 +258,10 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
           </ol>
         </section>
 
-        {stats && <Paths stats={stats} />}
-
         <section
           id="help"
           aria-labelledby="landing-help"
+          data-reveal="stagger"
           className={`grid grid-cols-2 items-center gap-18 py-24 scroll-mt-4 max-lg:grid-cols-1 max-lg:gap-8 max-md:py-12 ${SECTION}`}
         >
           <div className="flex flex-col gap-5">
@@ -326,8 +305,18 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
 
         <section
           aria-labelledby="landing-join"
-          className="flex items-center justify-between gap-12 mx-18 mb-18 p-18 rounded-[20px] bg-hero text-hero-ink max-lg:flex-col max-lg:items-start max-lg:mx-8 max-lg:p-10 max-md:gap-6 max-md:mx-4 max-md:mb-10 max-md:p-6"
+          data-reveal=""
+          className="relative isolate overflow-hidden flex items-center justify-between gap-12 mx-18 mb-18 p-18 rounded-[20px] bg-hero text-hero-ink bg-[image:radial-gradient(50%_90%_at_85%_50%,rgb(226_188_102/0.22),transparent_70%)] max-lg:flex-col max-lg:items-start max-lg:mx-8 max-lg:p-10 max-md:gap-6 max-md:mx-4 max-md:mb-10 max-md:p-6"
         >
+          <div aria-hidden className="pointer-events-none absolute -z-10 -end-24 top-1/2">
+            {[520, 380, 240].map((size) => (
+              <span
+                key={size}
+                className="absolute top-0 left-0 -translate-1/2 rounded-full border border-white/10"
+                style={{ width: size, height: size }}
+              />
+            ))}
+          </div>
           <div className="flex flex-col gap-3.5">
             <h2
               id="landing-join"
@@ -351,12 +340,58 @@ export function LandingPage({ stats, catalog, now }: LandingPageProps) {
         </section>
       </main>
 
-      <footer
-        className={`flex flex-wrap justify-between gap-x-6 gap-y-2 py-7 border-t border-ln text-ink3 text-[13.5px] ${SECTION}`}
-      >
-        <span>TekCert · TEK-UP community platform</span>
-        <span>Exams are funded by the institute. Nothing is sold on TekCert.</span>
+      <footer className={`flex flex-col gap-10 pt-14 pb-8 border-t border-ln bg-sf ${SECTION}`}>
+        <div className="flex justify-between gap-12 max-md:flex-col max-md:gap-8">
+          <div className="flex flex-col gap-4 max-w-90">
+            <span className="flex items-center gap-2.75">
+              <Image
+                src="/icons/tekcert-96.png"
+                alt=""
+                width={32}
+                height={32}
+                loading="eager"
+                className="flex-none size-8 object-contain"
+              />
+              <span className="font-serif text-[22px] font-semibold">TekCert</span>
+              <span className="flex items-center ms-0.5 ps-3 border-s border-ln2">
+                <SchoolLogo className="h-8" />
+              </span>
+            </span>
+            <p className="text-ink2 text-[14.5px] leading-[1.6]">
+              The community platform that guides TEK-UP students toward the certifications the
+              institute funds.
+            </p>
+          </div>
+          <nav aria-label="Footer" className="flex gap-16 max-md:gap-10">
+            <div className="flex flex-col gap-2">
+              <span className="pb-1 text-ink3 text-[12px] font-semibold tracking-[0.1em] uppercase">
+                Explore
+              </span>
+              {NAV.map((item) => (
+                <a key={item.href} href={item.href} className={FOOTER_LINK}>
+                  {item.label}
+                </a>
+              ))}
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="pb-1 text-ink3 text-[12px] font-semibold tracking-[0.1em] uppercase">
+                Account
+              </span>
+              <Link href="/sign-in" className={FOOTER_LINK}>
+                Sign in
+              </Link>
+              <Link href="/sign-up" className={FOOTER_LINK}>
+                Create my account
+              </Link>
+            </div>
+          </nav>
+        </div>
+        <div className="flex flex-wrap justify-between gap-x-6 gap-y-2 pt-6 border-t border-ln text-ink3 text-[13px]">
+          <span>© {new Date(now).getUTCFullYear()} TekCert · TEK-UP community platform</span>
+          <span>Exams are funded by the institute. Nothing is sold on TekCert.</span>
+        </div>
       </footer>
+      <RevealOnScroll />
     </div>
   );
 }
@@ -381,7 +416,7 @@ function StatsPanel({ stats, now }: { stats: PublicStats; now: Date }) {
           Live
         </span>
       </div>
-      <dl className="grid grid-cols-[1.3fr_1fr_1fr] gap-5 pb-6 border-b border-ln max-md:grid-cols-2">
+      <dl className="grid grid-cols-[1.3fr_1fr_1fr] items-start gap-5 pb-6 border-b border-ln max-md:grid-cols-2">
         <Stat value={stats.preparing} label="students preparing a certification" lead />
         <Stat value={stats.students} label="students on TekCert" />
         <Stat value={stats.certifications} label="certifications in the catalog" />
@@ -422,13 +457,13 @@ function StatsPanel({ stats, now }: { stats: PublicStats; now: Date }) {
 
 function Stat({ value, label, lead = false }: { value: number; label: string; lead?: boolean }) {
   return (
-    <div className={`flex flex-col-reverse gap-1 ${lead ? 'max-md:col-span-2' : ''}`}>
+    <div className={`flex flex-col-reverse justify-end gap-1.5 ${lead ? 'max-md:col-span-2' : ''}`}>
       <dt className="text-ink2 text-[14px] leading-[1.4]">{label}</dt>
       <dd
         className={
           lead
-            ? 'font-serif text-[64px] font-medium tracking-[-0.03em] leading-none text-gold max-md:text-[52px]'
-            : 'font-serif text-[40px] font-medium leading-[1.15] max-md:text-[30px]'
+            ? 'flex items-end h-16 font-serif text-[64px] font-medium tracking-[-0.03em] leading-none text-gold max-md:h-13 max-md:text-[52px]'
+            : 'flex items-end h-16 font-serif text-[40px] font-medium leading-none max-md:h-9 max-md:text-[30px]'
         }
       >
         {value.toLocaleString('en-US')}
@@ -443,9 +478,12 @@ function Paths({ stats }: { stats: PublicStats }) {
     <section
       id="paths"
       aria-labelledby="landing-paths"
-      className={`flex flex-col gap-10 py-22 border-y border-ln bg-sf scroll-mt-4 max-md:gap-6 max-md:py-12 ${SECTION}`}
+      className={`flex flex-col gap-10 py-22 scroll-mt-4 max-md:gap-6 max-md:py-12 ${SECTION}`}
     >
-      <div className="flex items-end justify-between gap-6 max-md:flex-col max-md:items-start max-md:gap-2">
+      <div
+        data-reveal=""
+        className="flex items-end justify-between gap-6 max-md:flex-col max-md:items-start max-md:gap-2"
+      >
         <h2 id="landing-paths" className={H2}>
           One path per specialty, plus the Fundamentals
         </h2>
@@ -457,56 +495,15 @@ function Paths({ stats }: { stats: PublicStats }) {
           <Icon name="arrow_forward" size={20} />
         </Link>
       </div>
-      <ul className="grid grid-cols-4 gap-5 max-xl:grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 max-md:gap-3">
+      <ul
+        data-reveal=""
+        className="grid grid-cols-4 gap-5 max-xl:grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 max-md:gap-3"
+      >
         {stats.paths.map((path) =>
           path.hue === null ? (
-            <li
-              key={path.code}
-              className="flex flex-col col-span-2 gap-4 p-7 border border-ln rounded-[16px] bg-hero text-hero-ink max-md:col-span-1 max-md:p-5"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-[12px] font-semibold tracking-[0.1em] uppercase opacity-80">
-                  Shared path · ING-1 to ING-5
-                </span>
-                <span className="flex-none text-[13px] opacity-80">
-                  {countLabel(path.certifications, 'certification')}
-                </span>
-              </div>
-              <h3 className="font-serif text-[34px] font-medium max-md:text-[28px]">{path.name}</h3>
-              <p className="max-w-110 text-[14.5px] leading-[1.55] opacity-90">
-                The starting point if you haven’t chosen your specialty yet: the foundational
-                certifications of the major providers.
-              </p>
-              <span className="mt-auto font-mono text-[12px] font-medium opacity-90">
-                {trackLine(path.track, LANDING_TRACK_LENGTH + 2, ' · ')}
-              </span>
-            </li>
+            <FundamentalsPathCard key={path.code} path={path} length={LANDING_TRACK_LENGTH + 2} />
           ) : (
-            <li
-              key={path.code}
-              className="flex flex-col gap-3 p-5.5 border border-ln rounded-[16px] bg-bg"
-              style={{ '--spec': specialtyColor(path.code as SpecialtyCode) } as CSSProperties}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="flex items-center gap-2.25 font-serif text-[26px] font-semibold">
-                  <span aria-hidden className="flex-none size-3 rounded-full bg-(--spec)" />
-                  {path.code}
-                </h3>
-                <span className="flex-none text-ink3 text-[12.5px]">
-                  {countLabel(path.certifications, 'cert')}
-                </span>
-              </div>
-              <p className="min-h-10 text-ink2 text-[14px] leading-[1.4] max-md:min-h-0">
-                {path.name}
-              </p>
-              <span className="font-mono text-[11.5px] font-medium text-ink2">
-                {trackLine(path.track, LANDING_TRACK_LENGTH)}
-              </span>
-              <span className="mt-auto pt-3 border-t border-ln text-ink2 text-[13px]">
-                <strong className="text-ink">{path.students.toLocaleString('en-US')}</strong>{' '}
-                {path.students === 1 ? 'student follows it' : 'students follow it'}
-              </span>
-            </li>
+            <SpecialtyPathCard key={path.code} path={path} />
           ),
         )}
       </ul>
