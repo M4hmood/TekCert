@@ -71,7 +71,7 @@ test.describe('onboarding', () => {
     await page.getByRole('button', { name: 'Go to my dashboard' }).click();
     await expect(page).toHaveURL(/\/dashboard$/);
     const account = page.getByRole('link', { name: /Test Student/ });
-    await expect(account).toContainText('ING-4-CIM-C');
+    await expect(account).toContainText('ING-4 · CIM · Group C');
     await expect(account.locator('img')).toBeVisible();
   });
 

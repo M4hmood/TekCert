@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState, useTransition } from 'react';
 import { errorCode } from '@/components/dashboard/DashboardError';
+import { SchoolLogo } from '@/components/SchoolLogo';
 import { StatusScreen } from '@/components/StatusScreen';
 import { reportError } from '@/lib/monitoring';
 
@@ -41,9 +42,11 @@ export default function ErrorPage({
             height={32}
             className="size-8 object-contain"
           />
-          <span className="font-serif text-[22px] font-semibold">
-            TekCert<span className="sr-only"> home</span>
+          <span className="font-serif text-[22px] font-semibold">TekCert</span>
+          <span className="flex items-center ms-0.5 ps-3 border-s border-ln2">
+            <SchoolLogo className="h-9 max-md:h-8" />
           </span>
+          <span className="sr-only"> home</span>
         </Link>
       </header>
 

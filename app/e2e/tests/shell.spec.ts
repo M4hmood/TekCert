@@ -143,7 +143,7 @@ test('the sidebar shows the signed-in student', async ({ page, viewport }) => {
   await page.goto('/dashboard');
   const account = page.getByRole('link', { name: /Test Student/ });
   await expect(account).toHaveAttribute('href', '/profile');
-  await expect(account).toContainText('ING-4-CIM-A');
+  await expect(account).toContainText('ING-4 · CIM · Group A');
 });
 
 test('unknown pages show the not-found screen', async ({ page }) => {
