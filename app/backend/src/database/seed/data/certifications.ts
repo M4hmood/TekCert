@@ -737,7 +737,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 4,
     specialties: ['CIM', 'GLOps', 'SSIR'],
-    badgeAsset: null,
+    badgeAsset: 'redhat-rhcsa.webp',
     domains: [
       d('Essential tools and scripting', 'Tools', null, [
         ['Essential command-line tools', 150],
@@ -792,7 +792,7 @@ export const certifications: CertificationSeed[] = [
     level: 'professional',
     difficulty: 5,
     specialties: ['GLOps', 'CIM'],
-    badgeAsset: null,
+    badgeAsset: 'redhat-rhce.png',
     domains: [
       d('Ansible foundations', 'Foundations', null, [
         ['Core components of Ansible', 120],
@@ -842,7 +842,7 @@ export const certifications: CertificationSeed[] = [
     level: 'expert',
     difficulty: 5,
     specialties: ['CIM', 'GLOps'],
-    badgeAsset: null,
+    badgeAsset: 'redhat-rhca.png',
     domains: [
       d('Prerequisite engineer track', 'Engineer', null, [
         ['RHCE competencies: Linux administration and automation', 240],
@@ -1479,7 +1479,7 @@ export const certifications: CertificationSeed[] = [
     level: 'associate',
     difficulty: 3,
     specialties: ['SSIR', 'CIM'],
-    badgeAsset: null,
+    badgeAsset: 'huawei-hcna.png',
     domains: [
       d('Network fundamentals', 'Fundamentals', null, [
         ['TCP/IP, addressing and VRP basics', 180],
@@ -1525,7 +1525,7 @@ export const certifications: CertificationSeed[] = [
     level: 'expert',
     difficulty: 5,
     specialties: ['SSIR'],
-    badgeAsset: null,
+    badgeAsset: 'huawei-hcie.png',
     domains: [
       d('Advanced routing and switching', 'Routing and switching', null, [
         ['Advanced OSPF, IS-IS and BGP', 360],
