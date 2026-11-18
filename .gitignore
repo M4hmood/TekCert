@@ -1,0 +1,2 @@
+# Turborepo cache, when a task runs from the repo root (app/.gitignore covers app/).
+.turbo/
