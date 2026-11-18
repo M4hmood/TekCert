@@ -2,7 +2,7 @@ import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BottomNav } from './BottomNav';
-import { Sidebar } from './Sidebar';
+import { classLabel, Sidebar } from './Sidebar';
 import { ThemeToggle } from './ThemeToggle';
 
 const USER = {
@@ -70,7 +70,13 @@ describe('Sidebar', () => {
     const account = screen.getByRole('link', { name: /Yassine Ben Amor/ });
     expect(account).toHaveAttribute('href', '/profile');
     expect(account).toHaveTextContent('YB');
-    expect(account).toHaveTextContent('ING-4-CIM-C');
+    expect(account).toHaveTextContent('ING-4 · CIM · Group C');
+  });
+
+  it('spells the class code out', () => {
+    expect(classLabel('ING-4-CIM-C')).toBe('ING-4 · CIM · Group C');
+    expect(classLabel('ING-2-B')).toBe('ING-2 · Group B');
+    expect(classLabel('odd')).toBe('odd');
   });
 
   it('shows the profile photo through the API proxy when there is one', () => {

@@ -1,5 +1,5 @@
 import type { CertificationSummary, PublicStats } from '@tekcert/types';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { groupByProvider, maxPreparing, semesterLabel, trackLine } from './format';
@@ -129,7 +129,9 @@ describe('LandingPage', () => {
     for (const link of screen.getAllByRole('link', { name: /Create my account|Sign up with/ })) {
       expect(link).toHaveAttribute('href', '/sign-up');
     }
-    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in');
+    for (const link of screen.getAllByRole('link', { name: 'Sign in' })) {
+      expect(link).toHaveAttribute('href', '/sign-in');
+    }
     expect(screen.getByText(/No payment, ever/)).toBeInTheDocument();
     // The sections the header links to all exist.
     const nav = screen.getByRole('navigation', { name: 'Sections' });
@@ -184,20 +186,31 @@ describe('LandingPage', () => {
     const many = Array.from({ length: 8 }, (_, i) => cert(`AWS-${i + 1}`, AWS));
     render(<LandingPage stats={stats} catalog={many} now={NOW} />);
     const card = screen.getByRole('article', { name: 'Amazon Web Services' });
-    expect(within(card).getAllByRole('listitem')).toHaveLength(7);
-    expect(card).toHaveTextContent('and 2 more');
+    expect(within(card).getAllByRole('listitem')).toHaveLength(5);
+    expect(card).toHaveTextContent('and 4 more');
   });
 
-  it('moves the provider rail with its arrows', async () => {
+  it('moves the provider carousel one card at a time, with its arrows and its dots', async () => {
     const user = userEvent.setup();
     render(<LandingPage stats={stats} catalog={catalog} now={NOW} />);
     const rail = screen.getByRole('region', { name: 'Funded certifications by provider' });
-    const scrollBy = vi.fn();
-    rail.scrollBy = scrollBy;
-    await user.click(screen.getByRole('button', { name: 'Next providers' }));
-    expect(scrollBy).toHaveBeenCalledWith({ left: 380, behavior: 'smooth' });
-    await user.click(screen.getByRole('button', { name: 'Previous providers' }));
-    expect(scrollBy).toHaveBeenLastCalledWith({ left: -380, behavior: 'smooth' });
+    const scrollTo = vi.fn();
+    rail.scrollTo = scrollTo;
+    // jsdom has no layout: give the rail more cards than it shows, then let it read that back.
+    Object.defineProperty(rail, 'scrollWidth', { value: 3000 });
+    Object.defineProperty(rail, 'clientWidth', { value: 1000 });
+    fireEvent.scroll(rail);
+    const next = screen.getByRole('button', { name: 'Next providers' });
+    await waitFor(() => expect(next).toBeEnabled());
+    expect(screen.getByRole('button', { name: 'Previous providers' })).toBeDisabled();
+    await user.click(next);
+    expect(scrollTo).toHaveBeenLastCalledWith({ left: expect.any(Number), behavior: 'smooth' });
+
+    const dots = screen.getAllByRole('button', { name: /^Show / });
+    expect(dots).toHaveLength(rail.querySelectorAll('article').length);
+    expect(dots[0]).toHaveAttribute('aria-current', 'true');
+    await user.click(dots[1] as HTMLElement);
+    expect(scrollTo).toHaveBeenCalledTimes(2);
   });
 
   it('explains the three steps without promising Release 2 features', () => {
@@ -214,16 +227,24 @@ describe('LandingPage', () => {
   it('lists the paths, Fundamentals first, with how many students follow each', () => {
     render(<LandingPage stats={stats} catalog={catalog} now={NOW} />);
     const paths = screen.getByRole('region', { name: /One path per specialty/ });
-    const cards = within(paths).getAllByRole('listitem');
+    const grid = paths.querySelector('ul') as HTMLElement;
+    const cards = within(grid)
+      .getAllByRole('listitem')
+      .filter((item) => item.parentElement === grid);
+    const items = (card: HTMLElement | undefined) =>
+      within(card as HTMLElement)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent);
     expect(cards).toHaveLength(3);
     expect(cards[0]).toHaveTextContent('Shared path · ING-1 to ING-5');
     expect(cards[0]).toHaveTextContent('7 certifications');
-    expect(cards[0]).toHaveTextContent('CLF-C02 · AZ-900 · AI-900 · AIF-C01 · PCEP');
-    expect(cards[1]).toHaveTextContent('CIM9 certs');
-    expect(cards[1]).toHaveTextContent('CLF-C02 → SAA-C03 → SAP-C02');
+    expect(items(cards[0])).toEqual(['CLF-C02', 'AZ-900', 'AI-900', 'AIF-C01', 'PCEP']);
+    expect(within(cards[1] as HTMLElement).getByRole('heading')).toHaveTextContent('CIM');
+    expect(cards[1]).toHaveTextContent('9 certs');
+    expect(items(cards[1])).toEqual(['CLF-C02', 'SAA-C03', 'SAP-C02', '+6 more']);
     expect(cards[1]).not.toHaveTextContent('DOP-C02');
-    expect(cards[1]).toHaveTextContent('68 students follow it');
-    expect(cards[2]).toHaveTextContent('1 student follows it');
+    expect(cards[1]).toHaveTextContent('68 following');
+    expect(cards[2]).toHaveTextContent('1 following');
     expect(within(paths).getByRole('link', { name: /All paths/ })).toHaveAttribute(
       'href',
       '/paths',

@@ -17,6 +17,7 @@ import { Alert, Button, cn, Icon, IconButton, Progress } from '@tekcert/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { SchoolLogo } from '@/components/SchoolLogo';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { type ApiResult, getJson, postJson, putJson, withSessionRefresh } from '@/lib/client-api';
 import { groupLabel, stepLabel } from './copy';
@@ -197,6 +198,9 @@ export function OnboardingWizard({
             className="size-8 object-contain"
           />
           <span className="font-serif text-[22px] font-semibold">TekCert</span>
+          <span className="flex items-center ms-0.5 ps-3 border-s border-ln2">
+            <SchoolLogo className="h-8" />
+          </span>
         </span>
         <div className="flex flex-col items-center gap-2 max-md:flex-1 max-md:flex-row max-md:min-h-(--touch-target) max-md:ps-3">
           {step > 1 && (

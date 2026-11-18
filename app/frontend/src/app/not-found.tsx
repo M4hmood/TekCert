@@ -1,20 +1,10 @@
-import { buttonClass, EmptyState } from '@tekcert/ui';
-import Link from 'next/link';
+import { NotFoundMessage } from '@/components/NotFoundMessage';
 
+/** Unknown addresses: a page of its own, with no sidebar. */
 export default function NotFound() {
   return (
-    <main id="main" className="flex flex-col min-h-dvh">
-      <EmptyState
-        icon="search_off"
-        title="Page not found"
-        action={
-          <Link href="/dashboard" className={buttonClass('primary')}>
-            Back to the dashboard
-          </Link>
-        }
-      >
-        The page you are looking for does not exist or has moved.
-      </EmptyState>
+    <main id="main" className="flex flex-col flex-1 min-h-dvh">
+      <NotFoundMessage />
     </main>
   );
 }

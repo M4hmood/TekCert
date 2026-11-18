@@ -143,13 +143,13 @@ test('the sidebar shows the signed-in student', async ({ page, viewport }) => {
   await page.goto('/dashboard');
   const account = page.getByRole('link', { name: /Test Student/ });
   await expect(account).toHaveAttribute('href', '/profile');
-  await expect(account).toContainText('ING-4-CIM-A');
+  await expect(account).toContainText('ING-4 · CIM · Group A');
 });
 
 test('unknown pages show the not-found screen', async ({ page }) => {
   const response = await page.goto('/does-not-exist');
   expect(response?.status()).toBe(404);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'This page doesn’t exist' })).toBeVisible();
 });
 
 test.describe('catalog wiring', () => {

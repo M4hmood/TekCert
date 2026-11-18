@@ -1,7 +1,7 @@
 import { act, render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SPLASH_COOKIE } from '@/lib/preferences';
-import { Splash } from './Splash';
+import { RING_MS, Splash, TICKS, tickDelay } from './Splash';
 
 const splash = (container: HTMLElement) => container.querySelector('[data-splash]');
 
@@ -30,6 +30,21 @@ describe('Splash', () => {
     const { container } = render(<Splash />);
     expect(splash(container)).toHaveAttribute('aria-hidden', 'true');
     expect(container.querySelectorAll('button, a, [tabindex]')).toHaveLength(0);
+  });
+
+  it('draws one tick per certification on a track, and the arc that closes the ring', () => {
+    const { container } = render(<Splash />);
+    expect(container.querySelectorAll('[data-ring-tick]')).toHaveLength(TICKS);
+    expect(container.querySelector('[data-ring-track]')).not.toBeNull();
+    expect(container.querySelector('[data-ring-close]')).not.toBeNull();
+  });
+
+  it('lights the last tick as the ring closes, and the first one at once', () => {
+    expect(tickDelay(0)).toBe(0);
+    expect(tickDelay(TICKS - 1)).toBe(RING_MS);
+    for (let index = 1; index < TICKS; index += 1) {
+      expect(tickDelay(index)).toBeGreaterThanOrEqual(tickDelay(index - 1));
+    }
   });
 
   it('remembers for this browser session that it was shown', () => {

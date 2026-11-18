@@ -10,11 +10,20 @@ import { isActive, MAIN_NAV, type NavItem, PERSONAL_NAV } from '@/lib/navigation
 import { SIDEBAR_COOKIE, writePreference } from '@/lib/preferences';
 import { useShell } from '@/lib/shell-context';
 import { Avatar } from './Avatar';
+import { SchoolLogo } from './SchoolLogo';
 
 export interface SidebarProps {
   /** Initial state from the sidebar cookie, so the server renders the right width. */
   initiallyCollapsed: boolean;
   user: Pick<CurrentUser, 'firstName' | 'lastName' | 'email' | 'classCode' | 'avatarPath'>;
+}
+
+/** "ING-4-CIM-C" → "ING-4 · CIM · Group C"; "ING-2-B" → "ING-2 · Group B". */
+export function classLabel(code: string): string {
+  const [school, year, ...rest] = code.split('-');
+  const group = rest.pop();
+  if (!school || !year || !group) return code;
+  return [`${school}-${year}`, ...rest, `Group ${group}`].join(' · ');
 }
 
 export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
@@ -85,9 +94,7 @@ export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
             <span className="font-serif text-[22px] font-semibold tracking-[-0.01em] leading-none">
               TekCert
             </span>
-            <span className="text-ink3 text-[10.5px] tracking-[0.12em] leading-none uppercase">
-              TEK-UP University
-            </span>
+            <SchoolLogo className="self-start h-6.5 -ms-0.5" />
           </span>
           {/* The name is the visible text plus this, so speech input can say what it sees. */}
           <span className="sr-only"> home</span>
@@ -115,26 +122,31 @@ export function Sidebar({ initiallyCollapsed, user }: SidebarProps) {
         {PERSONAL_NAV.map(renderLink)}
       </nav>
 
-      {/* The level joins the class here with points (Sprint 4). */}
+      {/* The student, their class, and the way to their profile. */}
       <Link
         href="/profile"
-        className="flex flex-none items-center gap-2.75 mt-auto p-2.5 overflow-hidden border border-ln rounded-[10px] text-ink no-underline transition-[padding,border-color] duration-[240ms] ease-standard hover:bg-sf2 group-data-[collapsed=true]/sidebar:p-1 group-data-[collapsed=true]/sidebar:border-transparent max-xl:p-1 max-xl:border-transparent"
+        className="group/me flex flex-none items-center gap-3 mt-auto p-2.5 overflow-hidden border border-ln rounded-[12px] bg-bg text-ink no-underline transition-[padding,border-color,background-color] duration-[240ms] ease-standard hover:border-ln2 hover:bg-sf2 group-data-[collapsed=true]/sidebar:p-1 group-data-[collapsed=true]/sidebar:border-transparent group-data-[collapsed=true]/sidebar:bg-transparent max-xl:p-1 max-xl:border-transparent max-xl:bg-transparent"
         title="My profile"
       >
         <Avatar
           firstName={user.firstName}
           lastName={user.lastName}
           avatarPath={user.avatarPath}
-          className="size-9.5 text-[16px]"
+          className="size-9.5 font-sans text-[13.5px] font-semibold tracking-[0.02em]"
         />
-        <span className="flex flex-col gap-0.5 min-w-0 whitespace-nowrap transition-opacity duration-[160ms] ease-standard group-data-[collapsed=true]/sidebar:opacity-0 max-xl:opacity-0">
-          <span className="text-[14px] font-semibold">
+        <span className="flex flex-1 flex-col gap-0.5 min-w-0 whitespace-nowrap transition-opacity duration-[160ms] ease-standard group-data-[collapsed=true]/sidebar:opacity-0 max-xl:opacity-0">
+          <span className="overflow-hidden text-[14px] font-semibold leading-[1.25] text-ellipsis">
             {user.firstName} {user.lastName}
           </span>
-          <span className="overflow-hidden text-ink3 text-[12px] text-ellipsis whitespace-nowrap">
-            {user.classCode ?? user.email}
+          <span className="overflow-hidden text-ink3 text-[12.5px] leading-[1.25] text-ellipsis">
+            {user.classCode ? classLabel(user.classCode) : user.email}
           </span>
         </span>
+        <Icon
+          name="chevron_right"
+          size={18}
+          className="flex-none text-ink3 transition-[opacity,translate] duration-200 group-hover/me:translate-x-0.5 group-hover/me:text-ink group-data-[collapsed=true]/sidebar:opacity-0 max-xl:opacity-0"
+        />
       </Link>
     </aside>
   );

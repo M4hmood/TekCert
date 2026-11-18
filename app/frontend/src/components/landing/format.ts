@@ -15,7 +15,7 @@ const PROVIDER_ORDER = [
 ];
 /** Badges drawn at the top of a provider card, and certifications listed under it. */
 export const SHOWCASE_BADGES = 6;
-export const SHOWCASE_ROWS = 6;
+export const SHOWCASE_ROWS = 4;
 
 export interface ProviderShowcase {
   provider: Provider;

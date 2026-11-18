@@ -1,9 +1,12 @@
 import { CertificationListSchema } from '@tekcert/types';
+import { Icon } from '@tekcert/ui';
 import Image from 'next/image';
+import Link from 'next/link';
 import { type ReactNode, Suspense } from 'react';
 import { AuthContent } from '@/components/auth/AuthContent';
 import { AuthTabs } from '@/components/auth/AuthTabs';
 import { BadgeWall } from '@/components/auth/BadgeWall';
+import { SchoolLogo } from '@/components/SchoolLogo';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { apiGet } from '@/lib/api';
 
@@ -20,9 +23,12 @@ async function catalogSize(): Promise<number | null> {
 export default async function AuthLayout({ children }: { children: ReactNode }) {
   const total = await catalogSize();
   return (
-    <div className="grid grid-cols-[minmax(420px,600px)_1fr] min-h-dvh max-lg:grid-cols-1">
+    // On phones and tablets the panel keeps its own height and the form takes the rest:
+    // with auto rows, a short form (sign in) would stretch the panel taller than on sign up.
+    <div className="grid grid-cols-[minmax(420px,600px)_1fr] min-h-dvh max-lg:grid-cols-1 max-lg:grid-rows-[auto_1fr]">
       <aside className="flex flex-col justify-between gap-8 px-14 py-12 overflow-hidden bg-hero text-hero-ink max-lg:flex-row max-lg:flex-wrap max-lg:items-center max-lg:gap-5.5 max-lg:px-6 max-lg:pt-7 max-lg:pb-8">
-        <span className="flex items-center gap-2.75 text-inherit no-underline">
+        {/* Back to the landing page, as its own header logo does. */}
+        <Link href="/" className="flex items-center gap-2.75 min-h-11 text-inherit no-underline">
           <Image
             src="/icons/tekcert-96.png"
             alt=""
@@ -32,21 +38,33 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
             priority
           />
           <span className="font-serif text-[23px] font-semibold">TekCert</span>
-        </span>
+          {/* The panel is navy in both themes: the school's logo is always drawn white. */}
+          <span className="flex items-center ms-0.5 ps-3 border-s border-white/25">
+            <SchoolLogo tone="light" className="h-10 max-lg:h-9" />
+          </span>
+          <span className="sr-only"> home</span>
+        </Link>
         <div className="flex flex-col gap-7 max-lg:basis-full">
           <p className="font-serif text-[56px] font-medium tracking-[-0.02em] leading-[1.04] max-lg:text-[36px] max-lg:leading-[1.05] [&_em]:text-[#e2bc66]">
             Your class is moving ahead. <em>Join it.</em>
           </p>
           <BadgeWall />
         </div>
-        {total !== null && (
-          <span className="text-[14px] opacity-75 max-lg:hidden">
-            {total} certifications funded by the institute.
-          </span>
-        )}
+        {/* Always rendered: the panel spreads its three rows apart, so without this one the
+            headline and the wall would sink to the bottom when the API can't be reached. */}
+        <span className="min-h-5 text-[14px] opacity-75 max-lg:hidden">
+          {total !== null && `${total} certifications funded by the institute.`}
+        </span>
       </aside>
       <main id="main" className="flex flex-col px-12 py-8 max-lg:px-5 max-lg:pt-2 max-lg:pb-8">
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 h-11 -ms-2.5 px-2.5 rounded-field text-ink2 text-[14.5px] font-medium no-underline hover:bg-sf2 hover:text-ink"
+          >
+            <Icon name="arrow_back" size={18} />
+            Home
+          </Link>
           <ThemeToggle />
         </div>
         <div className="flex flex-1 items-center justify-center py-6 max-lg:items-start max-lg:pt-4 max-lg:pb-0">
